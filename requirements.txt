@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+python-multipart
+pyinstaller
+pywebview
+# Add mediapipe and opencv-python if we were implementing real vision logic
+# For this MVP, we will simulate the vision integration

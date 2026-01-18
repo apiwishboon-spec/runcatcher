@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibraryRunCatcher | Teacher Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/united/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="manifest" href="/static/manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="/static/logo.png" alt="Logo" height="32" class="me-2 rounded-circle bg-white p-1">
+                LibraryRunCatcher
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row g-4">
+            <!-- Main Monitoring Card -->
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm glass-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="card-title mb-0">Live Monitoring</h4>
+                            <div class="d-flex align-items-center gap-3">
+                                <button id="fullscreen-btn" class="btn btn-sm btn-outline-secondary"
+                                    onclick="toggleFullscreen()" title="Toggle Fullscreen">
+                                    <i data-lucide="maximize" style="width: 16px; height: 16px;"></i>
+                                </button>
+                                <div class="form-check form-switch pt-1">
+                                    <input class="form-check-input" type="checkbox" id="live-toggle">
+                                    <label class="form-check-label fw-bold" for="live-toggle">Auto-Detect</label>
+                                </div>
+                                <div id="status-badge" class="badge bg-success py-2 px-3 rounded-pill">
+                                    All Quiet
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden camera elements for pose tracking (no visual display) -->
+                        <div id="camera-container" style="display: none;">
+                            <video id="input-video" style="display: none;"></video>
+                            <canvas id="output-canvas" style="display: none;"></canvas>
+                        </div>
+
+                        <div id="status-display" class="text-center py-5">
+                            <div class="status-icon-wrapper mb-3">
+                                <i data-lucide="smile" id="main-icon" class="text-success" size="64"></i>
+                            </div>
+                            <h2 id="status-message" class="fw-bold text-dark">Environment is Peaceful</h2>
+                            <p class="text-muted">No disruptions detected in current zones.</p>
+                        </div>
+
+                        <div class="row text-center mt-4">
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light rounded shadow-sm border">
+                                    <small class="text-uppercase text-muted d-block mb-1">Speed</small>
+                                    <span id="stat-speed" class="h4 fw-bold">0.0</span> <small>m/s</small>
+                                    <div class="progress mt-2" style="height: 4px;">
+                                        <div id="speed-meter" class="progress-bar bg-primary" role="progressbar"
+                                            style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light rounded shadow-sm border">
+                                    <small class="text-uppercase text-muted d-block mb-1">Noise</small>
+                                    <span id="stat-noise" class="h4 fw-bold">0</span> <small>dB</small>
+                                    <div class="progress mt-2" style="height: 4px;">
+                                        <div id="noise-meter" class="progress-bar bg-info" role="progressbar"
+                                            style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light rounded shadow-sm border">
+                                    <small class="text-uppercase text-muted d-block mb-1">Streak</small>
+                                    <span id="stat-streak" class="h4 fw-bold text-primary">0</span>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light rounded shadow-sm border">
+                                    <small class="text-uppercase text-muted d-block mb-1">Zone</small>
+                                    <span id="stat-zone" class="h5 fw-bold">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Sidebar -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm glass-card h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="card-title mb-0 d-flex align-items-center">
+                                <i data-lucide="bell" class="me-2 text-warning"></i> Recent Alerts
+                            </h5>
+                            <button id="clear-alerts-btn" class="btn btn-sm btn-outline-danger"
+                                onclick="clearAllAlerts()">
+                                <i data-lucide="trash-2" class="me-1" style="width: 14px; height: 14px;"></i> Clear
+                            </button>
+                        </div>
+                        <div id="alerts-container" class="vstack gap-3">
+                            <div id="alerts-placeholder" class="text-center text-muted py-5">
+                                <small>No recent alerts.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zone Selection Card -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm glass-card">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3 d-flex align-items-center">
+                            <i data-lucide="map-pin" class="me-2 text-primary"></i> Zone Selection
+                        </h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Monitoring Zone</label>
+                                <select id="zone-select" class="form-select">
+                                    <option value="reading_area">Reading Area</option>
+                                    <option value="computer_lab">Computer Lab</option>
+                                    <option value="study_hall">Study Hall</option>
+                                    <option value="quiet_zone">Quiet Zone</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" id="new-zone-input" class="form-control"
+                                    placeholder="New zone name...">
+                            </div>
+                            <div class="col-md-2">
+                                <button id="add-zone-btn" class="btn btn-primary w-100" onclick="addNewZone()">
+                                    <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for snapshot viewing -->
+    <div class="modal fade" id="snapshotModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Alert Snapshot</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-0">
+                    <img id="snapshot-img" src="" class="img-fluid" alt="Snapshot">
+                </div>
+                <div class="modal-footer bg-light border-0 d-flex justify-content-between p-3">
+                    <div class="text-start">
+                        <small class="text-muted d-block">Time Detected</small>
+                        <span id="modal-time" class="fw-bold">00:00:00</span>
+                    </div>
+                    <div class="text-start">
+                        <small class="text-muted d-block">Sound Level</small>
+                        <span id="modal-noise" class="fw-bold text-info">0 dB</span>
+                    </div>
+                    <div class="text-start">
+                        <small class="text-muted d-block">Movement Speed</small>
+                        <span id="modal-speed" class="fw-bold text-danger">0.0 m/s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

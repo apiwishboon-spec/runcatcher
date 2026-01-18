@@ -1,0 +1,21 @@
+{
+    "name": "LibraryRunCatcher",
+    "short_name": "RunCatcher",
+    "description": "Library Behavior Monitoring & Teacher Accountability",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#e95420",
+    "theme_color": "#e95420",
+    "icons": [
+        {
+            "src": "/static/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
