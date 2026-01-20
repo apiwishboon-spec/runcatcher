@@ -14,6 +14,14 @@
 </head>
 
 <body class="bg-light">
+    <!-- Intro Overlay -->
+    <div id="intro-overlay" class="intro-overlay">
+        <div class="intro-text">
+            Library Run
+            <span>Catcher</span>
+        </div>
+    </div>
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#">
@@ -190,6 +198,18 @@
     <script src="/static/app.js"></script>
     <script>
         lucide.createIcons();
+
+        // Remove intro after animation to prevent interaction issues
+        const intro = document.getElementById('intro-overlay');
+        if (intro) {
+            intro.addEventListener('animationend', () => {
+                intro.style.display = 'none';
+            });
+            // Fallback just in case
+            setTimeout(() => {
+                intro.style.display = 'none';
+            }, 3600);
+        }
     </script>
 </body>
 
