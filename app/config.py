@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # Thresholds
-    SPEED_THRESHOLD_RUNNING: float = 5.0  # m/s
+    SPEED_THRESHOLD_RUNNING: float = 8.0  # m/s
     NOISE_THRESHOLD_LOUD: float = 75.0    # dB
     
     # Simulation / Mocking

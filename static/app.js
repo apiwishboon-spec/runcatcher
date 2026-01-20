@@ -17,7 +17,7 @@ let lastPoseTime = 0;
 let lastX = 0;
 let audioContext, analyser, dataArray;
 let noiseThreshold = 75; // dB
-let speedThreshold = 5.0; // m/s (approx pixels/sec normalized)
+let speedThreshold = 8.0; // m/s (approx pixels/sec normalized)
 let currentZone = 'reading_area'; // Default zone
 
 // --- MediaPipe Setup ---
