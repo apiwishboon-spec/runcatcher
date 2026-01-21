@@ -182,30 +182,6 @@ body {
     border-left-color: var(--bs-info);
 }
 
-.alerts-scroll-area {
-    max-height: 500px;
-    overflow-y: auto;
-    padding-right: 5px;
-}
-
-.alerts-scroll-area::-webkit-scrollbar {
-    width: 6px;
-}
-
-.alerts-scroll-area::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
-}
-
-.alerts-scroll-area::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-}
-
-.alerts-scroll-area::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.2);
-}
-
 /* Intro Animation */
 .intro-overlay {
     position: fixed;

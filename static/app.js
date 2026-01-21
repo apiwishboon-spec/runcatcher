@@ -16,8 +16,8 @@ let isLive = false;
 let lastPoseTime = 0;
 let lastX = 0;
 let audioContext, analyser, dataArray;
-let noiseThreshold = 65; // Lowered from 75dB for better sensitivity
-let speedThreshold = 5.0; // Lowered from 8.0 for better sensitivity
+let noiseThreshold = 75; // dB
+let speedThreshold = 8.0; // m/s (approx pixels/sec normalized)
 let currentZone = 'reading_area'; // Default zone
 
 // --- MediaPipe Setup ---
@@ -71,23 +71,8 @@ async function onResults(results) {
         lastX = hipX;
         lastPoseTime = now;
 
-        // If speed is low, we still want to update the UI local stats
-        if (speed <= speedThreshold) {
-            document.getElementById('stat-speed').innerText = speed.toFixed(1);
-            const speedMeter = document.getElementById('speed-meter');
-            if (speedMeter) {
-                speedMeter.style.width = Math.min(100, speed * 20) + '%';
-                speedMeter.className = 'progress-bar bg-primary';
-            }
-        }
-
         // Draw basic landmarks (Privacy-safe)
         drawLandmarks(results.poseLandmarks);
-    } else {
-        // If no pose detected, speed is 0
-        document.getElementById('stat-speed').innerText = "0.0";
-        const speedMeter = document.getElementById('speed-meter');
-        if (speedMeter) speedMeter.style.width = '0%';
     }
     canvasCtx.restore();
 }
@@ -277,22 +262,23 @@ liveToggle.addEventListener('change', async (e) => {
         });
         camera.start();
 
-        // Polling for audio and Status Heartbeat
-        let heartbeatCount = 0;
-        const statusInterval = setInterval(async () => {
-            if (!isLive) { clearInterval(statusInterval); return; }
-
+        // Polling for audio and Heartbeat to reset status
+        let ticksSinceLastSent = 0;
+        const audioInterval = setInterval(async () => {
+            if (!isLive) { clearInterval(audioInterval); return; }
             const noise = getNoiseLevel();
-            const speed = parseFloat(document.getElementById('stat-speed').innerText);
+            const currentSpeed = parseFloat(document.getElementById('stat-speed').innerText) || 0;
             document.getElementById('stat-noise').innerText = Math.round(noise);
 
-            heartbeatCount++;
+            ticksSinceLastSent++;
 
-            // Send detection if noisy, fast, OR every 3 seconds (heartbeat)
-            if (noise > noiseThreshold || speed > speedThreshold || heartbeatCount >= 6) {
-                const snapshotUrl = (noise > noiseThreshold || speed > speedThreshold) ? await captureSnapshot(currentZone) : null;
-                sendDetection(currentZone, speed, noise, snapshotUrl);
-                heartbeatCount = 0;
+            // Send detection if threshold crossed OR every 2 seconds (heartbeat)
+            if (noise > noiseThreshold || currentSpeed > speedThreshold || ticksSinceLastSent >= 4) {
+                const needsSnapshot = (noise > noiseThreshold || currentSpeed > speedThreshold);
+                const snapshotUrl = (needsSnapshot && isLive) ? await captureSnapshot(currentZone) : null;
+
+                sendDetection(currentZone, currentSpeed, noise, snapshotUrl);
+                ticksSinceLastSent = 0;
             }
         }, 500);
 
