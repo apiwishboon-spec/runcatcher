@@ -16,19 +16,19 @@ const waveformCanvas = document.getElementById('waveform-canvas');
 const waveformCtx = waveformCanvas ? waveformCanvas.getContext('2d') : null;
 
 function resizeWaveform() {
-    if (waveformCanvas) {
-        waveformCanvas.width = waveformCanvas.parentElement.offsetWidth;
+    if (waveformCanvas && waveformCanvas.parentElement) {
+        // Set internal resolution to match displayed CSS size
+        waveformCanvas.width = waveformCanvas.offsetWidth || 200;
         waveformCanvas.height = 48;
     }
 }
 window.addEventListener('resize', resizeWaveform);
-resizeWaveform();
 
 // Detection State
 let isLive = false;
 let lastPoseTime = 0;
 let lastX = 0;
-let audioContext, analyser, dataArray;
+let audioContext, analyser, timeData, freqData;
 let noiseThreshold = 75; // dB
 let speedThreshold = 8.0; // m/s (approx pixels/sec normalized)
 let currentZone = 'reading_area'; // Default zone
@@ -108,7 +108,14 @@ async function setupAudio() {
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 512;
         source.connect(analyser);
-        dataArray = new Uint8Array(analyser.fftSize);
+        timeData = new Uint8Array(analyser.fftSize);
+        freqData = new Uint8Array(analyser.frequencyBinCount);
+
+        if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+        }
+
+        resizeWaveform();
         drawWaveform();
     } catch (err) {
         console.warn('Microphone access denied:', err);
@@ -119,18 +126,19 @@ function drawWaveform() {
     if (!isLive || !waveformCtx) return;
     requestAnimationFrame(drawWaveform);
 
-    analyser.getByteTimeDomainData(dataArray);
+    analyser.getByteTimeDomainData(timeData);
 
     waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
     waveformCtx.lineWidth = 3;
-    waveformCtx.strokeStyle = 'rgba(13, 110, 253, 0.6)';
+    waveformCtx.strokeStyle = '#e95420'; // Brand Primary (Orange)
+    waveformCtx.lineCap = 'round';
     waveformCtx.beginPath();
 
-    const sliceWidth = waveformCanvas.width * 1.0 / dataArray.length;
+    const sliceWidth = waveformCanvas.width / timeData.length;
     let x = 0;
 
-    for (let i = 0; i < dataArray.length; i++) {
-        const v = dataArray[i] / 128.0;
+    for (let i = 0; i < timeData.length; i++) {
+        const v = timeData[i] / 128.0;
         const y = v * waveformCanvas.height / 2;
 
         if (i === 0) {
@@ -148,19 +156,11 @@ function drawWaveform() {
 
 function getNoiseLevel() {
     if (!analyser) return 40;
-    analyser.getByteFrequencyData(dataArray);
+    analyser.getByteFrequencyData(freqData);
     let sum = 0;
-    for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-    const avg = sum / dataArray.length;
+    for (let i = 0; i < freqData.length; i++) sum += freqData[i];
+    const avg = sum / freqData.length;
     const level = 40 + (avg / 2); // Simple dB mapping
-
-    // Update visual meter
-    const meter = document.getElementById('noise-meter');
-    if (meter) {
-        const percent = Math.min(100, Math.max(0, (level - 40) * 2.5)); // Map 40-80dB to 0-100%
-        meter.style.width = percent + '%';
-        meter.className = level > 60 ? 'progress-bar bg-danger' : 'progress-bar bg-info';
-    }
 
     return level;
 }
