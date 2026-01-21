@@ -4,9 +4,54 @@
 }
 
 body {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: #f8f9fa;
     min-height: 100vh;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Aura Background */
+.aura-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 150vw;
+    height: 150vh;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at center, rgba(13, 110, 253, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+    z-index: -1;
+    transition: background 1.5s ease;
+    filter: blur(80px);
+}
+
+.aura-peaceful {
+    background: radial-gradient(circle at center, rgba(25, 135, 84, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.aura-warning {
+    background: radial-gradient(circle at center, rgba(253, 126, 20, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.aura-alert {
+    background: radial-gradient(circle at center, rgba(220, 53, 69, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+    animation: auraPulse 2s infinite;
+}
+
+@keyframes auraPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
 }
 
 .glass-card {
@@ -129,6 +174,14 @@ body {
         transform: translateY(0);
         color: white;
     }
+}
+
+/* Waveform Canvas */
+#waveform-canvas {
+    width: 100%;
+    height: 40px;
+    border-radius: 4px;
+    margin-top: 8px;
 }
 
 @keyframes introSequence {

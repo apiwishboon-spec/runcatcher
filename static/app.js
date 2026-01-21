@@ -10,6 +10,15 @@ const canvasCtx = canvasElement.getContext('2d');
 // State icons/colors
 const icons = { QUIET: 'smile', LOUD: 'megaphone', RUNNING_DETECTED: 'zap' };
 const colors = { QUIET: 'success', LOUD: 'info', RUNNING_DETECTED: 'danger' };
+const auraClasses = { QUIET: 'aura-peaceful', LOUD: 'aura-warning', RUNNING_DETECTED: 'aura-alert' };
+
+const waveformCanvas = document.getElementById('waveform-canvas');
+const waveformCtx = waveformCanvas ? waveformCanvas.getContext('2d') : null;
+
+if (waveformCanvas) {
+    waveformCanvas.width = waveformCanvas.offsetWidth;
+    waveformCanvas.height = 40;
+}
 
 // Detection State
 let isLive = false;
@@ -96,9 +105,38 @@ async function setupAudio() {
         analyser.fftSize = 256;
         source.connect(analyser);
         dataArray = new Uint8Array(analyser.frequencyBinCount);
+        drawWaveform();
     } catch (err) {
         console.warn('Microphone access denied:', err);
     }
+}
+
+function drawWaveform() {
+    if (!isLive || !waveformCtx) return;
+    requestAnimationFrame(drawWaveform);
+
+    analyser.getByteTimeDomainData(dataArray);
+
+    waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+    waveformCtx.lineWidth = 2;
+    waveformCtx.strokeStyle = 'rgba(13, 110, 253, 0.5)';
+    waveformCtx.beginPath();
+
+    const sliceWidth = waveformCanvas.width / dataArray.length;
+    let x = 0;
+
+    for (let i = 0; i < dataArray.length; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = v * waveformCanvas.height / 2;
+
+        if (i === 0) waveformCtx.moveTo(x, y);
+        else waveformCtx.lineTo(x, y);
+
+        x += sliceWidth;
+    }
+
+    waveformCtx.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
+    waveformCtx.stroke();
 }
 
 function getNoiseLevel() {
@@ -151,14 +189,30 @@ function updateUI(result) {
     const statusMessage = document.getElementById('status-message');
     const mainIcon = document.getElementById('main-icon');
     const wrapper = document.querySelector('.status-icon-wrapper');
+    const aura = document.getElementById('aura');
+
+    // Update Aura
+    if (aura) {
+        aura.className = `aura-bg ${auraClasses[result.status]}`;
+    }
 
     statusBadge.className = `badge bg-${colors[result.status]} py-2 px-3 rounded-pill`;
     statusBadge.innerText = result.status.replace('_', ' ');
     statusMessage.innerText = result.message;
 
-    mainIcon.setAttribute('data-lucide', icons[result.status]);
-    mainIcon.className = `text-${colors[result.status]}`;
-    lucide.createIcons();
+    // Smooth Icon Swap
+    if (mainIcon.getAttribute('data-lucide') !== icons[result.status]) {
+        wrapper.style.transform = 'scale(0.8)';
+        wrapper.style.opacity = '0';
+
+        setTimeout(() => {
+            mainIcon.setAttribute('data-lucide', icons[result.status]);
+            mainIcon.className = `text-${colors[result.status]}`;
+            lucide.createIcons();
+            wrapper.style.transform = 'scale(1)';
+            wrapper.style.opacity = '1';
+        }, 200);
+    }
 
     if (result.status !== 'QUIET') {
         wrapper.classList.add('alert-pulse');
