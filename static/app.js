@@ -15,10 +15,14 @@ const auraClasses = { QUIET: 'aura-peaceful', LOUD: 'aura-warning', RUNNING_DETE
 const waveformCanvas = document.getElementById('waveform-canvas');
 const waveformCtx = waveformCanvas ? waveformCanvas.getContext('2d') : null;
 
-if (waveformCanvas) {
-    waveformCanvas.width = waveformCanvas.offsetWidth;
-    waveformCanvas.height = 40;
+function resizeWaveform() {
+    if (waveformCanvas) {
+        waveformCanvas.width = waveformCanvas.parentElement.offsetWidth;
+        waveformCanvas.height = 48;
+    }
 }
+window.addEventListener('resize', resizeWaveform);
+resizeWaveform();
 
 // Detection State
 let isLive = false;
@@ -102,9 +106,9 @@ async function setupAudio() {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioContext.createMediaStreamSource(stream);
         analyser = audioContext.createAnalyser();
-        analyser.fftSize = 256;
+        analyser.fftSize = 512;
         source.connect(analyser);
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        dataArray = new Uint8Array(analyser.fftSize);
         drawWaveform();
     } catch (err) {
         console.warn('Microphone access denied:', err);
@@ -118,19 +122,22 @@ function drawWaveform() {
     analyser.getByteTimeDomainData(dataArray);
 
     waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
-    waveformCtx.lineWidth = 2;
-    waveformCtx.strokeStyle = 'rgba(13, 110, 253, 0.5)';
+    waveformCtx.lineWidth = 3;
+    waveformCtx.strokeStyle = 'rgba(13, 110, 253, 0.6)';
     waveformCtx.beginPath();
 
-    const sliceWidth = waveformCanvas.width / dataArray.length;
+    const sliceWidth = waveformCanvas.width * 1.0 / dataArray.length;
     let x = 0;
 
     for (let i = 0; i < dataArray.length; i++) {
         const v = dataArray[i] / 128.0;
         const y = v * waveformCanvas.height / 2;
 
-        if (i === 0) waveformCtx.moveTo(x, y);
-        else waveformCtx.lineTo(x, y);
+        if (i === 0) {
+            waveformCtx.moveTo(x, y);
+        } else {
+            waveformCtx.lineTo(x, y);
+        }
 
         x += sliceWidth;
     }
@@ -202,8 +209,8 @@ function updateUI(result) {
 
     // Smooth Icon Swap
     if (mainIcon.getAttribute('data-lucide') !== icons[result.status]) {
-        wrapper.style.transform = 'scale(0.8)';
-        wrapper.style.opacity = '0';
+        wrapper.style.transform = 'scale(0.85)';
+        wrapper.style.opacity = '0.5';
 
         setTimeout(() => {
             mainIcon.setAttribute('data-lucide', icons[result.status]);
@@ -211,7 +218,7 @@ function updateUI(result) {
             lucide.createIcons();
             wrapper.style.transform = 'scale(1)';
             wrapper.style.opacity = '1';
-        }, 200);
+        }, 120);
     }
 
     if (result.status !== 'QUIET') {
@@ -285,8 +292,8 @@ function showSnapshot(element) {
 }
 
 // --- Live Toggle ---
-liveToggle.addEventListener('change', async (e) => {
-    isLive = e.target.checked;
+async function toggleLive(active) {
+    isLive = active;
     if (isLive) {
         cameraContainer.style.display = 'block';
         await setupAudio();
@@ -314,7 +321,14 @@ liveToggle.addEventListener('change', async (e) => {
         cameraContainer.style.display = 'none';
         if (audioContext) audioContext.close();
     }
-});
+}
+
+liveToggle.addEventListener('change', (e) => toggleLive(e.target.checked));
+
+// Handle initial state on load
+if (liveToggle.checked) {
+    toggleLive(true);
+}
 
 // --- Zone Management ---
 const zoneSelect = document.getElementById('zone-select');

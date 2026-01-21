@@ -18,14 +18,14 @@ body {
     width: 150vw;
     height: 150vh;
     transform: translate(-50%, -50%);
-    background: radial-gradient(circle at center, rgba(13, 110, 253, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+    background: radial-gradient(circle at center, rgba(13, 110, 253, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
     z-index: -1;
     transition: background 1.5s ease;
-    filter: blur(80px);
+    filter: blur(40px);
 }
 
 .aura-peaceful {
-    background: radial-gradient(circle at center, rgba(25, 135, 84, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+    background: radial-gradient(circle at center, rgba(25, 135, 84, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
 }
 
 .aura-warning {
@@ -71,7 +71,7 @@ body {
     align-items: center;
     justify-content: center;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
-    transition: all 0.5s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .alert-pulse {
@@ -179,9 +179,11 @@ body {
 /* Waveform Canvas */
 #waveform-canvas {
     width: 100%;
-    height: 40px;
-    border-radius: 4px;
-    margin-top: 8px;
+    height: 48px;
+    display: block;
+    border-radius: 8px;
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.02);
 }
 
 @keyframes introSequence {
