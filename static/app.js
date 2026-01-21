@@ -17,8 +17,9 @@ const waveformCtx = waveformCanvas ? waveformCanvas.getContext('2d') : null;
 
 function resizeWaveform() {
     if (waveformCanvas && waveformCanvas.parentElement) {
-        // Set internal resolution to match displayed CSS size
-        waveformCanvas.width = waveformCanvas.offsetWidth || 200;
+        // Force a layout recalculation if offsetWidth is 0
+        const width = waveformCanvas.parentElement.offsetWidth || 200;
+        waveformCanvas.width = width;
         waveformCanvas.height = 48;
     }
 }
@@ -115,7 +116,7 @@ async function setupAudio() {
             await audioContext.resume();
         }
 
-        resizeWaveform();
+        setTimeout(resizeWaveform, 100); // Give layout a moment
         drawWaveform();
     } catch (err) {
         console.warn('Microphone access denied:', err);
@@ -129,17 +130,29 @@ function drawWaveform() {
     analyser.getByteTimeDomainData(timeData);
 
     waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+
+    // Draw Base Line (Silent state)
+    waveformCtx.lineWidth = 1;
+    waveformCtx.strokeStyle = 'rgba(0,0,0,0.05)';
+    waveformCtx.beginPath();
+    waveformCtx.moveTo(0, waveformCanvas.height / 2);
+    waveformCtx.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
+    waveformCtx.stroke();
+
+    // Draw Active Wave
     waveformCtx.lineWidth = 3;
     waveformCtx.strokeStyle = '#e95420'; // Brand Primary (Orange)
     waveformCtx.lineCap = 'round';
+    waveformCtx.lineJoin = 'round';
     waveformCtx.beginPath();
 
     const sliceWidth = waveformCanvas.width / timeData.length;
     let x = 0;
 
     for (let i = 0; i < timeData.length; i++) {
-        const v = timeData[i] / 128.0;
-        const y = v * waveformCanvas.height / 2;
+        // Amplify the wave: (v - 128) * boost + center
+        const v = timeData[i];
+        const y = (waveformCanvas.height / 2) + (v - 128) * 1.5;
 
         if (i === 0) {
             waveformCtx.moveTo(x, y);
