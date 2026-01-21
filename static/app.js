@@ -16,8 +16,8 @@ let isLive = false;
 let lastPoseTime = 0;
 let lastX = 0;
 let audioContext, analyser, dataArray;
-let noiseThreshold = 75; // dB
-let speedThreshold = 8.0; // m/s (approx pixels/sec normalized)
+let noiseThreshold = 65; // Lowered from 75dB for better sensitivity
+let speedThreshold = 5.0; // Lowered from 8.0 for better sensitivity
 let currentZone = 'reading_area'; // Default zone
 
 // --- MediaPipe Setup ---
@@ -71,8 +71,23 @@ async function onResults(results) {
         lastX = hipX;
         lastPoseTime = now;
 
+        // If speed is low, we still want to update the UI local stats
+        if (speed <= speedThreshold) {
+            document.getElementById('stat-speed').innerText = speed.toFixed(1);
+            const speedMeter = document.getElementById('speed-meter');
+            if (speedMeter) {
+                speedMeter.style.width = Math.min(100, speed * 20) + '%';
+                speedMeter.className = 'progress-bar bg-primary';
+            }
+        }
+
         // Draw basic landmarks (Privacy-safe)
         drawLandmarks(results.poseLandmarks);
+    } else {
+        // If no pose detected, speed is 0
+        document.getElementById('stat-speed').innerText = "0.0";
+        const speedMeter = document.getElementById('speed-meter');
+        if (speedMeter) speedMeter.style.width = '0%';
     }
     canvasCtx.restore();
 }
@@ -166,6 +181,7 @@ function updateUI(result) {
 
     // Transition Icon with Pop Effect
     if (result.status !== lastStatus) {
+        particles.setState(result.status);
         wrapper.classList.remove('status-change-pop');
         void wrapper.offsetWidth; // Force reflow
         wrapper.classList.add('status-change-pop');
@@ -261,14 +277,22 @@ liveToggle.addEventListener('change', async (e) => {
         });
         camera.start();
 
-        // Polling for audio if not running
-        const audioInterval = setInterval(async () => {
-            if (!isLive) { clearInterval(audioInterval); return; }
+        // Polling for audio and Status Heartbeat
+        let heartbeatCount = 0;
+        const statusInterval = setInterval(async () => {
+            if (!isLive) { clearInterval(statusInterval); return; }
+
             const noise = getNoiseLevel();
+            const speed = parseFloat(document.getElementById('stat-speed').innerText);
             document.getElementById('stat-noise').innerText = Math.round(noise);
-            if (noise > noiseThreshold) {
-                const snapshotUrl = isLive ? await captureSnapshot(currentZone) : null;
-                sendDetection(currentZone, 0.1, noise, snapshotUrl);
+
+            heartbeatCount++;
+
+            // Send detection if noisy, fast, OR every 3 seconds (heartbeat)
+            if (noise > noiseThreshold || speed > speedThreshold || heartbeatCount >= 6) {
+                const snapshotUrl = (noise > noiseThreshold || speed > speedThreshold) ? await captureSnapshot(currentZone) : null;
+                sendDetection(currentZone, speed, noise, snapshotUrl);
+                heartbeatCount = 0;
             }
         }, 500);
 
@@ -387,6 +411,107 @@ document.addEventListener('fullscreenchange', () => {
         lucide.createIcons();
     }
 });
+
+// --- Particle System ---
+class ParticleSystem {
+    constructor() {
+        this.canvas = document.getElementById('particle-canvas');
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.count = 80;
+        this.state = 'QUIET'; // QUIET, LOUD, RUNNING_DETECTED
+
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.init();
+        this.animate();
+    }
+
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+
+    init() {
+        this.particles = [];
+        for (let i = 0; i < this.count; i++) {
+            this.particles.push(this.createParticle());
+        }
+    }
+
+    createParticle() {
+        return {
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            size: Math.random() * 2 + 1,
+            speedX: (Math.random() - 0.5) * 0.5,
+            speedY: (Math.random() - 0.5) * 0.5,
+            opacity: Math.random() * 0.5 + 0.1,
+            color: '255, 255, 255'
+        };
+    }
+
+    setState(state) {
+        this.state = state;
+        this.particles.forEach(p => {
+            if (state === 'QUIET') {
+                p.color = '255, 255, 255';
+                p.speedX = (Math.random() - 0.5) * 0.5;
+                p.speedY = (Math.random() - 0.5) * 0.5;
+            } else if (state === 'LOUD') {
+                p.color = '253, 126, 20'; // Orange
+                p.speedX = (Math.random() - 0.5) * 2;
+                p.speedY = (Math.random() - 0.5) * 2;
+            } else if (state === 'RUNNING_DETECTED') {
+                p.color = '233, 75, 20'; // Dark Red/Orange
+                p.speedX = (Math.random() - 0.5) * 8;
+                p.speedY = (Math.random() - 0.5) * 8;
+            }
+        });
+    }
+
+    update() {
+        this.particles.forEach(p => {
+            p.x += p.speedX;
+            p.y += p.speedY;
+
+            // Loop around edges
+            if (p.x < 0) p.x = this.canvas.width;
+            if (p.x > this.canvas.width) p.x = 0;
+            if (p.y < 0) p.y = this.canvas.height;
+            if (p.y > this.canvas.height) p.y = 0;
+
+            // Vortex effect in loud/running
+            if (this.state !== 'QUIET') {
+                const dx = (this.canvas.width / 2) - p.x;
+                const dy = (this.canvas.height / 2) - p.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const force = this.state === 'RUNNING_DETECTED' ? 0.05 : 0.01;
+                p.speedX += (dx / dist) * force;
+                p.speedY += (dy / dist) * force;
+            }
+        });
+    }
+
+    draw() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.particles.forEach(p => {
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            this.ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
+            this.ctx.fill();
+        });
+    }
+
+    animate() {
+        this.update();
+        this.draw();
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+const particles = new ParticleSystem();
 
 // PWA Registration
 if ('serviceWorker' in navigator) {

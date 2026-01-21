@@ -14,6 +14,9 @@
 </head>
 
 <body class="bg-light">
+    <!-- Particle System Canvas -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+
     <!-- Dynamic Aura Background -->
     <div id="aura-bg" class="aura-bg state-quiet">
         <div class="aura-sphere aura-sphere-1"></div>
@@ -126,9 +129,11 @@
                                 <i data-lucide="trash-2" class="me-1" style="width: 14px; height: 14px;"></i> Clear
                             </button>
                         </div>
-                        <div id="alerts-container" class="vstack gap-3">
-                            <div id="alerts-placeholder" class="text-center text-muted py-5">
-                                <small>No recent alerts.</small>
+                        <div class="alerts-scroll-area">
+                            <div id="alerts-container" class="vstack gap-3">
+                                <div id="alerts-placeholder" class="text-center text-muted py-5">
+                                    <small>No recent alerts.</small>
+                                </div>
                             </div>
                         </div>
                     </div>
