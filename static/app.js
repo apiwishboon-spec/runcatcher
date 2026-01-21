@@ -10,26 +10,12 @@ const canvasCtx = canvasElement.getContext('2d');
 // State icons/colors
 const icons = { QUIET: 'smile', LOUD: 'megaphone', RUNNING_DETECTED: 'zap' };
 const colors = { QUIET: 'success', LOUD: 'info', RUNNING_DETECTED: 'danger' };
-const auraClasses = { QUIET: 'aura-peaceful', LOUD: 'aura-warning', RUNNING_DETECTED: 'aura-alert' };
-
-const waveformCanvas = document.getElementById('waveform-canvas');
-const waveformCtx = waveformCanvas ? waveformCanvas.getContext('2d') : null;
-
-function resizeWaveform() {
-    if (waveformCanvas && waveformCanvas.parentElement) {
-        // Force a layout recalculation if offsetWidth is 0
-        const width = waveformCanvas.parentElement.offsetWidth || 200;
-        waveformCanvas.width = width;
-        waveformCanvas.height = 48;
-    }
-}
-window.addEventListener('resize', resizeWaveform);
 
 // Detection State
 let isLive = false;
 let lastPoseTime = 0;
 let lastX = 0;
-let audioContext, analyser, timeData, freqData;
+let audioContext, analyser, dataArray;
 let noiseThreshold = 75; // dB
 let speedThreshold = 8.0; // m/s (approx pixels/sec normalized)
 let currentZone = 'reading_area'; // Default zone
@@ -107,73 +93,29 @@ async function setupAudio() {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioContext.createMediaStreamSource(stream);
         analyser = audioContext.createAnalyser();
-        analyser.fftSize = 512;
+        analyser.fftSize = 256;
         source.connect(analyser);
-        timeData = new Uint8Array(analyser.fftSize);
-        freqData = new Uint8Array(analyser.frequencyBinCount);
-
-        if (audioContext.state === 'suspended') {
-            await audioContext.resume();
-        }
-
-        setTimeout(resizeWaveform, 100); // Give layout a moment
-        drawWaveform();
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
     } catch (err) {
         console.warn('Microphone access denied:', err);
     }
 }
 
-function drawWaveform() {
-    if (!isLive || !waveformCtx) return;
-    requestAnimationFrame(drawWaveform);
-
-    analyser.getByteTimeDomainData(timeData);
-
-    waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
-
-    // Draw Base Line (Silent state)
-    waveformCtx.lineWidth = 1;
-    waveformCtx.strokeStyle = 'rgba(0,0,0,0.05)';
-    waveformCtx.beginPath();
-    waveformCtx.moveTo(0, waveformCanvas.height / 2);
-    waveformCtx.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
-    waveformCtx.stroke();
-
-    // Draw Active Wave
-    waveformCtx.lineWidth = 3;
-    waveformCtx.strokeStyle = '#e95420'; // Brand Primary (Orange)
-    waveformCtx.lineCap = 'round';
-    waveformCtx.lineJoin = 'round';
-    waveformCtx.beginPath();
-
-    const sliceWidth = waveformCanvas.width / timeData.length;
-    let x = 0;
-
-    for (let i = 0; i < timeData.length; i++) {
-        // Amplify the wave: (v - 128) * boost + center
-        const v = timeData[i];
-        const y = (waveformCanvas.height / 2) + (v - 128) * 1.5;
-
-        if (i === 0) {
-            waveformCtx.moveTo(x, y);
-        } else {
-            waveformCtx.lineTo(x, y);
-        }
-
-        x += sliceWidth;
-    }
-
-    waveformCtx.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
-    waveformCtx.stroke();
-}
-
 function getNoiseLevel() {
     if (!analyser) return 40;
-    analyser.getByteFrequencyData(freqData);
+    analyser.getByteFrequencyData(dataArray);
     let sum = 0;
-    for (let i = 0; i < freqData.length; i++) sum += freqData[i];
-    const avg = sum / freqData.length;
+    for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+    const avg = sum / dataArray.length;
     const level = 40 + (avg / 2); // Simple dB mapping
+
+    // Update visual meter
+    const meter = document.getElementById('noise-meter');
+    if (meter) {
+        const percent = Math.min(100, Math.max(0, (level - 40) * 2.5)); // Map 40-80dB to 0-100%
+        meter.style.width = percent + '%';
+        meter.className = level > 60 ? 'progress-bar bg-danger' : 'progress-bar bg-info';
+    }
 
     return level;
 }
@@ -199,6 +141,7 @@ async function sendDetection(zone, speed, noise, alert_snapshot_url = null) {
 }
 
 // --- UI Updates ---
+let lastStatus = 'QUIET';
 function updateUI(result) {
     document.getElementById('stat-speed').innerText = result.movement_speed;
     document.getElementById('stat-noise').innerText = result.noise_level;
@@ -209,29 +152,28 @@ function updateUI(result) {
     const statusMessage = document.getElementById('status-message');
     const mainIcon = document.getElementById('main-icon');
     const wrapper = document.querySelector('.status-icon-wrapper');
-    const aura = document.getElementById('aura');
+    const auraBg = document.getElementById('aura-bg');
 
-    // Update Aura
-    if (aura) {
-        aura.className = `aura-bg ${auraClasses[result.status]}`;
+    // Update Aura Background
+    if (auraBg) {
+        const statusBase = result.status.split('_')[0].toLowerCase();
+        auraBg.className = `aura-bg state-${statusBase}`;
     }
 
     statusBadge.className = `badge bg-${colors[result.status]} py-2 px-3 rounded-pill`;
     statusBadge.innerText = result.status.replace('_', ' ');
     statusMessage.innerText = result.message;
 
-    // Smooth Icon Swap
-    if (mainIcon.getAttribute('data-lucide') !== icons[result.status]) {
-        wrapper.style.transform = 'scale(0.85)';
-        wrapper.style.opacity = '0.5';
+    // Transition Icon with Pop Effect
+    if (result.status !== lastStatus) {
+        wrapper.classList.remove('status-change-pop');
+        void wrapper.offsetWidth; // Force reflow
+        wrapper.classList.add('status-change-pop');
 
-        setTimeout(() => {
-            mainIcon.setAttribute('data-lucide', icons[result.status]);
-            mainIcon.className = `text-${colors[result.status]}`;
-            lucide.createIcons();
-            wrapper.style.transform = 'scale(1)';
-            wrapper.style.opacity = '1';
-        }, 120);
+        mainIcon.setAttribute('data-lucide', icons[result.status]);
+        mainIcon.className = `text-${colors[result.status]}`;
+        lucide.createIcons();
+        lastStatus = result.status;
     }
 
     if (result.status !== 'QUIET') {
@@ -305,8 +247,8 @@ function showSnapshot(element) {
 }
 
 // --- Live Toggle ---
-async function toggleLive(active) {
-    isLive = active;
+liveToggle.addEventListener('change', async (e) => {
+    isLive = e.target.checked;
     if (isLive) {
         cameraContainer.style.display = 'block';
         await setupAudio();
@@ -334,14 +276,7 @@ async function toggleLive(active) {
         cameraContainer.style.display = 'none';
         if (audioContext) audioContext.close();
     }
-}
-
-liveToggle.addEventListener('change', (e) => toggleLive(e.target.checked));
-
-// Handle initial state on load
-if (liveToggle.checked) {
-    toggleLive(true);
-}
+});
 
 // --- Zone Management ---
 const zoneSelect = document.getElementById('zone-select');

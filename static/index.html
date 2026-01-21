@@ -14,7 +14,12 @@
 </head>
 
 <body class="bg-light">
-    <div id="aura" class="aura-bg aura-peaceful"></div>
+    <!-- Dynamic Aura Background -->
+    <div id="aura-bg" class="aura-bg state-quiet">
+        <div class="aura-sphere aura-sphere-1"></div>
+        <div class="aura-sphere aura-sphere-2"></div>
+    </div>
+
     <!-- Intro Overlay -->
     <div id="intro-overlay" class="intro-overlay">
         <div class="intro-text">
@@ -85,7 +90,10 @@
                                 <div class="p-3 bg-light rounded shadow-sm border">
                                     <small class="text-uppercase text-muted d-block mb-1">Noise</small>
                                     <span id="stat-noise" class="h4 fw-bold">0</span> <small>dB</small>
-                                    <canvas id="waveform-canvas"></canvas>
+                                    <div class="progress mt-2" style="height: 4px;">
+                                        <div id="noise-meter" class="progress-bar bg-info" role="progressbar"
+                                            style="width: 0%"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
