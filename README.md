@@ -14,7 +14,7 @@ LibraryRunCatcher is a premium, privacy-conscious PWA (Progressive Web App) desi
 -   **📱 Cross-Platform PWA**: Installable on Mac, iOS, and Android for mobile monitoring.
 -   **🔒 Privacy-First**: 
     -   Skeletal tracking for motion (no raw video storage).
-    -   **2-Hour Ephemeral Retention**: All alerts and snapshots are automatically deleted after 2 hours.
+    -   **5-Hour Ephemeral Retention**: All alerts and snapshots are automatically deleted after 5 hours.
 
 ---
 

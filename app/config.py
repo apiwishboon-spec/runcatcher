@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     # Snapshot Storage (Mocked for now)
     SNAPSHOT_DIR: str = "snapshots"
     STATIC_DIR: str = "static"
-    SNAPSHOT_RETENTION_HOURS: int = 2
+    SNAPSHOT_RETENTION_HOURS: int = 5
 
     class Config:
         env_file = ".env"

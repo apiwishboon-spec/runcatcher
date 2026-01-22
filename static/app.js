@@ -198,6 +198,8 @@ function addAlertToList(result) {
     alertEl.dataset.noise = result.noise_level;
     alertEl.dataset.speed = result.movement_speed;
     alertEl.dataset.img = result.alert_snapshot_url;
+    alertEl.dataset.zone = result.zone_name;
+    alertEl.dataset.status = result.status.replace('_', ' ');
 
     alertEl.innerHTML = `
         <div class="d-flex justify-content-between align-items-start">
@@ -244,7 +246,81 @@ function showSnapshot(element) {
     document.getElementById('modal-time').innerText = element.dataset.time;
     document.getElementById('modal-noise').innerText = element.dataset.noise + ' dB';
     document.getElementById('modal-speed').innerText = element.dataset.speed + ' m/s';
+
+    // Store current element for PDF export
+    window.currentAlertElement = element;
     modal.show();
+}
+
+async function downloadPDFReport() {
+    const el = window.currentAlertElement;
+    if (!el) return;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const primaryColor = [233, 84, 32]; // United theme orange
+
+    // 1. Header
+    doc.setFillColor(...primaryColor);
+    doc.rect(0, 0, 210, 40, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.text('LibraryRunCatcher', 20, 25);
+    doc.setFontSize(12);
+    doc.text('Incident Accountability Report', 20, 33);
+
+    // 2. Info Section
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Incident Details', 20, 55);
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Type: ${el.dataset.status}`, 20, 65);
+    doc.text(`Zone: ${el.dataset.zone}`, 20, 72);
+    doc.text(`Date/Time: ${new Date(parseInt(el.dataset.timestamp)).toLocaleString()}`, 20, 79);
+
+    // 3. Metrics
+    doc.setDrawColor(200, 200, 200);
+    doc.line(20, 85, 190, 85);
+
+    doc.setFontSize(12);
+    doc.text('Sensor Data', 20, 95);
+    doc.setFontSize(10);
+    doc.text(`Movement Speed: ${el.dataset.speed} m/s`, 25, 105);
+    doc.text(`Noise Level: ${el.dataset.noise} dB`, 25, 112);
+
+    // 4. Image Capture (Proof)
+    doc.setFontSize(12);
+    doc.text('Visual Evidence', 20, 125);
+
+    try {
+        const img = document.getElementById('snapshot-img');
+        // Simple way to get base64 if it's already loaded in the modal
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const imgData = canvas.toDataURL('image/jpeg', 0.8);
+
+        // Calculate aspect ratio for 150mm width
+        const imgWidth = 150;
+        const imgHeight = (img.naturalHeight / img.naturalWidth) * imgWidth;
+        doc.addImage(imgData, 'JPEG', 20, 130, imgWidth, imgHeight);
+    } catch (e) {
+        doc.text('[Error loading evidence image]', 25, 135);
+    }
+
+    // 5. Footer / Signature
+    const footerY = 260;
+    doc.setDashMode([1, 1], 0);
+    doc.line(20, footerY, 100, footerY);
+    doc.text('Teacher Signature', 20, footerY + 5);
+    doc.text('Page 1 of 1', 170, footerY + 5);
+
+    doc.save(`Alert_Report_${el.dataset.zone}_${el.dataset.time.replace(/:/g, '-')}.pdf`);
 }
 
 // --- Live Toggle ---
@@ -349,15 +425,15 @@ function clearAllAlerts() {
 }
 
 // --- Cleanup ---
-// Check every minute for alerts older than 2 hours and remove them from UI
+// Check every minute for alerts older than 5 hours and remove them from UI
 setInterval(() => {
-    const twoHoursInMs = 2 * 60 * 60 * 1000;
+    const fiveHoursInMs = 5 * 60 * 60 * 1000;
     const now = Date.now();
     const alerts = alertsContainer.querySelectorAll('.alert-item');
 
     alerts.forEach(alert => {
         const timestamp = parseInt(alert.dataset.timestamp);
-        if (now - timestamp > twoHoursInMs) {
+        if (now - timestamp > fiveHoursInMs) {
             alert.remove();
         }
     });

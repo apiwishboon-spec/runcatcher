@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body class="bg-light">
@@ -187,18 +188,23 @@
                     <img id="snapshot-img" src="" class="img-fluid" alt="Snapshot">
                 </div>
                 <div class="modal-footer bg-light border-0 d-flex justify-content-between p-3">
-                    <div class="text-start">
-                        <small class="text-muted d-block">Time Detected</small>
-                        <span id="modal-time" class="fw-bold">00:00:00</span>
+                    <div class="d-flex gap-4">
+                        <div class="text-start">
+                            <small class="text-muted d-block">Time Detected</small>
+                            <span id="modal-time" class="fw-bold">00:00:00</span>
+                        </div>
+                        <div class="text-start">
+                            <small class="text-muted d-block">Sound Level</small>
+                            <span id="modal-noise" class="fw-bold text-info">0 dB</span>
+                        </div>
+                        <div class="text-start">
+                            <small class="text-muted d-block">Movement Speed</small>
+                            <span id="modal-speed" class="fw-bold text-danger">0.0 m/s</span>
+                        </div>
                     </div>
-                    <div class="text-start">
-                        <small class="text-muted d-block">Sound Level</small>
-                        <span id="modal-noise" class="fw-bold text-info">0 dB</span>
-                    </div>
-                    <div class="text-start">
-                        <small class="text-muted d-block">Movement Speed</small>
-                        <span id="modal-speed" class="fw-bold text-danger">0.0 m/s</span>
-                    </div>
+                    <button class="btn btn-primary" onclick="downloadPDFReport()">
+                        <i data-lucide="download" class="me-1" style="width: 16px; height: 16px;"></i> Report
+                    </button>
                 </div>
             </div>
         </div>
