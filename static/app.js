@@ -254,73 +254,94 @@ function showSnapshot(element) {
 
 async function downloadPDFReport() {
     const el = window.currentAlertElement;
-    if (!el) return;
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const primaryColor = [233, 84, 32]; // United theme orange
-
-    // 1. Header
-    doc.setFillColor(...primaryColor);
-    doc.rect(0, 0, 210, 40, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
-    doc.text('LibraryRunCatcher', 20, 25);
-    doc.setFontSize(12);
-    doc.text('Incident Accountability Report', 20, 33);
-
-    // 2. Info Section
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Incident Details', 20, 55);
-
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Type: ${el.dataset.status}`, 20, 65);
-    doc.text(`Zone: ${el.dataset.zone}`, 20, 72);
-    doc.text(`Date/Time: ${new Date(parseInt(el.dataset.timestamp)).toLocaleString()}`, 20, 79);
-
-    // 3. Metrics
-    doc.setDrawColor(200, 200, 200);
-    doc.line(20, 85, 190, 85);
-
-    doc.setFontSize(12);
-    doc.text('Sensor Data', 20, 95);
-    doc.setFontSize(10);
-    doc.text(`Movement Speed: ${el.dataset.speed} m/s`, 25, 105);
-    doc.text(`Noise Level: ${el.dataset.noise} dB`, 25, 112);
-
-    // 4. Image Capture (Proof)
-    doc.setFontSize(12);
-    doc.text('Visual Evidence', 20, 125);
-
-    try {
-        const img = document.getElementById('snapshot-img');
-        // Simple way to get base64 if it's already loaded in the modal
-        const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        const imgData = canvas.toDataURL('image/jpeg', 0.8);
-
-        // Calculate aspect ratio for 150mm width
-        const imgWidth = 150;
-        const imgHeight = (img.naturalHeight / img.naturalWidth) * imgWidth;
-        doc.addImage(imgData, 'JPEG', 20, 130, imgWidth, imgHeight);
-    } catch (e) {
-        doc.text('[Error loading evidence image]', 25, 135);
+    if (!el) {
+        alert("Please select an alert first.");
+        return;
     }
 
-    // 5. Footer / Signature
-    const footerY = 260;
-    doc.setDashMode([1, 1], 0);
-    doc.line(20, footerY, 100, footerY);
-    doc.text('Teacher Signature', 20, footerY + 5);
-    doc.text('Page 1 of 1', 170, footerY + 5);
+    const reportBtn = document.querySelector('.modal-footer .btn-primary');
+    const originalText = reportBtn.innerHTML;
 
-    doc.save(`Alert_Report_${el.dataset.zone}_${el.dataset.time.replace(/:/g, '-')}.pdf`);
+    try {
+        reportBtn.disabled = true;
+        reportBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+
+        if (!window.jspdf) {
+            throw new Error("PDF library not loaded. Check internet connection.");
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const primaryColor = [233, 84, 32];
+
+        // 1. Header
+        doc.setFillColor(...primaryColor);
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.text('LibraryRunCatcher', 20, 25);
+        doc.setFontSize(12);
+        doc.text('Incident Accountability Report', 20, 33);
+
+        // 2. Details
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Incident Details', 20, 55);
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Type: ${el.dataset.status}`, 20, 65);
+        doc.text(`Zone: ${el.dataset.zone}`, 20, 72);
+        doc.text(`Date/Time: ${new Date(parseInt(el.dataset.timestamp)).toLocaleString()}`, 20, 79);
+
+        // 3. Metrics
+        doc.setDrawColor(200, 200, 200);
+        doc.line(20, 85, 190, 85);
+        doc.setFontSize(12);
+        doc.text('Sensor Data', 20, 95);
+        doc.setFontSize(10);
+        doc.text(`Movement Speed: ${el.dataset.speed} m/s`, 25, 105);
+        doc.text(`Noise Level: ${el.dataset.noise} dB`, 25, 112);
+
+        // 4. Evidence Image
+        doc.setFontSize(12);
+        doc.text('Visual Evidence', 20, 125);
+
+        const img = document.getElementById('snapshot-img');
+        if (img && img.complete && img.naturalWidth > 0) {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const imgData = canvas.toDataURL('image/jpeg', 0.8);
+
+            const imgWidth = 150;
+            const imgHeight = (img.naturalHeight / img.naturalWidth) * imgWidth;
+            doc.addImage(imgData, 'JPEG', 20, 130, imgWidth, Math.min(imgHeight, 100));
+        } else {
+            doc.setTextColor(150, 150, 150);
+            doc.text('[Image evidence loading or unavailable]', 25, 135);
+        }
+
+        // 5. Footer / Signature
+        const footerY = 260;
+        doc.setTextColor(0, 0, 0);
+        doc.setDrawColor(0, 0, 0);
+        doc.line(20, footerY, 100, footerY);
+        doc.text('Teacher Signature', 20, footerY + 5);
+        doc.text('Page 1 of 1', 170, footerY + 5);
+
+        doc.save(`Report_${el.dataset.zone}_${el.dataset.time.replace(/:/g, '-')}.pdf`);
+
+    } catch (err) {
+        console.error('PDF Error:', err);
+        alert("Download Failed: " + err.message);
+    } finally {
+        reportBtn.disabled = false;
+        reportBtn.innerHTML = originalText;
+    }
 }
 
 // --- Live Toggle ---
