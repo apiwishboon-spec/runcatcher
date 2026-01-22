@@ -333,8 +333,10 @@ async function downloadPDFReport() {
         doc.text('Teacher Signature', 20, footerY + 5);
         doc.text('Page 1 of 1', 170, footerY + 5);
 
+        // Copyright
         doc.setFontSize(9);
-        doc.text('© 2026 LibraryRunCatcher. All rights reserved.', 20, footerY + 20);
+        doc.setTextColor(150, 150, 150);
+        doc.text('© 2029 APIWISH ANUTARAVANICHKUL', 20, footerY + 15);
 
         doc.save(`Report_${el.dataset.zone}_${el.dataset.time.replace(/:/g, '-')}.pdf`);
 
@@ -420,8 +422,10 @@ async function downloadAllReports() {
             doc.text('Teacher Signature', 20, footerY + 5);
             doc.text(`Page ${i + 1} of ${alerts.length}`, 170, footerY + 5);
 
+            // Copyright
             doc.setFontSize(9);
-            doc.text('© 2026 LibraryRunCatcher. All rights reserved.', 20, footerY + 20);
+            doc.setTextColor(150, 150, 150);
+            doc.text('© 2029 APIWISH ANUTARAVANICHKUL', 20, footerY + 15);
         }
 
         doc.save(`Library_All_Alerts_${new Date().toISOString().split('T')[0]}.pdf`);

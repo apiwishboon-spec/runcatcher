@@ -71,4 +71,4 @@ Open your browser to `http://127.0.0.1:8000`.
 Apache License 2.0 - Created for educational and behavioral correction purposes.
 
 ---
-<p align="center" style="font-size: 9px;">© 2026 LibraryRunCatcher. All rights reserved.</p>
+<p align="center">© 2029 APIWISH ANUTARAVANICHKUL</p>
