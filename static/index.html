@@ -125,10 +125,16 @@
                             <h5 class="card-title mb-0 d-flex align-items-center">
                                 <i data-lucide="bell" class="me-2 text-warning"></i> Recent Alerts
                             </h5>
-                            <button id="clear-alerts-btn" class="btn btn-sm btn-outline-danger"
-                                onclick="clearAllAlerts()">
-                                <i data-lucide="trash-2" class="me-1" style="width: 14px; height: 14px;"></i> Clear
-                            </button>
+                            <div class="d-flex gap-2">
+                                <button id="download-all-btn" class="btn btn-sm btn-outline-primary"
+                                    onclick="downloadAllReports()">
+                                    <i data-lucide="download" class="me-1" style="width: 14px; height: 14px;"></i> All
+                                </button>
+                                <button id="clear-alerts-btn" class="btn btn-sm btn-outline-danger"
+                                    onclick="clearAllAlerts()">
+                                    <i data-lucide="trash-2" class="me-1" style="width: 14px; height: 14px;"></i> Clear
+                                </button>
+                            </div>
                         </div>
                         <div id="alerts-container" class="vstack gap-3">
                             <div id="alerts-placeholder" class="text-center text-muted py-5">

@@ -344,6 +344,108 @@ async function downloadPDFReport() {
     }
 }
 
+async function downloadAllReports() {
+    const alerts = Array.from(alertsContainer.querySelectorAll('.alert-item'));
+    if (alerts.length === 0) {
+        alert("No alerts to download.");
+        return;
+    }
+
+    const downloadAllBtn = document.getElementById('download-all-btn');
+    const originalHtml = downloadAllBtn.innerHTML;
+
+    try {
+        downloadAllBtn.disabled = true;
+        downloadAllBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>...';
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const primaryColor = [233, 84, 32];
+
+        for (let i = 0; i < alerts.length; i++) {
+            const el = alerts[i];
+            if (i > 0) doc.addPage();
+
+            // Header
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.text('LibraryRunCatcher', 20, 25);
+            doc.setFontSize(12);
+            doc.text('Consolidated Incident Report', 20, 33);
+
+            // Details
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Incident #${i + 1}`, 20, 55);
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Type: ${el.dataset.status}`, 20, 65);
+            doc.text(`Zone: ${el.dataset.zone}`, 20, 72);
+            doc.text(`Date/Time: ${new Date(parseInt(el.dataset.timestamp)).toLocaleString()}`, 20, 79);
+
+            // Metrics
+            doc.setDrawColor(200, 200, 200);
+            doc.line(20, 85, 190, 85);
+            doc.setFontSize(12);
+            doc.text('Sensor Data', 20, 95);
+            doc.setFontSize(10);
+            doc.text(`Movement Speed: ${el.dataset.speed} m/s`, 25, 105);
+            doc.text(`Noise Level: ${el.dataset.noise} dB`, 25, 112);
+
+            // Evidence Image
+            doc.setFontSize(12);
+            doc.text('Visual Evidence', 20, 125);
+
+            if (el.dataset.img) {
+                try {
+                    const imgData = await getBase64Image(el.dataset.img);
+                    doc.addImage(imgData, 'JPEG', 20, 130, 150, 100);
+                } catch (e) {
+                    doc.text('[Image load failed]', 25, 135);
+                }
+            }
+
+            // Footer
+            const footerY = 260;
+            doc.setTextColor(0, 0, 0);
+            doc.setDrawColor(0, 0, 0);
+            doc.line(20, footerY, 100, footerY);
+            doc.text('Teacher Signature', 20, footerY + 5);
+            doc.text(`Page ${i + 1} of ${alerts.length}`, 170, footerY + 5);
+        }
+
+        doc.save(`Library_All_Alerts_${new Date().toISOString().split('T')[0]}.pdf`);
+
+    } catch (err) {
+        console.error('Batch PDF Error:', err);
+        alert("Batch Download Failed: " + err.message);
+    } finally {
+        downloadAllBtn.disabled = false;
+        downloadAllBtn.innerHTML = originalHtml;
+    }
+}
+
+function getBase64Image(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+        };
+        img.onerror = reject;
+        img.src = url;
+    });
+}
+
 // --- Live Toggle ---
 liveToggle.addEventListener('change', async (e) => {
     isLive = e.target.checked;
