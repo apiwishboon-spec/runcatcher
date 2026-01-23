@@ -10,6 +10,7 @@ const canvasCtx = canvasElement.getContext('2d');
 // State icons/colors
 const icons = { QUIET: 'smile', LOUD: 'megaphone', RUNNING_DETECTED: 'zap' };
 const colors = { QUIET: 'success', LOUD: 'info', RUNNING_DETECTED: 'danger' };
+const gestureBtn = document.getElementById('gesture-enable-btn');
 
 // Detection State
 let isLive = false;
@@ -75,25 +76,27 @@ function onHandsResults(results) {
 }
 
 function detectGesture(lm) {
-    // lm indices: 4=thumb_tip, 8=index_tip, 12=middle_tip, 16=ring_tip, 20=pinky_tip
-    // knuckles: 2=thumb_mcp, 6=index_pip, 10=middle_pip, 14=ring_pip, 18=pinky_pip
+    // MediaPipe Y is inverted (0 is top, 1 is bottom)
+    const isRaised = (tip, mcp) => lm[tip].y < lm[mcp].y;
 
-    const indexUp = lm[8].y < lm[6].y;
-    const middleUp = lm[12].y < lm[10].y;
-    const ringUp = lm[16].y < lm[14].y;
-    const pinkyUp = lm[20].y < lm[18].y;
-    const thumbUp = lm[4].y < lm[3].y && lm[4].y < lm[8].y;
+    const indexUp = isRaised(8, 6);
+    const middleUp = isRaised(12, 10);
+    const ringUp = isRaised(16, 14);
+    const pinkyUp = isRaised(20, 18);
+    const thumbUp = lm[4].y < lm[2].y && lm[4].y < lm[8].y;
 
-    // 🤚 Palm (All up)
-    if (indexUp && middleUp && ringUp && pinkyUp && !thumbUp) return 'STOP';
+    // 🤚 Palm: All 4 fingers up
+    if (indexUp && middleUp && ringUp && pinkyUp) return 'STOP';
 
-    // 👍 Thumbs Up (Only thumb up)
+    // 👍 Thumbs Up: Only thumb up, others down
     if (thumbUp && !indexUp && !middleUp && !ringUp && !pinkyUp) return 'START';
 
-    // 🤞 Crossed (Index and Middle up and crossing/very close)
+    // 🤞 Crossed: Index and Middle up and very close/touching
     if (indexUp && middleUp && !ringUp && !pinkyUp) {
-        const dist = Math.abs(lm[8].x - lm[12].x);
-        if (dist < 0.03) return 'RESET';
+        const dx = lm[8].x - lm[12].x;
+        const dy = lm[8].y - lm[12].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 0.04) return 'RESET';
     }
 
     return null;
@@ -848,7 +851,21 @@ liveToggle.addEventListener('change', async (e) => {
     }
 });
 
-// --- Zone Management ---
+gestureBtn.addEventListener('click', async () => {
+    gestureBtn.disabled = true;
+    gestureBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>CALIBRATING...';
+
+    try {
+        await startCamera();
+        gestureBtn.innerHTML = '<i data-lucide="check-circle" class="me-2"></i>GESTURES ACTIVE';
+        gestureBtn.className = 'btn btn-success w-100 fw-bold';
+        lucide.createIcons();
+    } catch (err) {
+        gestureBtn.disabled = false;
+        gestureBtn.innerHTML = '<i data-lucide="alert-circle" class="me-2"></i>RETRY WAKE UP';
+        console.error(err);
+    }
+});
 const zoneSelect = document.getElementById('zone-select');
 const newZoneInput = document.getElementById('new-zone-input');
 
