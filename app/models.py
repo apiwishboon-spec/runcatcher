@@ -19,4 +19,3 @@ class DetectionResult(BaseModel):
     streak: int
     alert_snapshot_url: Optional[str] = None
     zone_name: str
-    ai_analysis: Optional[str] = None

@@ -348,7 +348,6 @@ function addAlertToList(result) {
     alertEl.dataset.img = result.alert_snapshot_url;
     alertEl.dataset.zone = result.zone_name;
     alertEl.dataset.status = result.status.replace('_', ' ');
-    alertEl.dataset.analysis = result.ai_analysis || '';
 
     alertEl.innerHTML = `
         <div class="d-flex justify-content-between align-items-start">
@@ -443,15 +442,6 @@ function showSnapshot(element) {
     document.getElementById('modal-time').innerText = element.dataset.time;
     document.getElementById('modal-noise').innerText = element.dataset.noise + ' dB';
     document.getElementById('modal-speed').innerText = element.dataset.speed + ' m/s';
-
-    const analysisPanel = document.getElementById('modal-ai-analysis');
-    const analysisText = document.getElementById('ai-analysis-text');
-    if (element.dataset.analysis) {
-        analysisPanel.style.display = 'block';
-        analysisText.innerText = element.dataset.analysis;
-    } else {
-        analysisPanel.style.display = 'none';
-    }
 
     // Store current element for PDF export
     window.currentAlertElement = element;
