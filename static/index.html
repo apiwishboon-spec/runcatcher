@@ -154,10 +154,11 @@
         </div>
     </div>
 
-    <!-- Zone Selection & Grid Settings -->
+    <!-- Zone Selection, Grid Settings & Librarian's Watch -->
     <div class="container mt-4 mb-5">
         <div class="row g-4">
-            <div class="col-md-6">
+            <!-- Zone Selection -->
+            <div class="col-md-4">
                 <div class="card border-0 shadow-sm glass-card h-100">
                     <div class="card-body p-4">
                         <h5 class="card-title mb-3 d-flex align-items-center">
@@ -189,8 +190,8 @@
                 </div>
             </div>
 
-            <!-- New Grid Settings Card -->
-            <div class="col-md-6">
+            <!-- Grid Settings -->
+            <div class="col-md-4">
                 <div class="card border-0 shadow-sm glass-card h-100">
                     <div class="card-body p-4">
                         <h5 class="card-title mb-3 d-flex align-items-center">
@@ -215,11 +216,47 @@
                                             max="4">
                                     </div>
                                 </div>
-                                <div class="mt-2">
-                                    <small class="text-muted">Splits the video stream into a grid. Each cell is treated
-                                        as an independent camera.</small>
+                                <div class="mt-2 text-muted small">
+                                    Splits the video stream into a grid.
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Librarian's Watch Sync -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm glass-card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3 d-flex align-items-center text-warning">
+                            <i data-lucide="smartphone" class="me-2"></i> Librarian's Watch
+                        </h5>
+                        <div class="vstack gap-3">
+                            <div class="d-flex gap-2">
+                                <input type="text" id="sync-code-input" class="form-control font-monospace"
+                                    placeholder="Room Code..." readonly>
+                                <button onclick="generateSyncCode()" class="btn btn-outline-warning">
+                                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </div>
+                            <div id="sync-status" class="alert alert-light py-2 px-3 m-0 small border d-none">
+                                <div class="d-flex align-items-center">
+                                    <span class="spinner-grow spinner-grow-sm text-warning me-2" role="status"></span>
+                                    <span>Syncing Active...</span>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-7">
+                                    <input type="text" id="join-code-input" class="form-control"
+                                        placeholder="Enter Code...">
+                                </div>
+                                <div class="col-5">
+                                    <button onclick="joinSyncRoom()"
+                                        class="btn btn-warning w-100 text-white fw-bold">Join</button>
+                                </div>
+                            </div>
+                            <small class="text-muted">Sync multiple devices. Phone vibrates on alert.</small>
                         </div>
                     </div>
                 </div>

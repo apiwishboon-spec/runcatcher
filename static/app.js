@@ -28,6 +28,8 @@ let currentZone = 'reading_area'; // Default zone
 let gridMode = false;
 let gridRows = 2;
 let gridCols = 2;
+let watchSocket = null;
+let currentRoomId = null;
 
 // --- MediaPipe Setup ---
 const pose = new Pose({
@@ -278,7 +280,8 @@ async function sendDetection(zone, speed, noise, alert_snapshot_url = null) {
                 zone_name: zone,
                 movement_speed: parseFloat(speed.toFixed(1)),
                 noise_level: Math.round(noise),
-                alert_snapshot_url: alert_snapshot_url
+                alert_snapshot_url: alert_snapshot_url,
+                room_id: currentRoomId
             })
         });
         const result = await response.json();
@@ -286,6 +289,51 @@ async function sendDetection(zone, speed, noise, alert_snapshot_url = null) {
     } catch (err) {
         console.error('API Error:', err);
     }
+}
+// --- Librarian's Watch Sync ---
+function generateSyncCode() {
+    const code = 'WATCH-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    document.getElementById('sync-code-input').value = code;
+    document.getElementById('join-code-input').value = code;
+}
+
+function joinSyncRoom() {
+    const code = document.getElementById('join-code-input').value;
+    if (!code) return;
+
+    currentRoomId = code;
+    connectToWatchSocket(code);
+
+    document.getElementById('sync-status').classList.remove('d-none');
+    document.getElementById('sync-code-input').value = code;
+}
+
+function connectToWatchSocket(roomId) {
+    if (watchSocket) watchSocket.close();
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    watchSocket = new WebSocket(`${protocol}//${window.location.host}/ws/${roomId}`);
+
+    watchSocket.onmessage = (event) => {
+        const result = JSON.parse(event.data);
+        updateUI(result);
+
+        // Haptic Feedback for Mobile
+        if (result.status !== 'QUIET' && "vibrate" in navigator) {
+            navigator.vibrate([200, 100, 200]);
+        }
+
+        // Alert Sound
+        if (result.status === 'RUNNING_DETECTED') {
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            audio.play().catch(e => console.log('Audio blocked by browser'));
+        }
+    };
+
+    watchSocket.onclose = () => {
+        console.log('Watch connection closed. Reconnecting...');
+        setTimeout(() => connectToWatchSocket(roomId), 3000);
+    };
 }
 
 // --- UI Updates ---

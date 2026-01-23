@@ -12,6 +12,7 @@ class SensorReading(BaseModel):
     noise_level: float
     zone_name: str
     alert_snapshot_url: Optional[str] = None
+    room_id: Optional[str] = None
 
 class DetectionResult(BaseModel):
     status: BehaviorStatus
@@ -19,3 +20,4 @@ class DetectionResult(BaseModel):
     streak: int
     alert_snapshot_url: Optional[str] = None
     zone_name: str
+    room_id: Optional[str] = None

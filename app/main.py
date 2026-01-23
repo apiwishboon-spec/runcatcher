@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Request, BackgroundTasks, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from .models import SensorReading, DetectionResult
@@ -7,8 +7,37 @@ from .config import settings
 import os
 import base64
 import datetime
+import json
+from typing import Dict, List
 
 app = FastAPI(title=settings.APP_NAME)
+
+class ConnectionManager:
+    def __init__(self):
+        # Dictionary mapping room_id to a list of WebSockets
+        self.rooms: Dict[str, List[WebSocket]] = {}
+
+    async def connect(self, websocket: WebSocket, room_id: str):
+        await websocket.accept()
+        if room_id not in self.rooms:
+            self.rooms[room_id] = []
+        self.rooms[room_id].append(websocket)
+
+    def disconnect(self, websocket: WebSocket, room_id: str):
+        if room_id in self.rooms:
+            self.rooms[room_id].remove(websocket)
+            if not self.rooms[room_id]:
+                del self.rooms[room_id]
+
+    async def broadcast_to_room(self, room_id: str, message: dict):
+        if room_id in self.rooms:
+            for connection in self.rooms[room_id]:
+                try:
+                    await connection.send_json(message)
+                except:
+                    pass
+
+manager = ConnectionManager()
 
 # Ensure directories exist
 os.makedirs(settings.SNAPSHOT_DIR, exist_ok=True)
@@ -23,6 +52,16 @@ async def root():
     index_path = os.path.join(settings.STATIC_DIR, "index.html")
     with open(index_path, "r") as f:
         return f.read()
+
+@app.websocket("/ws/{room_id}")
+async def websocket_endpoint(websocket: WebSocket, room_id: str):
+    await manager.connect(websocket, room_id)
+    try:
+        while True:
+            # Keep connection alive
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, room_id)
 
 @app.post("/upload/snapshot")
 async def upload_snapshot(data: dict):
@@ -64,6 +103,12 @@ async def process_sensor_reading(reading: SensorReading, background_tasks: Backg
     background_tasks.add_task(cleanup_old_snapshots)
     try:
         result = classify_behavior(reading, reading.alert_snapshot_url)
+        
+        # Broadcast via WebSocket if room_id exists
+        if reading.room_id:
+            result.room_id = reading.room_id
+            await manager.broadcast_to_room(reading.room_id, result.model_dump())
+            
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
