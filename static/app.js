@@ -15,10 +15,12 @@ const colors = { QUIET: 'success', LOUD: 'info', RUNNING_DETECTED: 'danger' };
 let isLive = false;
 let isPreview = false;
 let lastPoseTime = 0;
-let lastX = 0;
+let lastCentroid = { x: 0, y: 0 };
+let speedBuffer = [];
+const BUFFER_SIZE = 5;
 let audioContext, analyser, dataArray;
 let noiseThreshold = 75; // dB
-let speedThreshold = 8.0; // m/s (approx pixels/sec normalized)
+let speedThreshold = 10.0; // m/s (approx pixels/sec normalized)
 let currentZone = 'reading_area'; // Default zone
 let gridMode = false;
 let gridRows = 2;
@@ -46,24 +48,34 @@ async function onResults(results) {
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-    // If Grid mode is on, we might want to draw the grid lines on the (hidden) canvas for alignment
     if (gridMode) {
         drawGrid();
     }
 
     if (results.poseLandmarks) {
         const now = performance.now();
-        const hipX = results.poseLandmarks[24].x;
-        const hipY = results.poseLandmarks[24].y;
+        const lp = results.poseLandmarks;
+
+        // 1. Calculate Centroid (Mid-point of hips) for stable tracking
+        const currentCentroid = {
+            x: (lp[23].x + lp[24].x) / 2,
+            y: (lp[23].y + lp[24].y) / 2
+        };
+
+        // 2. Normalization: Use person's torso height to handle perspective
+        // Distance between shoulders and hips helps estimate distance from camera
+        const shoulderY = (lp[11].y + lp[12].y) / 2;
+        const hipY_avg = (lp[23].y + lp[24].y) / 2;
+        const torsoHeight = Math.abs(hipY_avg - shoulderY);
+        const perspectiveFactor = 0.3 / Math.max(0.05, torsoHeight);
 
         // Calculate specific zone if in grid mode
         let effectiveZone = currentZone;
         if (gridMode) {
-            const row = Math.floor(hipY * gridRows);
-            const col = Math.floor(hipX * gridCols);
+            const row = Math.floor(currentCentroid.y * gridRows);
+            const col = Math.floor(currentCentroid.x * gridCols);
             const camId = (row * gridCols) + col + 1;
             effectiveZone = `${currentZone} (Cam ${camId})`;
-            // Update UI to show which camera is active
             document.getElementById('stat-zone').innerText = effectiveZone;
         } else {
             document.getElementById('stat-zone').innerText = formatZoneName(currentZone);
@@ -71,14 +83,22 @@ async function onResults(results) {
 
         if (lastPoseTime > 0) {
             const dt = (now - lastPoseTime) / 1000;
-            let dx = Math.abs(hipX - lastX);
+            let dx = currentCentroid.x - lastCentroid.x;
+            let dy = currentCentroid.y - lastCentroid.y;
 
-            // Adjust sensitivity for grid mode: movements are smaller relative to total frame
-            if (gridMode) {
-                dx *= gridCols;
-            }
+            // Euclidean distance for velocity (captures X and Y movement)
+            let distance = Math.sqrt(dx * dx + dy * dy);
 
-            const speed = (dx / dt) * 5;
+            // Adjust for grid and perspective
+            if (gridMode) distance *= gridCols;
+            distance *= perspectiveFactor;
+
+            const instantSpeed = (distance / dt) * 5;
+
+            // 3. Smoothing: Moving Average Buffer
+            speedBuffer.push(instantSpeed);
+            if (speedBuffer.length > BUFFER_SIZE) speedBuffer.shift();
+            const speed = speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length;
 
             document.getElementById('stat-speed').innerText = speed.toFixed(1);
             const speedMeter = document.getElementById('speed-meter');
@@ -94,7 +114,7 @@ async function onResults(results) {
             }
         }
 
-        lastX = hipX;
+        lastCentroid = currentCentroid;
         lastPoseTime = now;
 
         drawLandmarks(results.poseLandmarks);
@@ -551,11 +571,7 @@ liveToggle.addEventListener('change', async (e) => {
 
                 // Recalculate effective zone for periodic heartbeats too
                 let effectiveZone = currentZone;
-                if (gridMode && lastX) {
-                    // We need Y as well for heartbeat, but we only store lastX
-                    // Let's use 0.5 (middle) if we don't have a recent Y, or just stick to last known location
-                    // Actually, let's just use the currentZone if no pose is active, or last known
-                    // For now, simple approach:
+                if (gridMode && lastCentroid.x) {
                     effectiveZone = document.getElementById('stat-zone').innerText;
                 }
 
