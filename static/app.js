@@ -18,7 +18,9 @@ let lastPoseTime = 0;
 let lastCentroid = { x: 0, y: 0 };
 let lastBoundingBox = null;
 let speedBuffer = [];
+let pathHistory = [];
 const BUFFER_SIZE = 5;
+const PATH_HISTORY_SIZE = 15;
 let audioContext, analyser, dataArray;
 let noiseThreshold = 75; // dB
 let speedThreshold = 10.0; // m/s (approx pixels/sec normalized)
@@ -117,6 +119,10 @@ async function onResults(results) {
 
         lastCentroid = currentCentroid;
         lastPoseTime = now;
+
+        // 5. Store path history
+        pathHistory.push({ x: currentCentroid.x, y: currentCentroid.y });
+        if (pathHistory.length > PATH_HISTORY_SIZE) pathHistory.shift();
 
         // 4. Calculate Bounding Box for Highlighting
         lastBoundingBox = getBoundingBox(results.poseLandmarks);
@@ -342,6 +348,7 @@ function addAlertToList(result) {
     alertEl.dataset.img = result.alert_snapshot_url;
     alertEl.dataset.zone = result.zone_name;
     alertEl.dataset.status = result.status.replace('_', ' ');
+    alertEl.dataset.analysis = result.ai_analysis || '';
 
     alertEl.innerHTML = `
         <div class="d-flex justify-content-between align-items-start">
@@ -395,6 +402,25 @@ async function captureSnapshot(zone) {
         ctx.fillText(`CAPTURE_TS: ${new Date().toISOString()} | ZONE: ${zone}`, 20, tempCanvas.height - 15);
     }
 
+    // 3. Draw Kinetic Path Trail
+    if (pathHistory.length > 1) {
+        ctx.beginPath();
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        for (let i = 0; i < pathHistory.length - 1; i++) {
+            const p1 = pathHistory[i];
+            const p2 = pathHistory[i + 1];
+            const alpha = (i / pathHistory.length) * 0.8;
+            ctx.strokeStyle = `rgba(233, 84, 32, ${alpha})`;
+            ctx.beginPath();
+            ctx.moveTo(p1.x * tempCanvas.width, p1.y * tempCanvas.height);
+            ctx.lineTo(p2.x * tempCanvas.width, p2.y * tempCanvas.height);
+            ctx.stroke();
+        }
+    }
+
     const dataUrl = tempCanvas.toDataURL('image/jpeg', 0.8);
 
     try {
@@ -418,9 +444,19 @@ function showSnapshot(element) {
     document.getElementById('modal-noise').innerText = element.dataset.noise + ' dB';
     document.getElementById('modal-speed').innerText = element.dataset.speed + ' m/s';
 
+    const analysisPanel = document.getElementById('modal-ai-analysis');
+    const analysisText = document.getElementById('ai-analysis-text');
+    if (element.dataset.analysis) {
+        analysisPanel.style.display = 'block';
+        analysisText.innerText = element.dataset.analysis;
+    } else {
+        analysisPanel.style.display = 'none';
+    }
+
     // Store current element for PDF export
     window.currentAlertElement = element;
     modal.show();
+    lucide.createIcons();
 }
 
 async function downloadPDFReport() {
