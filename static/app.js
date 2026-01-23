@@ -492,42 +492,33 @@ function addAlertToList(result) {
 }
 
 async function captureSnapshot(zone) {
-    // Try to use output canvas first (more reliable as it's already rendering)
-    let sourceElement = canvasElement;
-    let sourceWidth = canvasElement.width;
-    let sourceHeight = canvasElement.height;
+    // Always capture from the raw camera feed (NOT the pose/landmark canvas),
+    // so the snapshot is an actual picture, not the skeleton overlay.
+    if (!videoElement) {
+        console.warn('Video element not found');
+        return null;
+    }
 
-    // Fallback to video element if canvas isn't available or has no content
-    if (!sourceElement || sourceWidth === 0 || sourceHeight === 0) {
-        if (!videoElement) {
-            console.warn('Neither canvas nor video element available for capture');
-            return null;
-        }
-
-        // Check if video is ready and has valid dimensions
-        if (!videoElement.videoWidth || !videoElement.videoHeight || videoElement.readyState < 2) {
-            console.warn('Video not ready for capture', {
-                videoWidth: videoElement.videoWidth,
-                videoHeight: videoElement.videoHeight,
-                readyState: videoElement.readyState
-            });
-            return null;
-        }
-        sourceElement = videoElement;
-        sourceWidth = videoElement.videoWidth;
-        sourceHeight = videoElement.videoHeight;
+    // Check if video is ready and has valid dimensions
+    if (!videoElement.videoWidth || !videoElement.videoHeight || videoElement.readyState < 2) {
+        console.warn('Video not ready for capture', {
+            videoWidth: videoElement.videoWidth,
+            videoHeight: videoElement.videoHeight,
+            readyState: videoElement.readyState
+        });
+        return null;
     }
 
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = sourceWidth;
-    tempCanvas.height = sourceHeight;
+    tempCanvas.width = videoElement.videoWidth;
+    tempCanvas.height = videoElement.videoHeight;
     const ctx = tempCanvas.getContext('2d');
 
     // 1. Draw original video frame
     try {
-        ctx.drawImage(sourceElement, 0, 0);
+        ctx.drawImage(videoElement, 0, 0);
     } catch (err) {
-        console.error('Failed to draw source to canvas:', err);
+        console.error('Failed to draw video to canvas:', err);
         return null;
     }
 
