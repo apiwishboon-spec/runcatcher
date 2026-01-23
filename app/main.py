@@ -58,8 +58,14 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
     await manager.connect(websocket, room_id)
     try:
         while True:
-            # Keep connection alive
-            await websocket.receive_text()
+            # Receive message from client
+            data = await websocket.receive_text()
+            try:
+                message = json.loads(data)
+                # Relay the message to all clients in the same room
+                await manager.broadcast_to_room(room_id, message)
+            except json.JSONDecodeError:
+                pass
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_id)
 

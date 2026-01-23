@@ -55,6 +55,11 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="card-title mb-0">Live Monitoring</h4>
                             <div class="d-flex align-items-center gap-3">
+                                <button id="summon-btn"
+                                    class="btn btn-sm btn-danger d-flex align-items-center gap-2 px-3 fw-bold"
+                                    onclick="triggerStaffSummon()" title="Emergency: Summon All Staff">
+                                    <i data-lucide="bell-ring" style="width: 16px; height: 16px;"></i> SUMMON
+                                </button>
                                 <button id="preview-btn" class="btn btn-sm btn-outline-info" onclick="togglePreview()"
                                     title="Show Camera Preview">
                                     <i data-lucide="eye" style="width: 16px; height: 16px;"></i>

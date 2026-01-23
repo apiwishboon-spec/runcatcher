@@ -328,12 +328,79 @@ function connectToWatchSocket(roomId) {
             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
             audio.play().catch(e => console.log('Audio blocked by browser'));
         }
+
+        // Emergency Staff Summon
+        if (result.type === 'EMERGENCY') {
+            handleStaffSummonAlert(result);
+        }
     };
 
     watchSocket.onclose = () => {
         console.log('Watch connection closed. Reconnecting...');
         setTimeout(() => connectToWatchSocket(roomId), 3000);
     };
+}
+
+function triggerStaffSummon() {
+    if (!watchSocket || watchSocket.readyState !== WebSocket.OPEN) {
+        alert("Librarian's Watch sync must be active (Joined) to summon staff.");
+        return;
+    }
+
+    const confirmSummon = confirm("⚠️ SYSTEM ALERT: Are you sure you want to summon ALL staff to your location?");
+    if (!confirmSummon) return;
+
+    const emergencyMsg = {
+        type: 'EMERGENCY',
+        zone: document.getElementById('stat-zone').innerText,
+        time: new Date().toLocaleTimeString(),
+        sender: 'Station ' + currentRoomId.split('-').pop()
+    };
+
+    watchSocket.send(JSON.stringify(emergencyMsg));
+
+    // Feedback for sender
+    const summonBtn = document.getElementById('summon-btn');
+    const originalText = summonBtn.innerHTML;
+    summonBtn.innerHTML = '<i data-lucide="check" class="me-2"></i>SUMMONED';
+    summonBtn.className = 'btn btn-sm btn-success px-3 fw-bold';
+    setTimeout(() => {
+        summonBtn.innerHTML = originalText;
+        summonBtn.className = 'btn btn-sm btn-danger px-3 fw-bold';
+        lucide.createIcons();
+    }, 5000);
+}
+
+function handleStaffSummonAlert(data) {
+    // 1. Violent Vibration
+    if ("vibrate" in navigator) {
+        navigator.vibrate([800, 200, 800, 200, 800]);
+    }
+
+    // 2. High-Priority Audio
+    const emergencyAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3');
+    emergencyAudio.play().catch(e => { });
+
+    // 3. Visual UI takeover
+    const aura = document.getElementById('aura-bg');
+    aura.className = 'aura-bg state-running'; // Red strobe effect
+
+    const statusMsg = document.getElementById('status-message');
+    statusMsg.innerText = "🚨 EMERGENCY SUMMON: " + data.zone;
+    statusMsg.classList.add('text-danger');
+
+    // 4. Temporary big overlay for fullscreen visibility
+    const overlay = document.createElement('div');
+    overlay.className = 'position-fixed top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-danger text-white z-index-modal';
+    overlay.style.zIndex = '99999';
+    overlay.style.animation = 'pulse 1s infinite';
+    overlay.innerHTML = `
+        <h1 class="display-1 fw-black">🚨 EMERGENCY 🚨</h1>
+        <h2 class="display-4 fw-bold mb-4">Staff Summoned to: ${data.zone}</h2>
+        <p class="lead">From: ${data.sender} | Time: ${data.time}</p>
+        <button class="btn btn-light btn-lg mt-4 px-5 fw-bold" onclick="this.parentElement.remove(); location.reload();">DISMISS</button>
+    `;
+    document.body.appendChild(overlay);
 }
 
 // --- UI Updates ---
