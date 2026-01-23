@@ -9,6 +9,7 @@ LibraryRunCatcher is a premium, privacy-conscious PWA (Progressive Web App) desi
 ## ✨ Key Features
 
 -   **🚀 Auto-Detect Mode**: Uses MediaPipe Pose tracking and Web Audio API to monitor behavior in real-time.
+-   **📽️ CCTV Grid View**: Support for virtual camera signals showing multiple grid views (2x2, 3x3, etc.) with independent cell detection.
 -   **🖼️ Real Evidence Capture**: Auto-captures snapshots when violations occur (Running or Loud Noise).
 -   **📊 Premium Dashboard**: Glassmorphic UI with real-time speed/noise meters.
 -   **📱 Cross-Platform PWA**: Installable on Mac, iOS, and Android for mobile monitoring.

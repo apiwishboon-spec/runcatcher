@@ -13,12 +13,16 @@ const colors = { QUIET: 'success', LOUD: 'info', RUNNING_DETECTED: 'danger' };
 
 // Detection State
 let isLive = false;
+let isPreview = false;
 let lastPoseTime = 0;
 let lastX = 0;
 let audioContext, analyser, dataArray;
 let noiseThreshold = 75; // dB
 let speedThreshold = 8.0; // m/s (approx pixels/sec normalized)
 let currentZone = 'reading_area'; // Default zone
+let gridMode = false;
+let gridRows = 2;
+let gridCols = 2;
 
 // --- MediaPipe Setup ---
 const pose = new Pose({
@@ -42,39 +46,93 @@ async function onResults(results) {
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-    // Privacy: Only draw skeleton, not the raw video
+    // If Grid mode is on, we might want to draw the grid lines on the (hidden) canvas for alignment
+    if (gridMode) {
+        drawGrid();
+    }
+
     if (results.poseLandmarks) {
-        // Simple Speed Calculation
         const now = performance.now();
-        const hipX = results.poseLandmarks[24].x; // Right hip X
+        const hipX = results.poseLandmarks[24].x;
+        const hipY = results.poseLandmarks[24].y;
+
+        // Calculate specific zone if in grid mode
+        let effectiveZone = currentZone;
+        if (gridMode) {
+            const row = Math.floor(hipY * gridRows);
+            const col = Math.floor(hipX * gridCols);
+            const camId = (row * gridCols) + col + 1;
+            effectiveZone = `${currentZone} (Cam ${camId})`;
+            // Update UI to show which camera is active
+            document.getElementById('stat-zone').innerText = effectiveZone;
+        } else {
+            document.getElementById('stat-zone').innerText = formatZoneName(currentZone);
+        }
 
         if (lastPoseTime > 0) {
             const dt = (now - lastPoseTime) / 1000;
             const dx = Math.abs(hipX - lastX);
-            const speed = (dx / dt) * 5; // Simplified scale
+            const speed = (dx / dt) * 5;
 
-            // Update UI Stats & Meter
             document.getElementById('stat-speed').innerText = speed.toFixed(1);
             const speedMeter = document.getElementById('speed-meter');
             if (speedMeter) {
-                const percent = Math.min(100, speed * 20); // Map 0-5m/s to 0-100%
+                const percent = Math.min(100, speed * 20);
                 speedMeter.style.width = percent + '%';
                 speedMeter.className = speed > speedThreshold ? 'progress-bar bg-danger' : 'progress-bar bg-primary';
             }
 
             if (speed > speedThreshold) {
-                const snapshotUrl = await captureSnapshot(currentZone);
-                sendDetection(currentZone, speed, getNoiseLevel(), snapshotUrl);
+                const snapshotUrl = await captureSnapshot(effectiveZone);
+                sendDetection(effectiveZone, speed, getNoiseLevel(), snapshotUrl);
             }
         }
 
         lastX = hipX;
         lastPoseTime = now;
 
-        // Draw basic landmarks (Privacy-safe)
         drawLandmarks(results.poseLandmarks);
     }
     canvasCtx.restore();
+}
+
+function drawGrid() {
+    canvasCtx.strokeStyle = 'rgba(233, 84, 32, 0.6)';
+    canvasCtx.lineWidth = 2;
+    canvasCtx.font = '14px Inter, sans-serif';
+    canvasCtx.fillStyle = 'rgba(233, 84, 32, 1)';
+    canvasCtx.textAlign = 'center';
+
+    const cellWidth = canvasElement.width / gridCols;
+    const cellHeight = canvasElement.height / gridRows;
+
+    // Draw Vertical Lines
+    for (let i = 1; i < gridCols; i++) {
+        const x = i * cellWidth;
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(x, 0);
+        canvasCtx.lineTo(x, canvasElement.height);
+        canvasCtx.stroke();
+    }
+
+    // Draw Horizontal Lines
+    for (let i = 1; i < gridRows; i++) {
+        const y = i * cellHeight;
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(0, y);
+        canvasCtx.lineTo(canvasElement.width, y);
+        canvasCtx.stroke();
+    }
+
+    // Draw Camera Labels
+    for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridCols; c++) {
+            const camId = (r * gridCols) + c + 1;
+            const x = (c * cellWidth) + (cellWidth / 2);
+            const y = (r * cellHeight) + 20;
+            canvasCtx.fillText(`Cam ${camId}`, x, y);
+        }
+    }
 }
 
 function drawLandmarks(landmarks) {
@@ -460,7 +518,7 @@ function getBase64Image(url) {
 liveToggle.addEventListener('change', async (e) => {
     isLive = e.target.checked;
     if (isLive) {
-        cameraContainer.style.display = 'block';
+        if (isPreview) cameraContainer.style.display = 'block';
         await setupAudio();
         const camera = new Camera(videoElement, {
             onFrame: async () => {
@@ -484,9 +542,20 @@ liveToggle.addEventListener('change', async (e) => {
             // Send detection if threshold crossed OR every 2 seconds (heartbeat)
             if (noise > noiseThreshold || currentSpeed > speedThreshold || ticksSinceLastSent >= 4) {
                 const needsSnapshot = (noise > noiseThreshold || currentSpeed > speedThreshold);
-                const snapshotUrl = (needsSnapshot && isLive) ? await captureSnapshot(currentZone) : null;
 
-                sendDetection(currentZone, currentSpeed, noise, snapshotUrl);
+                // Recalculate effective zone for periodic heartbeats too
+                let effectiveZone = currentZone;
+                if (gridMode && lastX) {
+                    // We need Y as well for heartbeat, but we only store lastX
+                    // Let's use 0.5 (middle) if we don't have a recent Y, or just stick to last known location
+                    // Actually, let's just use the currentZone if no pose is active, or last known
+                    // For now, simple approach:
+                    effectiveZone = document.getElementById('stat-zone').innerText;
+                }
+
+                const snapshotUrl = (needsSnapshot && isLive) ? await captureSnapshot(effectiveZone) : null;
+
+                sendDetection(effectiveZone, currentSpeed, noise, snapshotUrl);
                 ticksSinceLastSent = 0;
             }
         }, 500);
@@ -544,6 +613,41 @@ function addNewZone() {
     lucide.createIcons();
 }
 
+// --- Grid UI Event Listeners ---
+const gridModeToggle = document.getElementById('grid-mode-toggle');
+const gridRowsInput = document.getElementById('grid-rows');
+const gridColsInput = document.getElementById('grid-cols');
+const gridSettingsContent = document.getElementById('grid-settings-content');
+
+if (gridModeToggle) {
+    gridModeToggle.addEventListener('change', (e) => {
+        gridMode = e.target.checked;
+        const label = document.getElementById('grid-overlay-label');
+        if (gridMode) {
+            gridSettingsContent.style.opacity = '1';
+            gridSettingsContent.style.pointerEvents = 'auto';
+            if (label) label.style.display = 'block';
+        } else {
+            gridSettingsContent.style.opacity = '0.5';
+            gridSettingsContent.style.pointerEvents = 'none';
+            if (label) label.style.display = 'none';
+            document.getElementById('stat-zone').innerText = formatZoneName(currentZone);
+        }
+    });
+}
+
+if (gridRowsInput) {
+    gridRowsInput.addEventListener('change', (e) => {
+        gridRows = parseInt(e.target.value) || 2;
+    });
+}
+
+if (gridColsInput) {
+    gridColsInput.addEventListener('change', (e) => {
+        gridCols = parseInt(e.target.value) || 2;
+    });
+}
+
 function formatZoneName(zoneValue) {
     return zoneValue.split('_').map(word =>
         word.charAt(0).toUpperCase() + word.slice(1)
@@ -576,7 +680,25 @@ setInterval(() => {
     }
 }, 60000);
 
-// --- Fullscreen Toggle ---
+// --- Preview & Fullscreen Toggle ---
+function togglePreview() {
+    isPreview = !isPreview;
+    const btn = document.getElementById('preview-btn');
+    const icon = btn.querySelector('i');
+    const statusDisplay = document.getElementById('status-display');
+
+    if (isPreview) {
+        cameraContainer.style.display = 'block';
+        statusDisplay.style.display = 'none';
+        icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+        cameraContainer.style.display = 'none';
+        statusDisplay.style.display = 'block';
+        icon.setAttribute('data-lucide', 'eye');
+    }
+    lucide.createIcons();
+}
+
 function toggleFullscreen() {
     const monitoringCard = document.querySelector('.col-md-8 .card');
     const fullscreenBtn = document.getElementById('fullscreen-btn');

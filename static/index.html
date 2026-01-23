@@ -51,6 +51,10 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="card-title mb-0">Live Monitoring</h4>
                             <div class="d-flex align-items-center gap-3">
+                                <button id="preview-btn" class="btn btn-sm btn-outline-info" onclick="togglePreview()"
+                                    title="Show Camera Preview">
+                                    <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                                </button>
                                 <button id="fullscreen-btn" class="btn btn-sm btn-outline-secondary"
                                     onclick="toggleFullscreen()" title="Toggle Fullscreen">
                                     <i data-lucide="maximize" style="width: 16px; height: 16px;"></i>
@@ -65,10 +69,13 @@
                             </div>
                         </div>
 
-                        <!-- Hidden camera elements for pose tracking (no visual display) -->
-                        <div id="camera-container" style="display: none;">
+                        <!-- Camera Preview (Optional toggle) -->
+                        <div id="camera-container" class="position-relative mt-3 rounded overflow-hidden"
+                            style="display: none; aspect-ratio: 4/3; background: #000;">
                             <video id="input-video" style="display: none;"></video>
-                            <canvas id="output-canvas" style="display: none;"></canvas>
+                            <canvas id="output-canvas" class="w-100 h-100 object-fit-contain"></canvas>
+                            <div id="grid-overlay-label" class="position-absolute top-0 start-0 p-2 text-white small"
+                                style="background: rgba(0,0,0,0.5); display: none;">Grid Alignment Active</div>
                         </div>
 
                         <div id="status-display" class="text-center py-5">
@@ -147,17 +154,17 @@
         </div>
     </div>
 
-    <!-- Zone Selection Card -->
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm glass-card">
+    <!-- Zone Selection & Grid Settings -->
+    <div class="container mt-4 mb-5">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm glass-card h-100">
                     <div class="card-body p-4">
                         <h5 class="card-title mb-3 d-flex align-items-center">
                             <i data-lucide="map-pin" class="me-2 text-primary"></i> Zone Selection
                         </h5>
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-6">
+                        <div class="vstack gap-3">
+                            <div>
                                 <label class="form-label fw-bold">Monitoring Zone</label>
                                 <select id="zone-select" class="form-select">
                                     <option value="reading_area">Reading Area</option>
@@ -166,14 +173,52 @@
                                     <option value="quiet_zone">Quiet Zone</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <input type="text" id="new-zone-input" class="form-control"
-                                    placeholder="New zone name...">
+                            <div class="row g-2">
+                                <div class="col-8">
+                                    <input type="text" id="new-zone-input" class="form-control"
+                                        placeholder="New zone name...">
+                                </div>
+                                <div class="col-4">
+                                    <button id="add-zone-btn" class="btn btn-primary w-100" onclick="addNewZone()">
+                                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-md-2">
-                                <button id="add-zone-btn" class="btn btn-primary w-100" onclick="addNewZone()">
-                                    <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add
-                                </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Grid Settings Card -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm glass-card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3 d-flex align-items-center">
+                            <i data-lucide="grid" class="me-2 text-info"></i> CCTV Grid Configuration
+                        </h5>
+                        <div class="vstack gap-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="grid-mode-toggle">
+                                <label class="form-check-label fw-bold" for="grid-mode-toggle">Enable Grid
+                                    Detection</label>
+                            </div>
+                            <div id="grid-settings-content" style="opacity: 0.5; pointer-events: none;">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <label class="form-label small fw-bold">Rows</label>
+                                        <input type="number" id="grid-rows" class="form-control" value="2" min="1"
+                                            max="4">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small fw-bold">Columns</label>
+                                        <input type="number" id="grid-cols" class="form-control" value="2" min="1"
+                                            max="4">
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">Splits the video stream into a grid. Each cell is treated
+                                        as an independent camera.</small>
+                                </div>
                             </div>
                         </div>
                     </div>
