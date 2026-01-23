@@ -12,6 +12,8 @@ from typing import Dict, List
 
 app = FastAPI(title=settings.APP_NAME)
 
+from fastapi.encoders import jsonable_encoder
+
 class ConnectionManager:
     def __init__(self):
         # Dictionary mapping room_id to a list of WebSockets
@@ -31,9 +33,11 @@ class ConnectionManager:
 
     async def broadcast_to_room(self, room_id: str, message: dict):
         if room_id in self.rooms:
+            # Important: Ensure the message is JSON serializable
+            clean_message = jsonable_encoder(message)
             for connection in self.rooms[room_id]:
                 try:
-                    await connection.send_json(message)
+                    await connection.send_json(clean_message)
                 except:
                     pass
 

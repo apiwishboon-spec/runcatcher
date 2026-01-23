@@ -281,7 +281,12 @@ async function sendDetection(zone, speed, noise, alert_snapshot_url = null) {
             })
         });
         const result = await response.json();
-        updateUI(result);
+
+        // If a room is active, the server will broadcast this back to us via WebSocket.
+        // We only call updateUI here as a fallback if NOT in a room.
+        if (!currentRoomId) {
+            updateUI(result);
+        }
     } catch (err) {
         console.error('API Error:', err);
     }
@@ -312,10 +317,18 @@ function connectToWatchSocket(roomId) {
 
     watchSocket.onmessage = (event) => {
         const result = JSON.parse(event.data);
+
+        // 1. Emergency Staff Summon (High Priority)
+        if (result.type === 'EMERGENCY') {
+            handleStaffSummonAlert(result);
+            return;
+        }
+
+        // 2. Regular Detection Data
         updateUI(result);
 
         // Haptic Feedback for Mobile
-        if (result.status !== 'QUIET' && "vibrate" in navigator) {
+        if (result.status && result.status !== 'QUIET' && "vibrate" in navigator) {
             navigator.vibrate([200, 100, 200]);
         }
 
@@ -323,11 +336,6 @@ function connectToWatchSocket(roomId) {
         if (result.status === 'RUNNING_DETECTED') {
             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
             audio.play().catch(e => console.log('Audio blocked by browser'));
-        }
-
-        // Emergency Staff Summon
-        if (result.type === 'EMERGENCY') {
-            handleStaffSummonAlert(result);
         }
     };
 
@@ -424,10 +432,10 @@ function updateUI(result) {
     statusMessage.innerText = result.message;
 
     // Transition Icon with Pop Effect
-    if (result.status !== lastStatus) {
+    if (result.status && result.status !== lastStatus) {
         particles.setState(result.status);
         wrapper.classList.remove('status-change-pop');
-        void wrapper.offsetWidth; // Force reflow
+        void wrapper.offsetWidth;
         wrapper.classList.add('status-change-pop');
 
         mainIcon.setAttribute('data-lucide', icons[result.status]);
