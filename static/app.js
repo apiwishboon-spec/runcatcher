@@ -10,7 +10,6 @@ const canvasCtx = canvasElement.getContext('2d');
 // State icons/colors
 const icons = { QUIET: 'smile', LOUD: 'megaphone', RUNNING_DETECTED: 'zap' };
 const colors = { QUIET: 'success', LOUD: 'info', RUNNING_DETECTED: 'danger' };
-const gestureBtn = document.getElementById('gesture-enable-btn');
 
 // Detection State
 let isLive = false;
@@ -31,21 +30,11 @@ let gridRows = 2;
 let gridCols = 2;
 let watchSocket = null;
 let currentRoomId = null;
-let lastGesture = null;
-let gestureDebounce = 0;
 let globalCamera = null;
 
-// --- MediaPipe Setup ---
-const hands = new Hands({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+pose.onResults(async (results) => {
+    await onResults(results);
 });
-hands.setOptions({
-    maxNumHands: 1,
-    modelComplexity: 1,
-    minDetectionConfidence: 0.7,
-    minTrackingConfidence: 0.7
-});
-hands.onResults(onHandsResults);
 
 const pose = new Pose({
     locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
@@ -57,86 +46,6 @@ pose.setOptions({
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5
 });
-
-// --- Gesture Engine ---
-function onHandsResults(results) {
-    if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) return;
-
-    const now = Date.now();
-    if (now < gestureDebounce) return;
-
-    const landmarks = results.multiHandLandmarks[0];
-    const gesture = detectGesture(landmarks);
-
-    if (gesture && gesture !== lastGesture) {
-        handleGesture(gesture);
-        lastGesture = gesture;
-        gestureDebounce = now + 1500; // 1.5s cooldown
-    }
-}
-
-function detectGesture(lm) {
-    // MediaPipe Y is inverted (0 is top, 1 is bottom)
-    const isRaised = (tip, mcp) => lm[tip].y < lm[mcp].y;
-
-    const indexUp = isRaised(8, 6);
-    const middleUp = isRaised(12, 10);
-    const ringUp = isRaised(16, 14);
-    const pinkyUp = isRaised(20, 18);
-    const thumbUp = lm[4].y < lm[2].y && lm[4].y < lm[8].y;
-
-    // 🤚 Palm: All 4 fingers up
-    if (indexUp && middleUp && ringUp && pinkyUp) return 'STOP';
-
-    // 👍 Thumbs Up: Only thumb up, others down
-    if (thumbUp && !indexUp && !middleUp && !ringUp && !pinkyUp) return 'START';
-
-    // 🤞 Crossed: Index and Middle up and very close/touching
-    if (indexUp && middleUp && !ringUp && !pinkyUp) {
-        const dx = lm[8].x - lm[12].x;
-        const dy = lm[8].y - lm[12].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 0.04) return 'RESET';
-    }
-
-    return null;
-}
-
-function handleGesture(command) {
-    const notif = document.getElementById('gesture-notif');
-    const icon = document.getElementById('gesture-icon');
-    const text = document.getElementById('gesture-text');
-
-    notif.style.display = 'block';
-
-    if (command === 'START') {
-        icon.innerText = '👍';
-        text.innerText = 'STARTING CAPTURE...';
-        if (!liveToggle.checked) {
-            liveToggle.checked = true;
-            liveToggle.dispatchEvent(new Event('change'));
-        }
-    } else if (command === 'STOP') {
-        icon.innerText = '🤚';
-        text.innerText = 'STOPPING CAPTURE...';
-        if (liveToggle.checked) {
-            liveToggle.checked = false;
-            liveToggle.dispatchEvent(new Event('change'));
-        }
-    } else if (command === 'RESET') {
-        icon.innerText = '🤞';
-        text.innerText = 'RESETTING SYSTEM...';
-        // Clear alerts and streak
-        alertsContainer.innerHTML = '<div id="alerts-placeholder" class="text-center py-5 text-muted opacity-50"><i data-lucide="bell-off" class="d-block mx-auto mb-2" style="width: 32px; height: 32px;"></i><p class="small mb-0">No alerts yet</p></div>';
-        lucide.createIcons();
-        document.getElementById('stat-streak').innerText = '0';
-    }
-
-    setTimeout(() => {
-        notif.style.display = 'none';
-        lastGesture = null;
-    }, 2000);
-}
 
 async function onResults(results) {
     if (!isLive) return;
@@ -798,10 +707,6 @@ async function startCamera() {
 
     globalCamera = new Camera(videoElement, {
         onFrame: async () => {
-            // Hands detection runs ALWAYS to allow "Resume" gesture
-            await hands.send({ image: videoElement });
-
-            // Pose detection runs only when LIVE to save CPU
             if (isLive) {
                 await pose.send({ image: videoElement });
             }
@@ -841,31 +746,15 @@ liveToggle.addEventListener('change', async (e) => {
         }, 500);
 
     } else {
-        // We don't stop the camera, just hide preview and stop audio
-        // To allow the 👍 gesture to work
-        if (!isPreview) cameraContainer.style.display = 'none';
-        // Note: Audio is paused to save resources
-        if (audioContext && audioContext.state !== 'closed') {
-            await audioContext.suspend();
+        cameraContainer.style.display = 'none';
+        if (audioContext) audioContext.close();
+        if (globalCamera) {
+            await globalCamera.stop();
+            globalCamera = null;
         }
     }
 });
 
-gestureBtn.addEventListener('click', async () => {
-    gestureBtn.disabled = true;
-    gestureBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>CALIBRATING...';
-
-    try {
-        await startCamera();
-        gestureBtn.innerHTML = '<i data-lucide="check-circle" class="me-2"></i>GESTURES ACTIVE';
-        gestureBtn.className = 'btn btn-success w-100 fw-bold';
-        lucide.createIcons();
-    } catch (err) {
-        gestureBtn.disabled = false;
-        gestureBtn.innerHTML = '<i data-lucide="alert-circle" class="me-2"></i>RETRY WAKE UP';
-        console.error(err);
-    }
-});
 const zoneSelect = document.getElementById('zone-select');
 const newZoneInput = document.getElementById('new-zone-input');
 

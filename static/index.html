@@ -9,51 +9,16 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="manifest" href="/static/manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
         crossorigin="anonymous"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
-    <style>
-        /* Gesture Overlay */
-        #gesture-notif {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10000;
-            padding: 15px 30px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 50px;
-            font-weight: 800;
-            display: none;
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--bs-primary);
-            animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translate(-50%, -100px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translate(-50%, 0);
-                opacity: 1;
-            }
-        }
-    </style>
 </head>
 
 <body class="bg-light">
-    <!-- Gesture Notification -->
-    <div id="gesture-notif">
-        <span id="gesture-icon">🚀</span> <span id="gesture-text">COMMAND READY</span>
-    </div>
     <!-- Particle System Canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
 
@@ -97,10 +62,6 @@
                                 <button id="fullscreen-btn" class="btn btn-sm btn-outline-secondary"
                                     onclick="toggleFullscreen()" title="Toggle Fullscreen">
                                     <i data-lucide="maximize" style="width: 16px; height: 16px;"></i>
-                                </button>
-                                <button id="gesture-enable-btn" class="btn btn-sm btn-outline-warning"
-                                    title="Initialize Gestures">
-                                    <i data-lucide="hand" style="width: 16px; height: 16px;"></i> Wake Up
                                 </button>
                                 <div class="form-check form-switch pt-1">
                                     <input class="form-check-input" type="checkbox" id="live-toggle">
