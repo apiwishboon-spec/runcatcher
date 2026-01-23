@@ -402,9 +402,17 @@ function handleStaffSummonAlert(data) {
         <h1 class="display-1 fw-black">🚨 EMERGENCY 🚨</h1>
         <h2 class="display-4 fw-bold mb-4">Staff Summoned to: ${data.zone}</h2>
         <p class="lead">From: ${data.sender} | Time: ${data.time}</p>
-        <button class="btn btn-light btn-lg mt-4 px-5 fw-bold" onclick="this.parentElement.remove(); location.reload();">DISMISS</button>
+        <button type="button" class="btn btn-light btn-lg mt-4 px-5 fw-bold dismiss-summon-btn">DISMISS</button>
     `;
     document.body.appendChild(overlay);
+    
+    // Attach event listener to dismiss button to prevent page refresh
+    const dismissBtn = overlay.querySelector('.dismiss-summon-btn');
+    dismissBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        overlay.remove();
+    });
 }
 
 // --- UI Updates ---
