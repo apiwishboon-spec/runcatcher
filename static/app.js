@@ -492,15 +492,44 @@ function addAlertToList(result) {
 }
 
 async function captureSnapshot(zone) {
-    if (!videoElement) return null;
+    // Try to use output canvas first (more reliable as it's already rendering)
+    let sourceElement = canvasElement;
+    let sourceWidth = canvasElement.width;
+    let sourceHeight = canvasElement.height;
+
+    // Fallback to video element if canvas isn't available or has no content
+    if (!sourceElement || sourceWidth === 0 || sourceHeight === 0) {
+        if (!videoElement) {
+            console.warn('Neither canvas nor video element available for capture');
+            return null;
+        }
+
+        // Check if video is ready and has valid dimensions
+        if (!videoElement.videoWidth || !videoElement.videoHeight || videoElement.readyState < 2) {
+            console.warn('Video not ready for capture', {
+                videoWidth: videoElement.videoWidth,
+                videoHeight: videoElement.videoHeight,
+                readyState: videoElement.readyState
+            });
+            return null;
+        }
+        sourceElement = videoElement;
+        sourceWidth = videoElement.videoWidth;
+        sourceHeight = videoElement.videoHeight;
+    }
 
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = videoElement.videoWidth || 640;
-    tempCanvas.height = videoElement.videoHeight || 480;
+    tempCanvas.width = sourceWidth;
+    tempCanvas.height = sourceHeight;
     const ctx = tempCanvas.getContext('2d');
 
     // 1. Draw original video frame
-    ctx.drawImage(videoElement, 0, 0);
+    try {
+        ctx.drawImage(sourceElement, 0, 0);
+    } catch (err) {
+        console.error('Failed to draw source to canvas:', err);
+        return null;
+    }
 
     // 2. Add technical "Evidence" overlay if a box exists
     if (lastBoundingBox) {
@@ -548,14 +577,26 @@ async function captureSnapshot(zone) {
     }
 
     const dataUrl = tempCanvas.toDataURL('image/jpeg', 0.8);
+    
+    if (!dataUrl || dataUrl === 'data:,') {
+        console.error('Failed to generate canvas data URL');
+        return null;
+    }
 
     try {
+        console.log('Uploading snapshot for zone:', zone, 'Size:', dataUrl.length, 'bytes');
         const response = await fetch('/upload/snapshot', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ zone, image: dataUrl })
         });
+        
+        if (!response.ok) {
+            throw new Error(`Upload failed with status: ${response.status}`);
+        }
+        
         const data = await response.json();
+        console.log('Snapshot uploaded successfully:', data.url);
         return data.url;
     } catch (err) {
         console.error('Snapshot upload failed:', err);
@@ -784,16 +825,52 @@ function getBase64Image(url) {
 async function startCamera() {
     if (globalCamera) return;
 
+    const cameraWidth = 480;
+    const cameraHeight = 360;
+
+    // Set canvas dimensions to match camera
+    canvasElement.width = cameraWidth;
+    canvasElement.height = cameraHeight;
+
     globalCamera = new Camera(videoElement, {
         onFrame: async () => {
             if (isLive) {
                 await pose.send({ image: videoElement });
             }
         },
-        width: 480,
-        height: 360
+        width: cameraWidth,
+        height: cameraHeight
     });
-    return globalCamera.start();
+    
+    await globalCamera.start();
+    
+    // Wait for video metadata to be loaded and sync canvas dimensions
+    return new Promise((resolve) => {
+        const syncDimensions = () => {
+            if (videoElement.videoWidth && videoElement.videoHeight) {
+                canvasElement.width = videoElement.videoWidth;
+                canvasElement.height = videoElement.videoHeight;
+                resolve();
+            } else {
+                // Retry after a short delay if not ready yet
+                setTimeout(syncDimensions, 100);
+            }
+        };
+        
+        if (videoElement.readyState >= 1) {
+            syncDimensions();
+        } else {
+            videoElement.addEventListener('loadedmetadata', syncDimensions, { once: true });
+            // Fallback timeout
+            setTimeout(() => {
+                if (videoElement.videoWidth && videoElement.videoHeight) {
+                    canvasElement.width = videoElement.videoWidth;
+                    canvasElement.height = videoElement.videoHeight;
+                }
+                resolve();
+            }, 2000);
+        }
+    });
 }
 
 liveToggle.addEventListener('change', async (e) => {
