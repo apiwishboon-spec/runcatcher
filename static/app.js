@@ -16,6 +16,7 @@ let isLive = false;
 let isPreview = false;
 let lastPoseTime = 0;
 let lastCentroid = { x: 0, y: 0 };
+let lastBoundingBox = null;
 let speedBuffer = [];
 const BUFFER_SIZE = 5;
 let audioContext, analyser, dataArray;
@@ -117,7 +118,17 @@ async function onResults(results) {
         lastCentroid = currentCentroid;
         lastPoseTime = now;
 
+        // 4. Calculate Bounding Box for Highlighting
+        lastBoundingBox = getBoundingBox(results.poseLandmarks);
+
         drawLandmarks(results.poseLandmarks);
+
+        // Draw real-time box in preview
+        if (isPreview) {
+            drawBoundingBox(canvasCtx, lastBoundingBox, speed > speedThreshold ? 'RUNNING' : 'SUSPECT');
+        }
+    } else {
+        lastBoundingBox = null;
     }
     canvasCtx.restore();
 }
@@ -168,6 +179,53 @@ function drawLandmarks(landmarks) {
         canvasCtx.arc(landmark.x * canvasElement.width, landmark.y * canvasElement.height, 2, 0, 2 * Math.PI);
         canvasCtx.fill();
     }
+}
+
+function getBoundingBox(landmarks) {
+    let minX = 1, minY = 1, maxX = 0, maxY = 0;
+    landmarks.forEach(lm => {
+        if (lm.x < minX) minX = lm.x;
+        if (lm.x > maxX) maxX = lm.x;
+        if (lm.y < minY) minY = lm.y;
+        if (lm.y > maxY) maxY = lm.y;
+    });
+    const width = maxX - minX;
+    const height = maxY - minY;
+    return {
+        x: Math.max(0, minX - width * 0.1),
+        y: Math.max(0, minY - height * 0.1),
+        w: Math.min(1, width * 1.2),
+        h: Math.min(1, height * 1.2)
+    };
+}
+
+function drawBoundingBox(ctx, box, label) {
+    const bx = box.x * canvasElement.width;
+    const by = box.y * canvasElement.height;
+    const bw = box.w * canvasElement.width;
+    const bh = box.h * canvasElement.height;
+
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([5, 5]); // Cyber style dashed line
+    ctx.strokeRect(bx, by, bw, bh);
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.fillText(`[ ${label} ]`, bx, by - 8);
+
+    // Corner brackets
+    const b = 15;
+    ctx.lineWidth = 4;
+    // Top Left
+    ctx.beginPath(); ctx.moveTo(bx, by + b); ctx.lineTo(bx, by); ctx.lineTo(bx + b, by); ctx.stroke();
+    // Top Right
+    ctx.beginPath(); ctx.moveTo(bx + bw - b, by); ctx.lineTo(bx + bw, by); ctx.lineTo(bx + bw, by + b); ctx.stroke();
+    // Bottom Left
+    ctx.beginPath(); ctx.moveTo(bx, by + bh - b); ctx.lineTo(bx, by + bh); ctx.lineTo(bx + b, by + bh); ctx.stroke();
+    // Bottom Right
+    ctx.beginPath(); ctx.moveTo(bx + bw - b, by + bh); ctx.lineTo(bx + bw, by + bh); ctx.lineTo(bx + bw, by + bh - b); ctx.stroke();
 }
 
 // --- Audio Setup ---
@@ -307,8 +365,37 @@ async function captureSnapshot(zone) {
     tempCanvas.width = videoElement.videoWidth;
     tempCanvas.height = videoElement.videoHeight;
     const ctx = tempCanvas.getContext('2d');
+
+    // 1. Draw original video frame
     ctx.drawImage(videoElement, 0, 0);
-    const dataUrl = tempCanvas.toDataURL('image/jpeg');
+
+    // 2. Add technical "Evidence" overlay if a box exists
+    if (lastBoundingBox) {
+        const bx = lastBoundingBox.x * tempCanvas.width;
+        const by = lastBoundingBox.y * tempCanvas.height;
+        const bw = lastBoundingBox.w * tempCanvas.width;
+        const bh = lastBoundingBox.h * tempCanvas.height;
+
+        // Red Square
+        ctx.strokeStyle = '#ff3e3e';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(bx, by, bw, bh);
+
+        // Cyber Label
+        ctx.fillStyle = '#ff3e3e';
+        ctx.font = 'bold 24px Inter, sans-serif';
+        const label = document.getElementById('status-badge').innerText;
+        ctx.fillText(`>> ${label} IDENTIFIED`, bx, by - 15);
+
+        // Add timestamp to image
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.fillRect(0, tempCanvas.height - 40, tempCanvas.width, 40);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '16px monospace';
+        ctx.fillText(`CAPTURE_TS: ${new Date().toISOString()} | ZONE: ${zone}`, 20, tempCanvas.height - 15);
+    }
+
+    const dataUrl = tempCanvas.toDataURL('image/jpeg', 0.8);
 
     try {
         const response = await fetch('/upload/snapshot', {
