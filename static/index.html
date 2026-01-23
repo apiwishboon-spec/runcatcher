@@ -229,8 +229,14 @@
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm glass-card h-100">
                     <div class="card-body p-4">
-                        <h5 class="card-title mb-3 d-flex align-items-center text-warning">
-                            <i data-lucide="smartphone" class="me-2"></i> Librarian's Watch
+                        <h5 class="card-title mb-3 d-flex align-items-center text-warning justify-content-between">
+                            <span class="d-flex align-items-center">
+                                <i data-lucide="smartphone" class="me-2"></i> Librarian's Watch
+                            </span>
+                            <a href="#" class="text-warning opacity-75 small text-decoration-none fw-normal"
+                                data-bs-toggle="modal" data-bs-target="#watchHelpModal">
+                                <i data-lucide="help-circle" style="width: 14px; height: 14px;"></i> How to use
+                            </a>
                         </h5>
                         <div class="vstack gap-3">
                             <div class="d-flex gap-2">
@@ -293,6 +299,33 @@
                     <button class="btn btn-primary" onclick="downloadPDFReport()">
                         <i data-lucide="download" class="me-1" style="width: 16px; height: 16px;"></i> Report
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Librarian's Watch Help -->
+    <div class="modal fade" id="watchHelpModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold text-warning">How to use: Librarian's Watch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ol class="small text-muted vstack gap-3">
+                        <li><strong>On your Laptop (Station):</strong> Click the refresh icon <i
+                                data-lucide="refresh-cw" style="width: 12px;"></i> to generate a code, then click
+                            <strong>Join</strong>.</li>
+                        <li><strong>On your Phone/Watch:</strong> Open this same URL, enter the code in the
+                            <strong>Join</strong> box, and click <strong>Join</strong>.</li>
+                        <li><strong>Start Monitoring:</strong> Once both are joined, keep your phone in your pocket. It
+                            will vibrate and chime whenever an alert is triggered by the laptop's camera.</li>
+                    </ol>
+                    <div class="alert alert-warning py-2 mt-3 small border-0 opacity-75">
+                        <i data-lucide="info" class="me-1" style="width: 14px;"></i> Keep the browser tab open on your
+                        phone for haptics.
+                    </div>
                 </div>
             </div>
         </div>
