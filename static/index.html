@@ -8,13 +8,52 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/united/bootstrap.min.css">
     <link rel="stylesheet" href="/static/style.css">
     <link rel="manifest" href="/static/manifest.json">
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+    <style>
+        /* Gesture Overlay */
+        #gesture-notif {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 50px;
+            font-weight: 800;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--bs-primary);
+            animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-light">
+    <!-- Gesture Notification -->
+    <div id="gesture-notif">
+        <span id="gesture-icon">🚀</span> <span id="gesture-text">COMMAND READY</span>
+    </div>
     <!-- Particle System Canvas -->
     <canvas id="particle-canvas" class="particle-canvas"></canvas>
 
@@ -316,9 +355,11 @@
                     <ol class="small text-muted vstack gap-3">
                         <li><strong>On your Laptop (Station):</strong> Click the refresh icon <i
                                 data-lucide="refresh-cw" style="width: 12px;"></i> to generate a code, then click
-                            <strong>Join</strong>.</li>
+                            <strong>Join</strong>.
+                        </li>
                         <li><strong>On your Phone/Watch:</strong> Open this same URL, enter the code in the
-                            <strong>Join</strong> box, and click <strong>Join</strong>.</li>
+                            <strong>Join</strong> box, and click <strong>Join</strong>.
+                        </li>
                         <li><strong>Start Monitoring:</strong> Once both are joined, keep your phone in your pocket. It
                             will vibrate and chime whenever an alert is triggered by the laptop's camera.</li>
                     </ol>

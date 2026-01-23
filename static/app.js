@@ -30,8 +30,22 @@ let gridRows = 2;
 let gridCols = 2;
 let watchSocket = null;
 let currentRoomId = null;
+let lastGesture = null;
+let gestureDebounce = 0;
+let globalCamera = null;
 
 // --- MediaPipe Setup ---
+const hands = new Hands({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+});
+hands.setOptions({
+    maxNumHands: 1,
+    modelComplexity: 1,
+    minDetectionConfidence: 0.7,
+    minTrackingConfidence: 0.7
+});
+hands.onResults(onHandsResults);
+
 const pose = new Pose({
     locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
 });
@@ -43,9 +57,83 @@ pose.setOptions({
     minTrackingConfidence: 0.5
 });
 
-pose.onResults(async (results) => {
-    await onResults(results);
-});
+// --- Gesture Engine ---
+function onHandsResults(results) {
+    if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) return;
+
+    const now = Date.now();
+    if (now < gestureDebounce) return;
+
+    const landmarks = results.multiHandLandmarks[0];
+    const gesture = detectGesture(landmarks);
+
+    if (gesture && gesture !== lastGesture) {
+        handleGesture(gesture);
+        lastGesture = gesture;
+        gestureDebounce = now + 1500; // 1.5s cooldown
+    }
+}
+
+function detectGesture(lm) {
+    // lm indices: 4=thumb_tip, 8=index_tip, 12=middle_tip, 16=ring_tip, 20=pinky_tip
+    // knuckles: 2=thumb_mcp, 6=index_pip, 10=middle_pip, 14=ring_pip, 18=pinky_pip
+
+    const indexUp = lm[8].y < lm[6].y;
+    const middleUp = lm[12].y < lm[10].y;
+    const ringUp = lm[16].y < lm[14].y;
+    const pinkyUp = lm[20].y < lm[18].y;
+    const thumbUp = lm[4].y < lm[3].y && lm[4].y < lm[8].y;
+
+    // 🤚 Palm (All up)
+    if (indexUp && middleUp && ringUp && pinkyUp && !thumbUp) return 'STOP';
+
+    // 👍 Thumbs Up (Only thumb up)
+    if (thumbUp && !indexUp && !middleUp && !ringUp && !pinkyUp) return 'START';
+
+    // 🤞 Crossed (Index and Middle up and crossing/very close)
+    if (indexUp && middleUp && !ringUp && !pinkyUp) {
+        const dist = Math.abs(lm[8].x - lm[12].x);
+        if (dist < 0.03) return 'RESET';
+    }
+
+    return null;
+}
+
+function handleGesture(command) {
+    const notif = document.getElementById('gesture-notif');
+    const icon = document.getElementById('gesture-icon');
+    const text = document.getElementById('gesture-text');
+
+    notif.style.display = 'block';
+
+    if (command === 'START') {
+        icon.innerText = '👍';
+        text.innerText = 'STARTING CAPTURE...';
+        if (!liveToggle.checked) {
+            liveToggle.checked = true;
+            liveToggle.dispatchEvent(new Event('change'));
+        }
+    } else if (command === 'STOP') {
+        icon.innerText = '🤚';
+        text.innerText = 'STOPPING CAPTURE...';
+        if (liveToggle.checked) {
+            liveToggle.checked = false;
+            liveToggle.dispatchEvent(new Event('change'));
+        }
+    } else if (command === 'RESET') {
+        icon.innerText = '🤞';
+        text.innerText = 'RESETTING SYSTEM...';
+        // Clear alerts and streak
+        alertsContainer.innerHTML = '<div id="alerts-placeholder" class="text-center py-5 text-muted opacity-50"><i data-lucide="bell-off" class="d-block mx-auto mb-2" style="width: 32px; height: 32px;"></i><p class="small mb-0">No alerts yet</p></div>';
+        lucide.createIcons();
+        document.getElementById('stat-streak').innerText = '0';
+    }
+
+    setTimeout(() => {
+        notif.style.display = 'none';
+        lastGesture = null;
+    }, 2000);
+}
 
 async function onResults(results) {
     if (!isLive) return;
@@ -701,51 +789,62 @@ function getBase64Image(url) {
     });
 }
 
-// --- Live Toggle ---
+// --- Camera & Lifecycle ---
+async function startCamera() {
+    if (globalCamera) return;
+
+    globalCamera = new Camera(videoElement, {
+        onFrame: async () => {
+            // Hands detection runs ALWAYS to allow "Resume" gesture
+            await hands.send({ image: videoElement });
+
+            // Pose detection runs only when LIVE to save CPU
+            if (isLive) {
+                await pose.send({ image: videoElement });
+            }
+        },
+        width: 480,
+        height: 360
+    });
+    return globalCamera.start();
+}
+
 liveToggle.addEventListener('change', async (e) => {
     isLive = e.target.checked;
+
     if (isLive) {
         if (isPreview) cameraContainer.style.display = 'block';
         await setupAudio();
-        const camera = new Camera(videoElement, {
-            onFrame: async () => {
-                await pose.send({ image: videoElement });
-            },
-            width: 480,
-            height: 360
-        });
-        camera.start();
+        await startCamera();
 
-        // Polling for audio and Heartbeat to reset status
+        // Polling for audio and Heartbeat
         let ticksSinceLastSent = 0;
         const audioInterval = setInterval(async () => {
             if (!isLive) { clearInterval(audioInterval); return; }
+
             const noise = getNoiseLevel();
             const currentSpeed = parseFloat(document.getElementById('stat-speed').innerText) || 0;
             document.getElementById('stat-noise').innerText = Math.round(noise);
 
             ticksSinceLastSent++;
 
-            // Send detection if threshold crossed OR every 2 seconds (heartbeat)
             if (noise > noiseThreshold || currentSpeed > speedThreshold || ticksSinceLastSent >= 4) {
                 const needsSnapshot = (noise > noiseThreshold || currentSpeed > speedThreshold);
-
-                // Recalculate effective zone for periodic heartbeats too
-                let effectiveZone = currentZone;
-                if (gridMode && lastCentroid.x) {
-                    effectiveZone = document.getElementById('stat-zone').innerText;
-                }
-
+                let effectiveZone = document.getElementById('stat-zone').innerText;
                 const snapshotUrl = (needsSnapshot && isLive) ? await captureSnapshot(effectiveZone) : null;
-
                 sendDetection(effectiveZone, currentSpeed, noise, snapshotUrl);
                 ticksSinceLastSent = 0;
             }
         }, 500);
 
     } else {
-        cameraContainer.style.display = 'none';
-        if (audioContext) audioContext.close();
+        // We don't stop the camera, just hide preview and stop audio
+        // To allow the 👍 gesture to work
+        if (!isPreview) cameraContainer.style.display = 'none';
+        // Note: Audio is paused to save resources
+        if (audioContext && audioContext.state !== 'closed') {
+            await audioContext.suspend();
+        }
     }
 });
 
