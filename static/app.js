@@ -32,10 +32,6 @@ let watchSocket = null;
 let currentRoomId = null;
 let globalCamera = null;
 
-pose.onResults(async (results) => {
-    await onResults(results);
-});
-
 const pose = new Pose({
     locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
 });
@@ -45,6 +41,10 @@ pose.setOptions({
     smoothLandmarks: true,
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5
+});
+
+pose.onResults(async (results) => {
+    await onResults(results);
 });
 
 async function onResults(results) {
@@ -88,6 +88,7 @@ async function onResults(results) {
 
         if (lastPoseTime > 0) {
             const dt = (now - lastPoseTime) / 1000;
+            if (dt <= 0) return; // Prevent division by zero
             let dx = currentCentroid.x - lastCentroid.x;
             let dy = currentCentroid.y - lastCentroid.y;
 
@@ -111,11 +112,6 @@ async function onResults(results) {
                 const percent = Math.min(100, speed * 20);
                 speedMeter.style.width = percent + '%';
                 speedMeter.className = speed > speedThreshold ? 'progress-bar bg-danger' : 'progress-bar bg-primary';
-            }
-
-            if (speed > speedThreshold) {
-                const snapshotUrl = await captureSnapshot(effectiveZone);
-                sendDetection(effectiveZone, speed, getNoiseLevel(), snapshotUrl);
             }
         }
 
@@ -483,8 +479,8 @@ async function captureSnapshot(zone) {
     if (!videoElement) return null;
 
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = videoElement.videoWidth;
-    tempCanvas.height = videoElement.videoHeight;
+    tempCanvas.width = videoElement.videoWidth || 640;
+    tempCanvas.height = videoElement.videoHeight || 480;
     const ctx = tempCanvas.getContext('2d');
 
     // 1. Draw original video frame
