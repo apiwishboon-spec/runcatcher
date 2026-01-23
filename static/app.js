@@ -71,7 +71,13 @@ async function onResults(results) {
 
         if (lastPoseTime > 0) {
             const dt = (now - lastPoseTime) / 1000;
-            const dx = Math.abs(hipX - lastX);
+            let dx = Math.abs(hipX - lastX);
+
+            // Adjust sensitivity for grid mode: movements are smaller relative to total frame
+            if (gridMode) {
+                dx *= gridCols;
+            }
+
             const speed = (dx / dt) * 5;
 
             document.getElementById('stat-speed').innerText = speed.toFixed(1);
