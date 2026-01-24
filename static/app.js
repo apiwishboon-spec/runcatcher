@@ -54,11 +54,14 @@ pose.onResults(async (results) => {
 async function onResults(results) {
     if (!isLive) return;
 
+    // Only perform canvas drawing when not in preview mode (when canvas is visible)
+    if (!isPreview) {
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
     if (gridMode) {
         drawGrid();
+        }
     }
 
     if (results.poseLandmarks) {
@@ -93,6 +96,8 @@ async function onResults(results) {
             currentActiveCell = null;
         }
 
+        let currentSpeed = 0; // Declare speed variable for use in preview mode
+
         if (lastPoseTime > 0) {
             const dt = (now - lastPoseTime) / 1000;
             if (dt <= 0) return; // Prevent division by zero
@@ -111,14 +116,14 @@ async function onResults(results) {
             // 3. Smoothing: Moving Average Buffer
             speedBuffer.push(instantSpeed);
             if (speedBuffer.length > BUFFER_SIZE) speedBuffer.shift();
-            const speed = speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length;
+            currentSpeed = speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length;
 
-            document.getElementById('stat-speed').innerText = speed.toFixed(1);
+            document.getElementById('stat-speed').innerText = currentSpeed.toFixed(1);
             const speedMeter = document.getElementById('speed-meter');
             if (speedMeter) {
-                const percent = Math.min(100, speed * 20);
+                const percent = Math.min(100, currentSpeed * 20);
                 speedMeter.style.width = percent + '%';
-                speedMeter.className = speed > speedThreshold ? 'progress-bar bg-danger' : 'progress-bar bg-primary';
+                speedMeter.className = currentSpeed > speedThreshold ? 'progress-bar bg-danger' : 'progress-bar bg-primary';
             }
         }
 
@@ -132,16 +137,51 @@ async function onResults(results) {
         // 4. Calculate Bounding Box for Highlighting
         lastBoundingBox = getBoundingBox(results.poseLandmarks);
 
+        // Only perform canvas drawing when not in preview mode
+        if (!isPreview) {
         drawLandmarks(results.poseLandmarks);
+        }
 
-        // Draw real-time box in preview
-        if (isPreview) {
-            drawBoundingBox(canvasCtx, lastBoundingBox, speed > speedThreshold ? 'RUNNING' : 'SUSPECT');
+        // Draw real-time box in preview mode (on grid overlay)
+        if (isPreview && gridMode && gridOverlayCanvas) {
+            // Draw bounding box on grid overlay instead of main canvas
+            const overlayCtx = gridOverlayCtx;
+            if (overlayCtx && lastBoundingBox) {
+                const rect = videoElement.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    gridOverlayCanvas.width = rect.width;
+                    gridOverlayCanvas.height = rect.height;
+
+                    overlayCtx.strokeStyle = currentSpeed > speedThreshold ? '#ef4444' : '#f97316';
+                    overlayCtx.lineWidth = 3;
+                    overlayCtx.setLineDash([5, 5]);
+                    overlayCtx.strokeRect(
+                        lastBoundingBox.x * rect.width,
+                        lastBoundingBox.y * rect.height,
+                        lastBoundingBox.w * rect.width,
+                        lastBoundingBox.h * rect.height
+                    );
+                    overlayCtx.setLineDash([]);
+
+                    // Label
+                    overlayCtx.fillStyle = currentSpeed > speedThreshold ? '#ef4444' : '#f97316';
+                    overlayCtx.font = 'bold 14px Inter, sans-serif';
+                    overlayCtx.fillText(
+                        currentSpeed > speedThreshold ? '[ RUNNING ]' : '[ SUSPECT ]',
+                        lastBoundingBox.x * rect.width,
+                        lastBoundingBox.y * rect.height - 8
+                    );
+                }
+            }
         }
     } else {
         lastBoundingBox = null;
     }
+
+    // Only restore canvas context when not in preview mode
+    if (!isPreview) {
     canvasCtx.restore();
+    }
 }
 
 function drawGridOnOverlay() {
