@@ -746,8 +746,8 @@ function addAlertToList(result) {
     // Store metadata in data attributes for the modal
     alertEl.dataset.time = time;
     alertEl.dataset.timestamp = Date.now(); // Record current time for cleanup
-    alertEl.dataset.noise = result.noise_level;
-    alertEl.dataset.speed = result.movement_speed;
+    alertEl.dataset.noise = result.noise_level || 0;
+    alertEl.dataset.speed = result.movement_speed || 0;
     alertEl.dataset.img = result.alert_snapshot_url;
     alertEl.dataset.zone = result.zone_name;
     alertEl.dataset.status = result.status.replace('_', ' ');
@@ -874,9 +874,9 @@ async function captureSnapshot(zone) {
 function showSnapshot(element) {
     const modal = new bootstrap.Modal(document.getElementById('snapshotModal'));
     document.getElementById('snapshot-img').src = element.dataset.img;
-    document.getElementById('modal-time').innerText = element.dataset.time;
-    document.getElementById('modal-noise').innerText = element.dataset.noise + ' dB';
-    document.getElementById('modal-speed').innerText = element.dataset.speed + ' m/s';
+    document.getElementById('modal-time').innerText = element.dataset.time || 'Unknown';
+    document.getElementById('modal-noise').innerText = (element.dataset.noise || '0') + ' dB';
+    document.getElementById('modal-speed').innerText = (element.dataset.speed || '0') + ' m/s';
 
     // Store current element for PDF export
     window.currentAlertElement = element;

@@ -20,4 +20,6 @@ class DetectionResult(BaseModel):
     streak: int
     alert_snapshot_url: Optional[str] = None
     zone_name: str
+    movement_speed: float
+    noise_level: float
     room_id: Optional[str] = None

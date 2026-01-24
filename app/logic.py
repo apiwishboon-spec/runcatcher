@@ -40,5 +40,7 @@ def classify_behavior(reading: SensorReading, alert_snapshot_url: Optional[str] 
         message=message,
         streak=zone_streaks.get(reading.zone_name, 0),
         alert_snapshot_url=snapshot_url,
-        zone_name=reading.zone_name
+        zone_name=reading.zone_name,
+        movement_speed=reading.movement_speed,
+        noise_level=reading.noise_level
     )
