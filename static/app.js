@@ -1025,10 +1025,16 @@ function togglePreview() {
     if (isPreview) {
         cameraContainer.style.display = 'block';
         statusDisplay.style.display = 'none';
+        // Show real video feed
+        videoElement.style.display = 'block';
+        canvasElement.style.display = 'none';
         icon.setAttribute('data-lucide', 'eye-off');
     } else {
         cameraContainer.style.display = 'none';
         statusDisplay.style.display = 'block';
+        // Hide video when preview is off
+        videoElement.style.display = 'none';
+        canvasElement.style.display = 'none';
         icon.setAttribute('data-lucide', 'eye');
     }
     lucide.createIcons();
