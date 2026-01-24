@@ -28,6 +28,8 @@ let currentZone = 'reading_area'; // Default zone
 let gridMode = false;
 let gridRows = 2;
 let gridCols = 2;
+let gridCellActivity = {}; // Track activity per cell: { camId: { lastActive: timestamp, status: 'QUIET'|'LOUD'|'RUNNING', count: number } }
+let currentActiveCell = null;
 let watchSocket = null;
 let currentRoomId = null;
 let globalCamera = null;
@@ -76,14 +78,17 @@ async function onResults(results) {
 
         // Calculate specific zone if in grid mode
         let effectiveZone = currentZone;
+        let currentCamId = null;
         if (gridMode) {
             const row = Math.floor(currentCentroid.y * gridRows);
             const col = Math.floor(currentCentroid.x * gridCols);
-            const camId = (row * gridCols) + col + 1;
-            effectiveZone = `${currentZone} (Cam ${camId})`;
+            currentCamId = (row * gridCols) + col + 1;
+            effectiveZone = `${currentZone} (Cam ${currentCamId})`;
             document.getElementById('stat-zone').innerText = effectiveZone;
+            currentActiveCell = currentCamId;
         } else {
             document.getElementById('stat-zone').innerText = formatZoneName(currentZone);
+            currentActiveCell = null;
         }
 
         if (lastPoseTime > 0) {
@@ -138,14 +143,86 @@ async function onResults(results) {
 }
 
 function drawGrid() {
-    canvasCtx.strokeStyle = 'rgba(233, 84, 32, 0.6)';
-    canvasCtx.lineWidth = 2;
-    canvasCtx.font = '14px Inter, sans-serif';
-    canvasCtx.fillStyle = 'rgba(233, 84, 32, 1)';
-    canvasCtx.textAlign = 'center';
-
     const cellWidth = canvasElement.width / gridCols;
     const cellHeight = canvasElement.height / gridRows;
+    const now = Date.now();
+    const fadeTime = 3000; // Fade out after 3 seconds
+
+    // Draw grid cells with activity highlighting
+    for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridCols; c++) {
+            const camId = (r * gridCols) + c + 1;
+            const x = c * cellWidth;
+            const y = r * cellHeight;
+            const cellData = gridCellActivity[camId];
+
+            // Draw cell background with activity highlight
+            if (cellData && (now - cellData.lastActive) < fadeTime) {
+                const fadeAlpha = 1 - ((now - cellData.lastActive) / fadeTime);
+                let highlightColor = 'rgba(233, 84, 32, 0.1)'; // Default orange
+                
+                if (cellData.status === 'RUNNING_DETECTED') {
+                    highlightColor = `rgba(220, 53, 69, ${0.2 * fadeAlpha})`; // Red
+                } else if (cellData.status === 'LOUD') {
+                    highlightColor = `rgba(13, 202, 240, ${0.15 * fadeAlpha})`; // Cyan
+                } else {
+                    highlightColor = `rgba(233, 84, 32, ${0.1 * fadeAlpha})`; // Orange
+                }
+
+                canvasCtx.fillStyle = highlightColor;
+                canvasCtx.fillRect(x, y, cellWidth, cellHeight);
+            }
+
+            // Draw cell border with corner brackets (CCTV style)
+            canvasCtx.strokeStyle = cellData && (now - cellData.lastActive) < fadeTime 
+                ? (cellData.status === 'RUNNING_DETECTED' ? 'rgba(220, 53, 69, 0.8)' : 'rgba(233, 84, 32, 0.6)')
+                : 'rgba(233, 84, 32, 0.3)';
+            canvasCtx.lineWidth = cellData && (now - cellData.lastActive) < fadeTime ? 3 : 2;
+            canvasCtx.setLineDash([]);
+            canvasCtx.strokeRect(x, y, cellWidth, cellHeight);
+
+            // Draw corner brackets for active cells
+            if (cellData && (now - cellData.lastActive) < fadeTime) {
+                const bracketSize = 15;
+                canvasCtx.strokeStyle = cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420';
+                canvasCtx.lineWidth = 3;
+                canvasCtx.setLineDash([]);
+                
+                // Top-left corner
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(x, y + bracketSize);
+                canvasCtx.lineTo(x, y);
+                canvasCtx.lineTo(x + bracketSize, y);
+                canvasCtx.stroke();
+                
+                // Top-right corner
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(x + cellWidth - bracketSize, y);
+                canvasCtx.lineTo(x + cellWidth, y);
+                canvasCtx.lineTo(x + cellWidth, y + bracketSize);
+                canvasCtx.stroke();
+                
+                // Bottom-left corner
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(x, y + cellHeight - bracketSize);
+                canvasCtx.lineTo(x, y + cellHeight);
+                canvasCtx.lineTo(x + bracketSize, y + cellHeight);
+                canvasCtx.stroke();
+                
+                // Bottom-right corner
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(x + cellWidth - bracketSize, y + cellHeight);
+                canvasCtx.lineTo(x + cellWidth, y + cellHeight);
+                canvasCtx.lineTo(x + cellWidth, y + cellHeight - bracketSize);
+                canvasCtx.stroke();
+            }
+        }
+    }
+
+    // Draw grid lines (darker, more visible)
+    canvasCtx.strokeStyle = 'rgba(233, 84, 32, 0.6)';
+    canvasCtx.lineWidth = 2;
+    canvasCtx.setLineDash([]);
 
     // Draw Vertical Lines
     for (let i = 1; i < gridCols; i++) {
@@ -165,13 +242,35 @@ function drawGrid() {
         canvasCtx.stroke();
     }
 
-    // Draw Camera Labels
+    // Draw Camera Labels with activity count
+    canvasCtx.font = 'bold 14px Inter, sans-serif';
+    canvasCtx.fillStyle = 'rgba(233, 84, 32, 1)';
+    canvasCtx.textAlign = 'center';
+    canvasCtx.textBaseline = 'top';
+
     for (let r = 0; r < gridRows; r++) {
         for (let c = 0; c < gridCols; c++) {
             const camId = (r * gridCols) + c + 1;
             const x = (c * cellWidth) + (cellWidth / 2);
-            const y = (r * cellHeight) + 20;
-            canvasCtx.fillText(`Cam ${camId}`, x, y);
+            const y = (r * cellHeight) + 8;
+            const cellData = gridCellActivity[camId];
+            
+            let label = `Cam ${camId}`;
+            if (cellData && cellData.count > 0) {
+                label += ` (${cellData.count})`;
+            }
+            
+            // Add background for label readability
+            const textMetrics = canvasCtx.measureText(label);
+            const textWidth = textMetrics.width;
+            const textHeight = 18;
+            canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            canvasCtx.fillRect(x - textWidth / 2 - 4, y - 2, textWidth + 8, textHeight);
+            
+            canvasCtx.fillStyle = cellData && (Date.now() - cellData.lastActive) < 3000 
+                ? (cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420')
+                : 'rgba(233, 84, 32, 1)';
+            canvasCtx.fillText(label, x, y);
         }
     }
 }
@@ -422,6 +521,22 @@ function updateUI(result) {
     document.getElementById('stat-noise').innerText = result.noise_level;
     document.getElementById('stat-streak').innerText = result.streak;
     document.getElementById('stat-zone').innerText = result.zone_name;
+
+    // Track grid cell activity
+    if (gridMode && result.zone_name) {
+        const camMatch = result.zone_name.match(/Cam (\d+)/);
+        if (camMatch) {
+            const camId = parseInt(camMatch[1]);
+            if (!gridCellActivity[camId]) {
+                gridCellActivity[camId] = { count: 0, lastActive: 0, status: 'QUIET' };
+            }
+            gridCellActivity[camId].lastActive = Date.now();
+            gridCellActivity[camId].status = result.status;
+            if (result.status !== 'QUIET') {
+                gridCellActivity[camId].count++;
+            }
+        }
+    }
 
     const statusBadge = document.getElementById('status-badge');
     const statusMessage = document.getElementById('status-message');
@@ -967,6 +1082,8 @@ if (gridModeToggle) {
             gridSettingsContent.style.pointerEvents = 'none';
             if (label) label.style.display = 'none';
             document.getElementById('stat-zone').innerText = formatZoneName(currentZone);
+            gridCellActivity = {}; // Reset activity when grid is disabled
+            currentActiveCell = null;
         }
     });
 }
@@ -974,14 +1091,37 @@ if (gridModeToggle) {
 if (gridRowsInput) {
     gridRowsInput.addEventListener('change', (e) => {
         gridRows = parseInt(e.target.value) || 2;
+        gridCellActivity = {}; // Reset activity when grid changes
     });
 }
 
 if (gridColsInput) {
     gridColsInput.addEventListener('change', (e) => {
         gridCols = parseInt(e.target.value) || 2;
+        gridCellActivity = {}; // Reset activity when grid changes
     });
 }
+
+// Preset grid configuration buttons
+document.querySelectorAll('.preset-grid-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const rows = parseInt(e.target.dataset.rows);
+        const cols = parseInt(e.target.dataset.cols);
+        gridRows = rows;
+        gridCols = cols;
+        gridCellActivity = {}; // Reset activity when grid changes
+        
+        // Update input fields
+        if (gridRowsInput) gridRowsInput.value = rows;
+        if (gridColsInput) gridColsInput.value = cols;
+        
+        // Update button states
+        document.querySelectorAll('.preset-grid-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        e.target.classList.add('active');
+    });
+});
 
 function formatZoneName(zoneValue) {
     return zoneValue.split('_').map(word =>
