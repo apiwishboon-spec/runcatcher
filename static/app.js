@@ -142,38 +142,7 @@ async function onResults(results) {
         drawLandmarks(results.poseLandmarks);
         }
 
-        // Draw real-time box in preview mode (on grid overlay)
-        if (isPreview && gridMode && gridOverlayCanvas) {
-            // Draw bounding box on grid overlay instead of main canvas
-            const overlayCtx = gridOverlayCtx;
-            if (overlayCtx && lastBoundingBox) {
-                const rect = videoElement.getBoundingClientRect();
-                if (rect.width > 0 && rect.height > 0) {
-                    gridOverlayCanvas.width = rect.width;
-                    gridOverlayCanvas.height = rect.height;
-
-                    overlayCtx.strokeStyle = currentSpeed > speedThreshold ? '#ef4444' : '#f97316';
-                    overlayCtx.lineWidth = 3;
-                    overlayCtx.setLineDash([5, 5]);
-                    overlayCtx.strokeRect(
-                        lastBoundingBox.x * rect.width,
-                        lastBoundingBox.y * rect.height,
-                        lastBoundingBox.w * rect.width,
-                        lastBoundingBox.h * rect.height
-                    );
-                    overlayCtx.setLineDash([]);
-
-                    // Label
-                    overlayCtx.fillStyle = currentSpeed > speedThreshold ? '#ef4444' : '#f97316';
-                    overlayCtx.font = 'bold 14px Inter, sans-serif';
-                    overlayCtx.fillText(
-                        currentSpeed > speedThreshold ? '[ RUNNING ]' : '[ SUSPECT ]',
-                        lastBoundingBox.x * rect.width,
-                        lastBoundingBox.y * rect.height - 8
-                    );
-                }
-            }
-        }
+        // Face tracking removed in preview mode for cleaner view
     } else {
         lastBoundingBox = null;
     }
