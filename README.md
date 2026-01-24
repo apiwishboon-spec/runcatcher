@@ -1,141 +1,255 @@
-# 🛡️ LibraryRunCatcher
+# 🛡️ LibraryRunCatcher v2.0
 
-> **Automated Behavior Monitoring & Teacher Accountability System.**
+> **Advanced AI-Powered Behavioral Monitoring & Teacher Accountability System**
 
-LibraryRunCatcher is a premium, privacy-conscious PWA (Progressive Web App) designed for schools and libraries. It uses browser-side AI to automatically detect running and loud behavior, providing teachers with real-time alerts and photographic evidence for accountability.
+LibraryRunCatcher is a sophisticated, privacy-first PWA designed for educational environments. Utilizing cutting-edge browser-side AI, it automatically detects running and excessive noise while providing teachers with comprehensive evidence and multi-device synchronization capabilities.
+
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9+-green.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.128.0-009688.svg)](https://fastapi.tiangolo.com/)
 
 ---
 
 ## ✨ Key Features
 
--   **🚀 Auto-Detect Mode**: Uses MediaPipe Pose tracking and Web Audio API to monitor behavior in real-time.
--   **📽️ Advanced CCTV Grid Mode**:
-    -   Virtual camera signals with multiple grid configurations (2×2, 3×3, 4×4)
-    -   Independent cell detection with activity tracking
-    -   Visual highlights and corner brackets for active cells
-    -   Grid overlay in preview mode for easy calibration
--   **👁️ Preview Mode**: Toggle between skeleton view and real video feed for calibration
--   **📸 Smart Snapshot Capture**: Captures raw camera feed (not pose skeleton) with forensic overlays
--   **⌚ Librarian's Watch**: Sync multiple devices via private rooms with real-time haptic/audio alerts
--   **🖼️ Forensic Evidence**: Auto-captures snapshots with technical overlays, kinetic path trails, and sensor metadata
--   **📊 Premium Dashboard**: Glassmorphic UI with real-time speed/noise meters and status indicators
--   **📱 Cross-Platform PWA**: Installable on Mac, iOS, and Android for mobile monitoring
--   **🔒 Privacy-First**:
-    -   Skeletal tracking for motion detection (no raw video storage by default)
-    -   **5-Hour Ephemeral Retention**: All alerts and snapshots auto-delete after 5 hours
-    -   Local processing with browser-side AI
+### 🤖 Advanced AI Detection
+- **Real-time Pose Tracking**: MediaPipe-powered skeletal analysis for precise movement detection
+- **Audio Monitoring**: Web Audio API with FFT analysis for noise level detection
+- **Smart Thresholds**: Configurable sensitivity for running (>10 m/s) and noise (>75 dB)
+
+### 📹 CCTV-Style Grid Monitoring
+- **Virtual Multi-Camera**: 2×2, 3×3, 4×4 grid layouts with independent cell detection
+- **Activity Visualization**: Color-coded cell highlighting with CCTV-style corner brackets
+- **Cell Statistics**: Activity counters and real-time status per camera zone
+- **Grid Calibration**: Preview mode with overlay for perfect alignment
+
+### 🔄 Multi-Device Synchronization
+- **Librarian's Watch**: Sync laptops with phones/watches for instant notifications
+- **Real-time Alerts**: Haptic feedback and audio alerts on secondary devices
+- **Emergency Summon**: One-tap alert to all synced devices with location info
+- **Private Rooms**: Secure, code-based device pairing
+
+### 📸 Forensic Evidence Capture
+- **Real Camera Snapshots**: Actual photos (not skeleton overlays) with evidence metadata
+- **Forensic Overlays**: Red bounding boxes, status labels, timestamps, and kinetic trails
+- **PDF Reports**: Individual and bulk incident reports with evidence
+- **Ephemeral Storage**: 5-hour automatic cleanup for privacy compliance
+
+### 🎨 Premium User Experience
+- **Glassmorphic UI**: Modern, translucent design with real-time sensor meters
+- **Preview Mode**: Clean camera feed without skeleton distractions
+- **Responsive Design**: Optimized for desktop, tablet, and mobile
+- **PWA Support**: Installable app with offline capabilities
+
+### 🔒 Privacy & Security First
+- **Client-side AI**: No video data ever leaves the device
+- **No Raw Video Storage**: Only processed evidence snapshots
+- **Automatic Cleanup**: 5-hour retention with background deletion
+- **No Personal Data**: Skeletal tracking only - no faces or identifiers
 
 ---
 
 ## 🛠️ Tech Stack
 
--   **Backend**: Python, FastAPI, Pydantic v2
--   **Frontend**: Vanilla HTML5, CSS3 (Glassmorphism), JavaScript
--   **AI/Sensors**: MediaPipe Pose, Web Audio API
--   **UI Framework**: Bootswatch "United" (Premium Bootstrap Theme)
+- **Backend**: Python 3.9+, FastAPI, Pydantic v2, Uvicorn
+- **Frontend**: Vanilla HTML5, CSS3 (Glassmorphism), ES6+ JavaScript
+- **AI/ML**: MediaPipe Pose v0.5, Web Audio API, FFT Analysis
+- **UI Framework**: Bootstrap 5 (United Theme), Lucide Icons
+- **Real-time**: WebSocket, Server-Sent Events
+- **PWA**: Service Workers, Web App Manifest
+- **PDF Generation**: jsPDF, HTML5 Canvas
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-### 1. Prerequisites
-- Python 3.9+
-- A modern web browser with Camera and Microphone access.
+### Prerequisites
+- **Python**: 3.9 or higher
+- **Browser**: Chrome 88+, Firefox 85+, Safari 14+, Edge 88+
+- **Hardware**: Webcam + microphone, 4GB RAM minimum
 
-### 2. Installation
+### Installation
+
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/apiwishboon-spec/runcatcher.git
 cd runcatcher
 
 # Install dependencies
 pip install -r requirements.txt
-```
 
-### 3. Running the App
-```bash
-# Start the FastAPI server
+# Start development server
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-Open your browser to `http://127.0.0.1:8000`.
-
-### Troubleshooting
--   **Camera/Snapshot Issues**: Ensure camera permissions are granted
--   **Speed Meter Freezes**: Toggle preview mode off/on to reset
--   **Grid Not Working**: Check browser console for MediaPipe errors
--   **Audio Not Working**: Verify microphone permissions and test with browser audio
+**Access**: Open `http://127.0.0.1:8000` in your browser
 
 ---
 
-## 📖 How to Use
+## 📖 Usage Guide
 
-### Basic Setup
-1.  **Grant Permissions**: When you open the app, allow Camera and Microphone access.
-2.  **Toggle Auto-Detect**: Flip the "Auto-Detect" switch on the dashboard.
+### Basic Monitoring
 
-### Monitoring Features
-3.  **Real-time Monitoring**:
-    -   **Speed Meter**: Shows movement velocity in m/s
-    -   **Noise Meter**: Shows real-time decibel levels
-    -   **Status Badge**: Displays current activity state
-4.  **Preview Mode**: Click the eye icon to toggle between:
-    -   **Skeleton View**: Shows pose detection landmarks
-    -   **Video Feed**: Shows real camera video for calibration
+1. **Grant Permissions**: Allow camera and microphone access
+2. **Enable Auto-Detect**: Toggle the main switch
+3. **Monitor Sensors**: Watch real-time speed/noise meters
+4. **Review Alerts**: Click "View" on sidebar alerts for evidence
 
-### Advanced CCTV Mode
-5.  **Grid Configuration**:
-    -   Enable "CCTV Grid Detection" in the settings panel
-    -   Choose from preset grids: 2×2, 3×3, or 4×4
-    -   Each cell monitors independently with activity tracking
-    -   Active cells highlight with colored borders and brackets
-6.  **Grid Calibration**:
-    -   Use preview mode with grid overlay for positioning
-    -   Adjust rows/columns to match your camera view
-    -   Active cells show detection counts
+### Advanced Features
 
-### Alert Management
-7.  **Review Alerts**: Recent violations appear in the sidebar with:
-    -   **View Button**: Opens detailed snapshot modal
-    -   **Sensor Data**: Time, noise level, movement speed
-    -   **Evidence**: Forensic snapshot with overlays
-    -   **PDF Export**: Generate accountability reports
+#### CCTV Grid Mode
+```bash
+1. Enable "CCTV Grid Configuration"
+2. Choose preset: 2×2, 3×3, or 4×4
+3. Use Preview mode (👁️) for calibration
+4. Monitor independent cell activity
+```
 
-### Librarian's Watch (Multi-device)
-8.  **Device Sync**:
-    -   Generate a sync code on your main device
-    -   Join with the code on your phone/watch
-    -   Receive haptic alerts when violations occur
+#### Librarian's Watch Sync
+```bash
+# On laptop (station):
+1. Generate sync code
+2. Click "Join"
 
-### Installation
-9.  **Install as App**:
-    -   On **Mac/Chrome**: Click the "Install" icon in the URL bar
-    -   On **iOS/Safari**: Tap "Share" → "Add to Home Screen"
-    -   On **Android/Chrome**: Tap menu → "Add to Home Screen"
+# On phone (watch):
+1. Open same URL
+2. Enter code and "Join"
+3. Keep browser active for notifications
+```
 
----
+#### Zone Management
+- **Built-in Zones**: Reading Area, Computer Lab, Study Hall, Quiet Zone
+- **Custom Zones**: Add unlimited custom monitoring areas
+- **Independent Tracking**: Each zone maintains separate statistics
 
-## 🔄 Recent Updates
+### PWA Installation
 
-### v2.x Features
--   **🆕 CCTV Grid Enhancements**: Improved cell activity tracking with visual highlights, corner brackets, and detection counters
--   **👁️ Enhanced Preview Mode**: Toggle between skeleton view and real video feed for better calibration
--   **📸 Raw Camera Capture**: Snapshots now capture actual video frames instead of pose skeletons
--   **🎯 Grid Overlay**: Preview mode shows grid lines for easy CCTV positioning
--   **⚡ Performance Fixes**: Resolved speed meter freezing in preview mode
--   **📊 Complete Sensor Data**: Alert snapshots now display accurate time, noise, and speed values
--   **🎨 UI Improvements**: Better visual feedback for active grid cells and cleaner preview interface
+#### Desktop (Chrome/Edge)
+- Click install icon in address bar
+- Or: Menu → "Install LibraryRunCatcher"
 
-### Bug Fixes
--   Fixed "undefined" values in alert snapshot details
--   Resolved speed meter freezing when toggling preview mode
--   Improved canvas operations for better preview/skeleton switching
--   Enhanced pose detection reliability across different browsers
+#### Mobile (iOS Safari)
+- Tap Share → "Add to Home Screen"
+
+#### Mobile (Android Chrome)
+- Menu → "Add to Home Screen"
 
 ---
 
-## ⚖️ License
-Apache License 2.0 - Created for educational and behavioral correction purposes.
+## 📊 System Architecture
+
+### Detection Pipeline
+```
+Camera Feed → MediaPipe Pose → Centroid Tracking → Speed Analysis
+Audio Input → FFT Analysis → dB Calculation → Threshold Comparison
+```
+
+### Data Flow
+```
+Detection Event → Snapshot Capture → Forensic Overlay → PDF Report
+                 ↓
+WebSocket Broadcast → Librarian's Watch → Haptic Alert
+```
+
+### Privacy Architecture
+- **Zero Server Storage**: All AI processing client-side
+- **Ephemeral Evidence**: 5-hour automatic cleanup
+- **No Raw Video**: Only processed snapshots with metadata
 
 ---
-<p align="center">© 2029 APIWISH ANUTARAVANICHKUL</p>
+
+## 🔧 Configuration
+
+### Detection Thresholds
+```python
+SPEED_THRESHOLD_RUNNING = 10.0  # m/s
+NOISE_THRESHOLD_LOUD = 75       # dB
+```
+
+### Grid Presets
+- **2×2**: 4 virtual cameras (balanced)
+- **3×3**: 9 virtual cameras (detailed)
+- **4×4**: 16 virtual cameras (maximum coverage)
+
+### Retention Settings
+- **Alert Lifespan**: 5 hours
+- **Cleanup Interval**: Every 60 seconds
+- **File Format**: JPEG with metadata overlay
+
+---
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+| Problem | Solution |
+|---------|----------|
+| "Camera access denied" | Check browser permissions, reload page |
+| Speed meter frozen | Toggle preview mode, refresh browser |
+| Grid not displaying | Enable grid mode, check preview |
+| Watch not syncing | Verify same URL and code, check network |
+| "Undefined" in alerts | Restart server, clear browser cache |
+
+### Performance Tips
+- Use Chrome for best performance
+- Close unnecessary browser tabs
+- Ensure stable internet for sync features
+- 8GB RAM recommended for large grids
+
+---
+
+## 📚 Documentation
+
+- **[Complete Manual](MANUAL.md)**: Comprehensive user guide with screenshots
+- **API Documentation**: Available at `/docs` when server is running
+- **Code Examples**: See `app/` directory for backend implementation
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Setup
+```bash
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
+# Run tests
+pytest
+
+# Format code
+black .
+isort .
+```
+
+---
+
+## 📄 License
+
+**Apache License 2.0**
+
+Created for educational and behavioral correction purposes. See [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **MediaPipe** for pose detection technology
+- **FastAPI** for the robust backend framework
+- **Bootstrap** for the beautiful UI components
+- Educational institutions using this for positive behavioral reinforcement
+
+---
+
+<p align="center">
+  <strong>LibraryRunCatcher v2.0</strong><br>
+  Advanced AI-Powered Behavioral Monitoring<br>
+  © 2029 APIWISH ANUTARAVANICHKUL
+</p>
