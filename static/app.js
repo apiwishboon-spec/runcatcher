@@ -6,6 +6,8 @@ const cameraContainer = document.getElementById('camera-container');
 const videoElement = document.getElementById('input-video');
 const canvasElement = document.getElementById('output-canvas');
 const canvasCtx = canvasElement.getContext('2d');
+const gridOverlayCanvas = document.getElementById('grid-overlay-canvas');
+const gridOverlayCtx = gridOverlayCanvas ? gridOverlayCanvas.getContext('2d') : null;
 
 // State icons/colors
 const icons = { QUIET: 'smile', LOUD: 'megaphone', RUNNING_DETECTED: 'zap' };
@@ -140,6 +142,152 @@ async function onResults(results) {
         lastBoundingBox = null;
     }
     canvasCtx.restore();
+}
+
+function drawGridOnOverlay() {
+    if (!gridOverlayCanvas || !gridOverlayCtx || !isPreview || !gridMode) return;
+    
+    // Match overlay canvas size to video element
+    const rect = videoElement.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    
+    gridOverlayCanvas.width = rect.width;
+    gridOverlayCanvas.height = rect.height;
+    
+    const ctx = gridOverlayCtx;
+    const cellWidth = gridOverlayCanvas.width / gridCols;
+    const cellHeight = gridOverlayCanvas.height / gridRows;
+    const now = Date.now();
+    const fadeTime = 3000;
+
+    // Clear overlay
+    ctx.clearRect(0, 0, gridOverlayCanvas.width, gridOverlayCanvas.height);
+
+    // Draw grid cells with activity highlighting
+    for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridCols; c++) {
+            const camId = (r * gridCols) + c + 1;
+            const x = c * cellWidth;
+            const y = r * cellHeight;
+            const cellData = gridCellActivity[camId];
+
+            // Draw cell background with activity highlight
+            if (cellData && (now - cellData.lastActive) < fadeTime) {
+                const fadeAlpha = 1 - ((now - cellData.lastActive) / fadeTime);
+                let highlightColor = 'rgba(233, 84, 32, 0.1)';
+                
+                if (cellData.status === 'RUNNING_DETECTED') {
+                    highlightColor = `rgba(220, 53, 69, ${0.2 * fadeAlpha})`;
+                } else if (cellData.status === 'LOUD') {
+                    highlightColor = `rgba(13, 202, 240, ${0.15 * fadeAlpha})`;
+                } else {
+                    highlightColor = `rgba(233, 84, 32, ${0.1 * fadeAlpha})`;
+                }
+
+                ctx.fillStyle = highlightColor;
+                ctx.fillRect(x, y, cellWidth, cellHeight);
+            }
+
+            // Draw cell border with corner brackets
+            ctx.strokeStyle = cellData && (now - cellData.lastActive) < fadeTime 
+                ? (cellData.status === 'RUNNING_DETECTED' ? 'rgba(220, 53, 69, 0.8)' : 'rgba(233, 84, 32, 0.6)')
+                : 'rgba(233, 84, 32, 0.6)';
+            ctx.lineWidth = cellData && (now - cellData.lastActive) < fadeTime ? 3 : 2;
+            ctx.setLineDash([]);
+            ctx.strokeRect(x, y, cellWidth, cellHeight);
+
+            // Draw corner brackets for active cells
+            if (cellData && (now - cellData.lastActive) < fadeTime) {
+                const bracketSize = 15;
+                ctx.strokeStyle = cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([]);
+                
+                // Top-left corner
+                ctx.beginPath();
+                ctx.moveTo(x, y + bracketSize);
+                ctx.lineTo(x, y);
+                ctx.lineTo(x + bracketSize, y);
+                ctx.stroke();
+                
+                // Top-right corner
+                ctx.beginPath();
+                ctx.moveTo(x + cellWidth - bracketSize, y);
+                ctx.lineTo(x + cellWidth, y);
+                ctx.lineTo(x + cellWidth, y + bracketSize);
+                ctx.stroke();
+                
+                // Bottom-left corner
+                ctx.beginPath();
+                ctx.moveTo(x, y + cellHeight - bracketSize);
+                ctx.lineTo(x, y + cellHeight);
+                ctx.lineTo(x + bracketSize, y + cellHeight);
+                ctx.stroke();
+                
+                // Bottom-right corner
+                ctx.beginPath();
+                ctx.moveTo(x + cellWidth - bracketSize, y + cellHeight);
+                ctx.lineTo(x + cellWidth, y + cellHeight);
+                ctx.lineTo(x + cellWidth, y + cellHeight - bracketSize);
+                ctx.stroke();
+            }
+        }
+    }
+
+    // Draw grid lines
+    ctx.strokeStyle = 'rgba(233, 84, 32, 0.6)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+
+    // Draw Vertical Lines
+    for (let i = 1; i < gridCols; i++) {
+        const x = i * cellWidth;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, gridOverlayCanvas.height);
+        ctx.stroke();
+    }
+
+    // Draw Horizontal Lines
+    for (let i = 1; i < gridRows; i++) {
+        const y = i * cellHeight;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(gridOverlayCanvas.width, y);
+        ctx.stroke();
+    }
+
+    // Draw Camera Labels
+    ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.fillStyle = 'rgba(233, 84, 32, 1)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridCols; c++) {
+            const camId = (r * gridCols) + c + 1;
+            const x = (c * cellWidth) + (cellWidth / 2);
+            const y = (r * cellHeight) + 8;
+            const cellData = gridCellActivity[camId];
+            
+            let label = `Cam ${camId}`;
+            if (cellData && cellData.count > 0) {
+                label += ` (${cellData.count})`;
+            }
+            
+            // Add background for label readability
+            const textMetrics = ctx.measureText(label);
+            const textWidth = textMetrics.width;
+            const textHeight = 18;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(x - textWidth / 2 - 4, y - 2, textWidth + 8, textHeight);
+            
+            ctx.fillStyle = cellData && (Date.now() - cellData.lastActive) < 3000 
+                ? (cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420')
+                : 'rgba(233, 84, 32, 1)';
+            ctx.fillText(label, x, y);
+        }
+    }
 }
 
 function drawGrid() {
@@ -535,6 +683,10 @@ function updateUI(result) {
             if (result.status !== 'QUIET') {
                 gridCellActivity[camId].count++;
             }
+            // Update grid overlay if in preview mode
+            if (isPreview && gridMode) {
+                drawGridOnOverlay();
+            }
         }
     }
 
@@ -631,7 +783,7 @@ async function captureSnapshot(zone) {
 
     // 1. Draw original video frame
     try {
-        ctx.drawImage(videoElement, 0, 0);
+    ctx.drawImage(videoElement, 0, 0);
     } catch (err) {
         console.error('Failed to draw video to canvas:', err);
         return null;
@@ -1077,6 +1229,18 @@ if (gridModeToggle) {
             gridSettingsContent.style.opacity = '1';
             gridSettingsContent.style.pointerEvents = 'auto';
             if (label) label.style.display = 'block';
+            // Show grid overlay in preview if preview is active
+            if (isPreview && gridOverlayCanvas) {
+                gridOverlayCanvas.style.display = 'block';
+                drawGridOnOverlay();
+                if (!window.gridOverlayInterval) {
+                    window.gridOverlayInterval = setInterval(() => {
+                        if (isPreview && gridMode) {
+                            drawGridOnOverlay();
+                        }
+                    }, 100);
+                }
+            }
         } else {
             gridSettingsContent.style.opacity = '0.5';
             gridSettingsContent.style.pointerEvents = 'none';
@@ -1084,6 +1248,12 @@ if (gridModeToggle) {
             document.getElementById('stat-zone').innerText = formatZoneName(currentZone);
             gridCellActivity = {}; // Reset activity when grid is disabled
             currentActiveCell = null;
+            // Hide grid overlay
+            if (gridOverlayCanvas) gridOverlayCanvas.style.display = 'none';
+            if (window.gridOverlayInterval) {
+                clearInterval(window.gridOverlayInterval);
+                window.gridOverlayInterval = null;
+            }
         }
     });
 }
@@ -1092,6 +1262,9 @@ if (gridRowsInput) {
     gridRowsInput.addEventListener('change', (e) => {
         gridRows = parseInt(e.target.value) || 2;
         gridCellActivity = {}; // Reset activity when grid changes
+        if (isPreview && gridMode) {
+            drawGridOnOverlay();
+        }
     });
 }
 
@@ -1099,6 +1272,9 @@ if (gridColsInput) {
     gridColsInput.addEventListener('change', (e) => {
         gridCols = parseInt(e.target.value) || 2;
         gridCellActivity = {}; // Reset activity when grid changes
+        if (isPreview && gridMode) {
+            drawGridOnOverlay();
+        }
     });
 }
 
@@ -1120,6 +1296,11 @@ document.querySelectorAll('.preset-grid-btn').forEach(btn => {
             b.classList.remove('active');
         });
         e.target.classList.add('active');
+        
+        // Redraw grid overlay if in preview
+        if (isPreview && gridMode) {
+            drawGridOnOverlay();
+        }
     });
 });
 
@@ -1168,6 +1349,21 @@ function togglePreview() {
         // Show real video feed
         videoElement.style.display = 'block';
         canvasElement.style.display = 'none';
+        // Show grid overlay if grid mode is enabled
+        if (gridMode && gridOverlayCanvas) {
+            gridOverlayCanvas.style.display = 'block';
+            // Start drawing grid overlay
+            drawGridOnOverlay();
+            // Update grid overlay periodically
+            if (window.gridOverlayInterval) clearInterval(window.gridOverlayInterval);
+            window.gridOverlayInterval = setInterval(() => {
+                if (isPreview && gridMode) {
+                    drawGridOnOverlay();
+                }
+            }, 100); // Update 10 times per second
+        } else if (gridOverlayCanvas) {
+            gridOverlayCanvas.style.display = 'none';
+        }
         icon.setAttribute('data-lucide', 'eye-off');
     } else {
         cameraContainer.style.display = 'none';
@@ -1175,6 +1371,11 @@ function togglePreview() {
         // Hide video when preview is off
         videoElement.style.display = 'none';
         canvasElement.style.display = 'none';
+        if (gridOverlayCanvas) gridOverlayCanvas.style.display = 'none';
+        if (window.gridOverlayInterval) {
+            clearInterval(window.gridOverlayInterval);
+            window.gridOverlayInterval = null;
+        }
         icon.setAttribute('data-lucide', 'eye');
     }
     lucide.createIcons();
@@ -1207,6 +1408,17 @@ document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
         icon.setAttribute('data-lucide', 'maximize');
         lucide.createIcons();
+    }
+    // Redraw grid overlay on fullscreen change
+    if (isPreview && gridMode) {
+        setTimeout(() => drawGridOnOverlay(), 100);
+    }
+});
+
+// Handle window resize to update grid overlay
+window.addEventListener('resize', () => {
+    if (isPreview && gridMode) {
+        drawGridOnOverlay();
     }
 });
 
