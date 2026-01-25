@@ -42,6 +42,12 @@
                 <img src="/static/logo.png" alt="Logo" height="32" class="me-2 rounded-circle bg-white p-1">
                 LibraryRunCatcher
             </a>
+            <div class="ms-auto">
+                <a href="/static/dashboard.html" class="btn btn-sm btn-outline-light d-flex align-items-center gap-2">
+                    <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
+                    <span class="d-none d-md-inline">Dashboard</span>
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -51,9 +57,11 @@
             <div class="col-md-8">
                 <div class="card border-0 shadow-sm glass-card">
                     <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="card-title mb-0">Live Monitoring</h4>
-                            <div class="d-flex align-items-center gap-3">
+                        <div
+                            class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+                            <h4 class="card-title mb-0 w-100 text-center text-md-start">Live Monitoring</h4>
+                            <div
+                                class="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-md-end w-100">
                                 <button id="summon-btn"
                                     class="btn btn-sm btn-danger d-flex align-items-center gap-2 px-3 fw-bold"
                                     onclick="triggerStaffSummon()" title="Emergency: Summon All Staff">
@@ -67,11 +75,11 @@
                                     onclick="toggleFullscreen()" title="Toggle Fullscreen">
                                     <i data-lucide="maximize" style="width: 16px; height: 16px;"></i>
                                 </button>
-                                <div class="form-check form-switch pt-1">
+                                <div class="form-check form-switch pt-1 ms-1">
                                     <input class="form-check-input" type="checkbox" id="live-toggle">
-                                    <label class="form-check-label fw-bold" for="live-toggle">Auto-Detect</label>
+                                    <label class="form-check-label fw-bold small" for="live-toggle">Auto</label>
                                 </div>
-                                <div id="status-badge" class="badge bg-success py-2 px-3 rounded-pill">
+                                <div id="status-badge" class="badge bg-success py-2 px-3 rounded-pill ms-1">
                                     All Quiet
                                 </div>
                             </div>
@@ -80,9 +88,12 @@
                         <!-- Camera Preview (Optional toggle) -->
                         <div id="camera-container" class="position-relative mt-3 rounded overflow-hidden"
                             style="display: none; aspect-ratio: 4/3; background: #000;">
-                            <video id="input-video" class="w-100 h-100 object-fit-contain" style="display: none;"></video>
-                            <canvas id="output-canvas" class="w-100 h-100 object-fit-contain" style="display: none;"></canvas>
-                            <canvas id="grid-overlay-canvas" class="position-absolute top-0 start-0 w-100 h-100" style="pointer-events: none; display: none;"></canvas>
+                            <video id="input-video" class="w-100 h-100 object-fit-contain"
+                                style="display: none;"></video>
+                            <canvas id="output-canvas" class="w-100 h-100 object-fit-contain"
+                                style="display: none;"></canvas>
+                            <canvas id="grid-overlay-canvas" class="position-absolute top-0 start-0 w-100 h-100"
+                                style="pointer-events: none; display: none;"></canvas>
                             <div id="grid-overlay-label" class="position-absolute top-0 start-0 p-2 text-white small"
                                 style="background: rgba(0,0,0,0.5); display: none;">Grid Alignment Active</div>
                         </div>
@@ -137,7 +148,7 @@
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm glass-card h-100">
                     <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                             <h5 class="card-title mb-0 d-flex align-items-center">
                                 <i data-lucide="bell" class="me-2 text-warning"></i> Recent Alerts
                             </h5>
@@ -216,9 +227,12 @@
                                 <div class="mb-3">
                                     <label class="form-label small fw-bold">Quick Presets</label>
                                     <div class="btn-group w-100" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn" data-rows="2" data-cols="2">2×2</button>
-                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn" data-rows="3" data-cols="3">3×3</button>
-                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn" data-rows="4" data-cols="4">4×4</button>
+                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
+                                            data-rows="2" data-cols="2">2×2</button>
+                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
+                                            data-rows="3" data-cols="3">3×3</button>
+                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
+                                            data-rows="4" data-cols="4">4×4</button>
                                     </div>
                                 </div>
                                 <div class="row g-3">
@@ -234,7 +248,8 @@
                                     </div>
                                 </div>
                                 <div class="mt-2 text-muted small">
-                                    <i data-lucide="info" style="width: 12px; height: 12px;"></i> Active cells highlight when motion detected.
+                                    <i data-lucide="info" style="width: 12px; height: 12px;"></i> Active cells highlight
+                                    when motion detected.
                                 </div>
                             </div>
                         </div>
@@ -246,7 +261,8 @@
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm glass-card h-100">
                     <div class="card-body p-4">
-                        <h5 class="card-title mb-3 d-flex align-items-center text-warning justify-content-between">
+                        <h5
+                            class="card-title mb-3 d-flex align-items-center text-warning justify-content-between flex-wrap gap-2">
                             <span class="d-flex align-items-center">
                                 <i data-lucide="smartphone" class="me-2"></i> Librarian's Watch
                             </span>

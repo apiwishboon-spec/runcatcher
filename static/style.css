@@ -288,3 +288,41 @@ body {
         opacity: 0;
     }
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .intro-text {
+        font-size: 2rem;
+    }
+
+    .intro-slogan {
+        font-size: 0.9rem;
+        padding: 0 1rem;
+    }
+
+    .status-icon-wrapper {
+        width: 100px;
+        height: 100px;
+    }
+
+    /* Adjust card spacing slightly on mobile */
+    .card-body {
+        padding: 1.25rem !important;
+    }
+
+    /* Make status message smaller */
+    h2#status-message {
+        font-size: 1.5rem;
+    }
+
+    /* Ensure charts/stats fit better */
+    .col-6 {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Adjust Aura spheres for portrait */
+    .aura-sphere {
+        width: 100vmax;
+        height: 100vmax;
+    }
+}
