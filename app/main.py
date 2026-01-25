@@ -132,3 +132,8 @@ async def health_check():
 async def get_alerts(zone_name: str):
     # This would query a database of recently triggered snapshots
     return {"zone": zone_name, "alerts": []}
+
+@app.get("/api/dashboard/stats")
+async def dashboard_stats():
+    from .logic import get_dashboard_stats
+    return get_dashboard_stats()
