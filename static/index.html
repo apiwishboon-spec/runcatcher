@@ -387,7 +387,9 @@
 
             if (overlay.style.display === 'none') {
                 // Open
-                if (!frame.src) frame.src = "/static/dashboard.html";
+                if (!frame.src.includes('dashboard.html')) {
+                    frame.src = "/static/dashboard.html";
+                }
                 overlay.style.display = 'block';
                 document.body.style.overflow = 'hidden'; // Prevent background scrolling
             } else {
