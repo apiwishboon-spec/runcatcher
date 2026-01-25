@@ -174,6 +174,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 def send_admin_email_task(recipient_email: str, pin: str):
+    print(f"--- Attempting to send email to {recipient_email} ---")
     try:
         msg = MIMEMultipart()
         msg['From'] = f"Library Run Catcher service <{settings.EMAIL_SENDER}>"
@@ -194,15 +195,23 @@ def send_admin_email_task(recipient_email: str, pin: str):
         """
         msg.attach(MIMEText(body, 'html'))
 
+        # Prepare password (strip spaces if present)
+        password = settings.EMAIL_PASSWORD.replace(" ", "")
+        
+        print("Connecting to Gmail SMTP...")
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
-        server.login(settings.EMAIL_SENDER, settings.EMAIL_PASSWORD)
+        print(f"Logging in as {settings.EMAIL_SENDER}...")
+        server.login(settings.EMAIL_SENDER, password)
+        print("Login successful. Sending mail...")
         text = msg.as_string()
         server.sendmail(settings.EMAIL_SENDER, recipient_email, text)
         server.quit()
-        print(f"Email sent to {recipient_email}")
+        print(f"--- Email successfully sent to {recipient_email} ---")
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"!!! FAILED TO SEND EMAIL: {e} !!!")
+        import traceback
+        traceback.print_exc()
 
 @app.post("/api/auth/forgot")
 async def forgot_password(data: dict, background_tasks: BackgroundTasks):
