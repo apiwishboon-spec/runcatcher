@@ -176,17 +176,17 @@ from email.mime.multipart import MIMEMultipart
 def send_admin_email_task(recipient_email: str, pin: str):
     print(f"--- Attempting to send email to {recipient_email} ---")
     try:
+        # Build MIME message
         msg = MIMEMultipart()
         msg['From'] = f"Library Run Catcher service <{settings.EMAIL_SENDER}>"
         msg['To'] = recipient_email
         msg['Subject'] = "Admin Dashboard Access PIN"
-
         body = f"""
         <html>
           <body>
             <h2>Library Run Catcher - Admin Access</h2>
             <p>You requested your current Admin Session PIN.</p>
-            <p><strong>Current PIN:</strong> <span style="font-family: monospace; font-size: 24px;">{pin}</span></p>
+            <p><strong>Current PIN:</strong> <span style='font-family: monospace; font-size: 24px;'>{pin}</span></p>
             <p>Use this code to unlock the dashboard.</p>
             <br>
             <small>If you did not request this, please ignore this email.</small>
@@ -194,18 +194,23 @@ def send_admin_email_task(recipient_email: str, pin: str):
         </html>
         """
         msg.attach(MIMEText(body, 'html'))
-
-        # Prepare password (strip spaces if present)
+        # Clean password (remove spaces)
         password = settings.EMAIL_PASSWORD.replace(" ", "")
-        
-        print("Connecting to Gmail SMTP...")
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        print(f"Logging in as {settings.EMAIL_SENDER}...")
-        server.login(settings.EMAIL_SENDER, password)
-        print("Login successful. Sending mail...")
-        text = msg.as_string()
-        server.sendmail(settings.EMAIL_SENDER, recipient_email, text)
+        # Try STARTTLS first
+        try:
+            print("Connecting via STARTTLS (smtp.gmail.com:587)...")
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(settings.EMAIL_SENDER, password)
+        except Exception as e_starttls:
+            print(f"STARTTLS failed: {e_starttls}. Trying SSL fallback.")
+            # Fallback to SSL on port 465
+            import ssl
+            context = ssl.create_default_context()
+            server = smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context)
+            server.login(settings.EMAIL_SENDER, password)
+        # Send email
+        server.sendmail(settings.EMAIL_SENDER, recipient_email, msg.as_string())
         server.quit()
         print(f"--- Email successfully sent to {recipient_email} ---")
     except Exception as e:
