@@ -280,9 +280,6 @@
                     <button onclick="submitLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors">
                         Unlock Dashboard
                     </button>
-                    <div class="mt-4">
-                        <a href="#" onclick="showForgotPrompt()" class="text-xs text-slate-400 hover:text-blue-500 transition-colors">Forgot Password?</a>
-                    </div>
                     <p id="login-error" class="text-rose-500 text-xs mt-3 font-bold hidden">Invalid PIN</p>
                 </div>
             `;
@@ -320,23 +317,6 @@
                 }
             } catch (e) {
                 console.error(e);
-            }
-        }
-
-        async function showForgotPrompt() {
-            const email = prompt("Please enter your email address to receive the PIN:");
-            if (!email) return;
-
-            try {
-                const res = await fetch('/api/auth/forgot', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email })
-                });
-                const data = await res.json();
-                alert(data.message);
-            } catch (e) {
-                alert("Failed to request PIN. Please check your network.");
             }
         }
 

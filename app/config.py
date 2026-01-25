@@ -15,11 +15,6 @@ class Settings(BaseSettings):
     SNAPSHOT_DIR: str = "snapshots"
     STATIC_DIR: str = "static"
     SNAPSHOT_RETENTION_HOURS: int = 5
-    
-    # Email Settings
-    # Email credentials for sending admin PIN
-    # Sender: apiwish.boon@gmail.com
-    # App password (app-specific): geoa pmxn uuvb ccci
 
     class Config:
         env_file = ".env"
