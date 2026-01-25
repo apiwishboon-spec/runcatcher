@@ -57,10 +57,10 @@
                 <p class="text-zinc-500 font-medium">Real-time status, zone analytics, and incident tracking.</p>
             </div>
             <div class="flex gap-3">
-                <a href="/"
-                    class="glass-dash hover:bg-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all text-sm font-bold no-underline text-slate-800 shadow-sm">
+                <button onclick="goBackToLive()"
+                    class="glass-dash hover:bg-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all text-sm font-bold shadow-sm">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Live
-                </a>
+                </button>
                 <button onclick="window.location.reload()"
                     class="glass-dash hover:bg-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all text-sm font-bold shadow-sm">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i> Sync Data
@@ -243,6 +243,17 @@
                 zoneGrid.appendChild(card);
             });
             lucide.createIcons();
+        }
+
+        // Navigation Logic
+        function goBackToLive() {
+            if (window.parent && window.parent !== window) {
+                // Inside iframe: Message parent to close overlay
+                window.parent.postMessage('closeDashboard', '*');
+            } else {
+                // Standalone: Navigate back
+                window.location.href = '/';
+            }
         }
 
         // Poll every 2 seconds
