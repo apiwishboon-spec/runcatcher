@@ -134,6 +134,32 @@ async def get_alerts(zone_name: str):
     return {"zone": zone_name, "alerts": []}
 
 @app.get("/api/dashboard/stats")
-async def dashboard_stats():
+async def dashboard_stats(request: Request):
     from .logic import get_dashboard_stats
+    
+    # Check for authentication
+    auth_header = request.headers.get("X-Admin-Key")
+    if not auth_header or auth_header != app.state.admin_password:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+        
     return get_dashboard_stats()
+
+# Admin Authentication
+import random
+import string
+
+# Initialize admin password in app state
+app.state.admin_password = "admin" # Default fallabck
+
+@app.post("/api/auth/reset")
+async def reset_admin_password():
+    """Generates a new random 6-digit PIN for the session."""
+    code = ''.join(random.choices(string.digits, k=6))
+    app.state.admin_password = code
+    return {"password": code}
+
+@app.post("/api/auth/verify")
+async def verify_admin_password(data: dict):
+    if data.get("password") == app.state.admin_password:
+        return {"status": "ok"}
+    raise HTTPException(status_code=401, detail="Invalid password")

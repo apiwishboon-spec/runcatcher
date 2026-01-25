@@ -180,8 +180,23 @@
         };
 
         async function updateDashboard() {
+            const token = sessionStorage.getItem('adminKey');
+            if (!token) {
+                showLoginModal();
+                return;
+            }
+
             try {
-                const response = await fetch('/api/dashboard/stats');
+                const response = await fetch('/api/dashboard/stats', {
+                    headers: { 'X-Admin-Key': token }
+                });
+
+                if (response.status === 401) {
+                    sessionStorage.removeItem('adminKey');
+                    showLoginModal();
+                    return;
+                }
+
                 const data = await response.json();
 
                 // Update KPIs
@@ -243,6 +258,66 @@
                 zoneGrid.appendChild(card);
             });
             lucide.createIcons();
+        }
+
+        // Auth Modal Logic
+        function showLoginModal() {
+            if (document.getElementById('login-modal')) return;
+
+            const modal = document.createElement('div');
+            modal.id = 'login-modal';
+            modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm';
+            modal.innerHTML = `
+                <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600">
+                        <i data-lucide="lock" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Admin Access</h2>
+                    <p class="text-slate-500 mb-6 text-sm">Enter the session PIN shown on the main screen.</p>
+                    
+                    <input type="password" id="admin-pin" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 mb-4 text-center font-mono text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="000000" maxlength="6">
+                    
+                    <button onclick="submitLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors">
+                        Unlock Dashboard
+                    </button>
+                    <p id="login-error" class="text-rose-500 text-xs mt-3 font-bold hidden">Invalid PIN</p>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+
+            // Focus input
+            setTimeout(() => document.getElementById('admin-pin').focus(), 100);
+
+            // Allow Enter key
+            document.getElementById('admin-pin').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') submitLogin();
+            });
+        }
+
+        async function submitLogin() {
+            const pin = document.getElementById('admin-pin').value;
+            if (pin.length < 6) return;
+
+            try {
+                const res = await fetch('/api/auth/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pin })
+                });
+
+                if (res.ok) {
+                    sessionStorage.setItem('adminKey', pin);
+                    document.getElementById('login-modal').remove();
+                    updateDashboard();
+                } else {
+                    const err = document.getElementById('login-error');
+                    err.classList.remove('hidden');
+                    err.classList.add('animate-pulse');
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         // Navigation Logic

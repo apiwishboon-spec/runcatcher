@@ -548,10 +548,55 @@ async function sendDetection(zone, speed, noise, alert_snapshot_url = null) {
     }
 }
 // --- Librarian's Watch Sync ---
-function generateSyncCode() {
+async function generateSyncCode() {
     const code = 'WATCH-' + Math.random().toString(36).substring(2, 8).toUpperCase();
     document.getElementById('sync-code-input').value = code;
     document.getElementById('join-code-input').value = code;
+
+    // Also generate Admin PIN for the dashboard
+    try {
+        const res = await fetch('/api/auth/reset', { method: 'POST' });
+        const data = await res.json();
+        const pin = data.password;
+
+        // Show PIN one time
+        showAdminPinModal(pin);
+    } catch (e) {
+        console.error("Failed to generate admin PIN", e);
+    }
+}
+
+function showAdminPinModal(pin) {
+    const modalHtml = `
+        <div id="admin-pin-modal" class="modal fade" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-primary text-white border-0">
+                        <h5 class="modal-title fw-bold">Session Security</h5>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <p class="mb-2 text-muted">A new room has been created.</p>
+                        <p class="mb-4">Use this PIN to access the Admin Dashboard:</p>
+                        <div class="display-4 fw-black font-monospace text-primary mb-3 text-nowrap" id="display-pin">${pin}</div>
+                        <div class="alert alert-warning small border-0"><i data-lucide="alert-triangle" class="me-1"></i> Write this down. It will not be shown again.</div>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center">
+                        <button type="button" class="btn btn-primary px-5 fw-bold" onclick="document.getElementById('admin-pin-modal').remove(); document.querySelector('.modal-backdrop')?.remove();">I have saved it</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+    `;
+
+    // Append to body
+    const div = document.createElement('div');
+    div.innerHTML = modalHtml;
+    document.body.appendChild(div);
+    const modalEl = document.getElementById('admin-pin-modal');
+    // Bootstrap class handling usually requires JS lib, but we force display:block with manual backdrop for simplicity without full BS object initialization
+    modalEl.classList.add('show');
+    lucide.createIcons();
 }
 
 function copySyncCode() {
