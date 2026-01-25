@@ -176,11 +176,12 @@ from email.mime.multipart import MIMEMultipart
 def send_admin_email_task(recipient_email: str, pin: str):
     print(f"--- Attempting to send email to {recipient_email} ---")
     try:
-        # Build MIME message
+        # Build the MIME message
         msg = MIMEMultipart()
         msg['From'] = f"Library Run Catcher service <{settings.EMAIL_SENDER}>"
         msg['To'] = recipient_email
         msg['Subject'] = "Admin Dashboard Access PIN"
+
         body = f"""
         <html>
           <body>
@@ -194,25 +195,32 @@ def send_admin_email_task(recipient_email: str, pin: str):
         </html>
         """
         msg.attach(MIMEText(body, 'html'))
-        # Clean password (remove spaces)
-        password = settings.EMAIL_PASSWORD.replace(" ", "")
-        # Try STARTTLS first
+
+        # Clean password (remove any spaces)
+        password = settings.EMAIL_PASSWORD.replace(' ', '')
+        print("Connecting to Gmail SMTP (STARTTLS on port 587)...")
         try:
-            print("Connecting via STARTTLS (smtp.gmail.com:587)...")
-            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)
             server.starttls()
             server.login(settings.EMAIL_SENDER, password)
+            server.sendmail(settings.EMAIL_SENDER, recipient_email, msg.as_string())
+            server.quit()
+            print(f"--- Email successfully sent to {recipient_email} via STARTTLS ---")
+            return
         except Exception as e_starttls:
-            print(f"STARTTLS failed: {e_starttls}. Trying SSL fallback.")
-            # Fallback to SSL on port 465
-            import ssl
-            context = ssl.create_default_context()
-            server = smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context)
-            server.login(settings.EMAIL_SENDER, password)
-        # Send email
-        server.sendmail(settings.EMAIL_SENDER, recipient_email, msg.as_string())
-        server.quit()
-        print(f"--- Email successfully sent to {recipient_email} ---")
+            print(f"STARTTLS connection failed: {e_starttls}")
+            print("Falling back to SSL (port 465)...")
+            # Fallback to SSL
+            try:
+                server_ssl = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10)
+                server_ssl.login(settings.EMAIL_SENDER, password)
+                server_ssl.sendmail(settings.EMAIL_SENDER, recipient_email, msg.as_string())
+                server_ssl.quit()
+                print(f"--- Email successfully sent to {recipient_email} via SSL ---")
+                return
+            except Exception as e_ssl:
+                print(f"SSL connection also failed: {e_ssl}")
+                raise e_ssl
     except Exception as e:
         print(f"!!! FAILED TO SEND EMAIL: {e} !!!")
         import traceback
@@ -224,8 +232,15 @@ async def forgot_password(data: dict, background_tasks: BackgroundTasks):
     if not email:
         raise HTTPException(status_code=400, detail="Email required")
     
-    # Send current PIN to the provided email in background
+    # Current PIN to send
     code = app.state.admin_password
-    background_tasks.add_task(send_admin_email_task, email, code)
-    
-    return {"status": "sent", "message": "If the email is valid, the PIN has been sent."}
+    try:
+        # Attempt to send email in background
+        background_tasks.add_task(send_admin_email_task, email, code)
+        # Return generic success message (email may still be in progress)
+        return {"status": "sent", "message": "If the email is valid, the PIN has been sent."}
+    except Exception as e:
+        # If scheduling or email fails, fall back to returning the PIN directly
+        print(f"Email sending failed, returning PIN directly: {e}")
+        return {"status": "failed", "message": "Email could not be sent. Here is your PIN.", "pin": code}
+

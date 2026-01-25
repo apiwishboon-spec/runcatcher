@@ -17,8 +17,9 @@ class Settings(BaseSettings):
     SNAPSHOT_RETENTION_HOURS: int = 5
     
     # Email Settings
-    EMAIL_SENDER: str = "apiwish.boon@gmail.com"
-    EMAIL_PASSWORD: str = "geoa pmxn uuvb ccci"
+    # Email credentials for sending admin PIN
+    # Sender: apiwish.boon@gmail.com
+    # App password (app-specific): geoa pmxn uuvb ccci
 
     class Config:
         env_file = ".env"
