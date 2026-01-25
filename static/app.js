@@ -56,11 +56,11 @@ async function onResults(results) {
 
     // Only perform canvas drawing when not in preview mode (when canvas is visible)
     if (!isPreview) {
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-    if (gridMode) {
-        drawGrid();
+        if (gridMode) {
+            drawGrid();
         }
     }
 
@@ -139,7 +139,7 @@ async function onResults(results) {
 
         // Only perform canvas drawing when not in preview mode
         if (!isPreview) {
-        drawLandmarks(results.poseLandmarks);
+            drawLandmarks(results.poseLandmarks);
         }
 
         // Face tracking removed in preview mode for cleaner view
@@ -149,20 +149,20 @@ async function onResults(results) {
 
     // Only restore canvas context when not in preview mode
     if (!isPreview) {
-    canvasCtx.restore();
+        canvasCtx.restore();
     }
 }
 
 function drawGridOnOverlay() {
     if (!gridOverlayCanvas || !gridOverlayCtx || !isPreview || !gridMode) return;
-    
+
     // Match overlay canvas size to video element
     const rect = videoElement.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
-    
+
     gridOverlayCanvas.width = rect.width;
     gridOverlayCanvas.height = rect.height;
-    
+
     const ctx = gridOverlayCtx;
     const cellWidth = gridOverlayCanvas.width / gridCols;
     const cellHeight = gridOverlayCanvas.height / gridRows;
@@ -184,7 +184,7 @@ function drawGridOnOverlay() {
             if (cellData && (now - cellData.lastActive) < fadeTime) {
                 const fadeAlpha = 1 - ((now - cellData.lastActive) / fadeTime);
                 let highlightColor = 'rgba(233, 84, 32, 0.1)';
-                
+
                 if (cellData.status === 'RUNNING_DETECTED') {
                     highlightColor = `rgba(220, 53, 69, ${0.2 * fadeAlpha})`;
                 } else if (cellData.status === 'LOUD') {
@@ -198,7 +198,7 @@ function drawGridOnOverlay() {
             }
 
             // Draw cell border with corner brackets
-            ctx.strokeStyle = cellData && (now - cellData.lastActive) < fadeTime 
+            ctx.strokeStyle = cellData && (now - cellData.lastActive) < fadeTime
                 ? (cellData.status === 'RUNNING_DETECTED' ? 'rgba(220, 53, 69, 0.8)' : 'rgba(233, 84, 32, 0.6)')
                 : 'rgba(233, 84, 32, 0.6)';
             ctx.lineWidth = cellData && (now - cellData.lastActive) < fadeTime ? 3 : 2;
@@ -211,28 +211,28 @@ function drawGridOnOverlay() {
                 ctx.strokeStyle = cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420';
                 ctx.lineWidth = 3;
                 ctx.setLineDash([]);
-                
+
                 // Top-left corner
                 ctx.beginPath();
                 ctx.moveTo(x, y + bracketSize);
                 ctx.lineTo(x, y);
                 ctx.lineTo(x + bracketSize, y);
                 ctx.stroke();
-                
+
                 // Top-right corner
                 ctx.beginPath();
                 ctx.moveTo(x + cellWidth - bracketSize, y);
                 ctx.lineTo(x + cellWidth, y);
                 ctx.lineTo(x + cellWidth, y + bracketSize);
                 ctx.stroke();
-                
+
                 // Bottom-left corner
                 ctx.beginPath();
                 ctx.moveTo(x, y + cellHeight - bracketSize);
                 ctx.lineTo(x, y + cellHeight);
                 ctx.lineTo(x + bracketSize, y + cellHeight);
                 ctx.stroke();
-                
+
                 // Bottom-right corner
                 ctx.beginPath();
                 ctx.moveTo(x + cellWidth - bracketSize, y + cellHeight);
@@ -278,20 +278,20 @@ function drawGridOnOverlay() {
             const x = (c * cellWidth) + (cellWidth / 2);
             const y = (r * cellHeight) + 8;
             const cellData = gridCellActivity[camId];
-            
+
             let label = `Cam ${camId}`;
             if (cellData && cellData.count > 0) {
                 label += ` (${cellData.count})`;
             }
-            
+
             // Add background for label readability
             const textMetrics = ctx.measureText(label);
             const textWidth = textMetrics.width;
             const textHeight = 18;
             ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
             ctx.fillRect(x - textWidth / 2 - 4, y - 2, textWidth + 8, textHeight);
-            
-            ctx.fillStyle = cellData && (Date.now() - cellData.lastActive) < 3000 
+
+            ctx.fillStyle = cellData && (Date.now() - cellData.lastActive) < 3000
                 ? (cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420')
                 : 'rgba(233, 84, 32, 1)';
             ctx.fillText(label, x, y);
@@ -317,7 +317,7 @@ function drawGrid() {
             if (cellData && (now - cellData.lastActive) < fadeTime) {
                 const fadeAlpha = 1 - ((now - cellData.lastActive) / fadeTime);
                 let highlightColor = 'rgba(233, 84, 32, 0.1)'; // Default orange
-                
+
                 if (cellData.status === 'RUNNING_DETECTED') {
                     highlightColor = `rgba(220, 53, 69, ${0.2 * fadeAlpha})`; // Red
                 } else if (cellData.status === 'LOUD') {
@@ -331,7 +331,7 @@ function drawGrid() {
             }
 
             // Draw cell border with corner brackets (CCTV style)
-            canvasCtx.strokeStyle = cellData && (now - cellData.lastActive) < fadeTime 
+            canvasCtx.strokeStyle = cellData && (now - cellData.lastActive) < fadeTime
                 ? (cellData.status === 'RUNNING_DETECTED' ? 'rgba(220, 53, 69, 0.8)' : 'rgba(233, 84, 32, 0.6)')
                 : 'rgba(233, 84, 32, 0.3)';
             canvasCtx.lineWidth = cellData && (now - cellData.lastActive) < fadeTime ? 3 : 2;
@@ -344,28 +344,28 @@ function drawGrid() {
                 canvasCtx.strokeStyle = cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420';
                 canvasCtx.lineWidth = 3;
                 canvasCtx.setLineDash([]);
-                
+
                 // Top-left corner
                 canvasCtx.beginPath();
                 canvasCtx.moveTo(x, y + bracketSize);
                 canvasCtx.lineTo(x, y);
                 canvasCtx.lineTo(x + bracketSize, y);
                 canvasCtx.stroke();
-                
+
                 // Top-right corner
                 canvasCtx.beginPath();
                 canvasCtx.moveTo(x + cellWidth - bracketSize, y);
                 canvasCtx.lineTo(x + cellWidth, y);
                 canvasCtx.lineTo(x + cellWidth, y + bracketSize);
                 canvasCtx.stroke();
-                
+
                 // Bottom-left corner
                 canvasCtx.beginPath();
                 canvasCtx.moveTo(x, y + cellHeight - bracketSize);
                 canvasCtx.lineTo(x, y + cellHeight);
                 canvasCtx.lineTo(x + bracketSize, y + cellHeight);
                 canvasCtx.stroke();
-                
+
                 // Bottom-right corner
                 canvasCtx.beginPath();
                 canvasCtx.moveTo(x + cellWidth - bracketSize, y + cellHeight);
@@ -411,20 +411,20 @@ function drawGrid() {
             const x = (c * cellWidth) + (cellWidth / 2);
             const y = (r * cellHeight) + 8;
             const cellData = gridCellActivity[camId];
-            
+
             let label = `Cam ${camId}`;
             if (cellData && cellData.count > 0) {
                 label += ` (${cellData.count})`;
             }
-            
+
             // Add background for label readability
             const textMetrics = canvasCtx.measureText(label);
             const textWidth = textMetrics.width;
             const textHeight = 18;
             canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
             canvasCtx.fillRect(x - textWidth / 2 - 4, y - 2, textWidth + 8, textHeight);
-            
-            canvasCtx.fillStyle = cellData && (Date.now() - cellData.lastActive) < 3000 
+
+            canvasCtx.fillStyle = cellData && (Date.now() - cellData.lastActive) < 3000
                 ? (cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420')
                 : 'rgba(233, 84, 32, 1)';
             canvasCtx.fillText(label, x, y);
@@ -554,6 +554,31 @@ function generateSyncCode() {
     document.getElementById('join-code-input').value = code;
 }
 
+function copySyncCode() {
+    const codeInput = document.getElementById('sync-code-input');
+    if (!codeInput || !codeInput.value) return;
+
+    codeInput.select();
+    codeInput.setSelectionRange(0, 99999); /* For mobile devices */
+
+    try {
+        navigator.clipboard.writeText(codeInput.value).then(() => {
+            const btn = document.querySelector('button[title="Copy Code"]');
+            if (btn) {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="check" style="width: 16px; height: 16px;"></i>';
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    lucide.createIcons();
+                }, 2000);
+            }
+        });
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
+}
+
 function joinSyncRoom() {
     const code = document.getElementById('join-code-input').value;
     if (!code) return;
@@ -661,7 +686,7 @@ function handleStaffSummonAlert(data) {
         <button type="button" class="btn btn-light btn-lg mt-4 px-5 fw-bold dismiss-summon-btn">DISMISS</button>
     `;
     document.body.appendChild(overlay);
-    
+
     // Attach event listener to dismiss button to prevent page refresh
     const dismissBtn = overlay.querySelector('.dismiss-summon-btn');
     dismissBtn.addEventListener('click', (e) => {
@@ -792,7 +817,7 @@ async function captureSnapshot(zone) {
 
     // 1. Draw original video frame
     try {
-    ctx.drawImage(videoElement, 0, 0);
+        ctx.drawImage(videoElement, 0, 0);
     } catch (err) {
         console.error('Failed to draw video to canvas:', err);
         return null;
@@ -844,7 +869,7 @@ async function captureSnapshot(zone) {
     }
 
     const dataUrl = tempCanvas.toDataURL('image/jpeg', 0.8);
-    
+
     if (!dataUrl || dataUrl === 'data:,') {
         console.error('Failed to generate canvas data URL');
         return null;
@@ -857,11 +882,11 @@ async function captureSnapshot(zone) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ zone, image: dataUrl })
         });
-        
+
         if (!response.ok) {
             throw new Error(`Upload failed with status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log('Snapshot uploaded successfully:', data.url);
         return data.url;
@@ -1108,9 +1133,9 @@ async function startCamera() {
         width: cameraWidth,
         height: cameraHeight
     });
-    
+
     await globalCamera.start();
-    
+
     // Wait for video metadata to be loaded and sync canvas dimensions
     return new Promise((resolve) => {
         const syncDimensions = () => {
@@ -1123,7 +1148,7 @@ async function startCamera() {
                 setTimeout(syncDimensions, 100);
             }
         };
-        
+
         if (videoElement.readyState >= 1) {
             syncDimensions();
         } else {
@@ -1295,17 +1320,17 @@ document.querySelectorAll('.preset-grid-btn').forEach(btn => {
         gridRows = rows;
         gridCols = cols;
         gridCellActivity = {}; // Reset activity when grid changes
-        
+
         // Update input fields
         if (gridRowsInput) gridRowsInput.value = rows;
         if (gridColsInput) gridColsInput.value = cols;
-        
+
         // Update button states
         document.querySelectorAll('.preset-grid-btn').forEach(b => {
             b.classList.remove('active');
         });
         e.target.classList.add('active');
-        
+
         // Redraw grid overlay if in preview
         if (isPreview && gridMode) {
             drawGridOnOverlay();

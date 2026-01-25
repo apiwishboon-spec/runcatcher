@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/style.css">
     <style>
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -21,21 +22,34 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #18181b;
+            background: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #27272a;
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #3f3f46;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Overrides for dashboard specifically to match theme */
+        .glass-dash {
+            background: rgba(255, 255, 255, 0.85);
+            /* Light mode glass for united theme match */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
 
-<body class="min-h-screen bg-black text-white p-8 pt-12 md:pt-32">
+<body class="min-h-screen text-slate-800 p-8 pt-12 md:pt-32">
+    <!-- Dynamic Aura Background (Copied from main app) -->
+    <div id="aura-bg" class="aura-bg state-quiet fixed top-0 left-0 w-full h-full -z-10">
+        <div class="aura-sphere aura-sphere-1"></div>
+        <div class="aura-sphere aura-sphere-2"></div>
+    </div>
     <div class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
             <div>
@@ -44,11 +58,11 @@
             </div>
             <div class="flex gap-3">
                 <a href="/"
-                    class="bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 px-6 py-3 rounded-2xl flex items-center gap-2 transition-all text-sm font-bold no-underline text-white">
+                    class="glass-dash hover:bg-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all text-sm font-bold no-underline text-slate-800 shadow-sm">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Live
                 </a>
                 <button onclick="window.location.reload()"
-                    class="bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 px-6 py-3 rounded-2xl flex items-center gap-2 transition-all text-sm font-bold">
+                    class="glass-dash hover:bg-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all text-sm font-bold shadow-sm">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i> Sync Data
                 </button>
             </div>
@@ -56,48 +70,45 @@
 
         <!-- KPI Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-            <div class="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl flex items-center gap-6">
-                <div
-                    class="w-14 h-14 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-center text-blue-500">
+            <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600">
                     <i data-lucide="layers" class="w-7 h-7 icon-layers"></i>
                 </div>
                 <div>
-                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-wider">Total Zones</p>
-                    <h3 class="text-3xl font-black" id="total-zones">0</h3>
+                    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Zones</p>
+                    <h3 class="text-3xl font-black text-slate-800" id="total-zones">0</h3>
                 </div>
             </div>
-            <div class="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl flex items-center gap-6">
-                <div
-                    class="w-14 h-14 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-center text-rose-500">
+            <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-600">
                     <i data-lucide="alert-triangle" class="w-7 h-7"></i>
                 </div>
                 <div>
-                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-wider">Running Incidents</p>
-                    <h3 class="text-3xl font-black" id="total-incidents">0</h3>
+                    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Running Incidents</p>
+                    <h3 class="text-3xl font-black text-slate-800" id="total-incidents">0</h3>
                 </div>
             </div>
-            <div class="bg-zinc-900/50 border border-zinc-800 p-8 rounded-3xl flex items-center gap-6">
-                <div
-                    class="w-14 h-14 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-center text-amber-500">
+            <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
                     <i data-lucide="volume-2" class="w-7 h-7"></i>
                 </div>
                 <div>
-                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-wider">Noise Warnings</p>
-                    <h3 class="text-3xl font-black" id="total-noise">0</h3>
+                    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Noise Warnings</p>
+                    <h3 class="text-3xl font-black text-slate-800" id="total-noise">0</h3>
                 </div>
             </div>
         </div>
 
         <!-- Charts Grid (Static Mock for now, requires more complex backend for historical chart data) -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl">
-                <h3 class="font-bold text-xl mb-8">Incidents vs Threshold (Daily)</h3>
+            <div class="glass-dash p-8 rounded-3xl shadow-sm">
+                <h3 class="font-bold text-xl mb-8 text-slate-800">Incidents vs Threshold (Daily)</h3>
                 <div class="h-[350px]">
                     <canvas id="barChart"></canvas>
                 </div>
             </div>
-            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl">
-                <h3 class="font-bold text-xl mb-8">Alert Distribution by Zone</h3>
+            <div class="glass-dash p-8 rounded-3xl shadow-sm">
+                <h3 class="font-bold text-xl mb-8 text-slate-800">Alert Distribution by Zone</h3>
                 <div class="h-[300px] flex justify-center items-center relative">
                     <canvas id="pieChart"></canvas>
                 </div>
@@ -114,8 +125,8 @@
 
     <script>
         lucide.createIcons();
-        Chart.defaults.color = '#71717a';
-        Chart.defaults.borderColor = '#27272a';
+        Chart.defaults.color = '#64748b'; // slate-500
+        Chart.defaults.borderColor = '#e2e8f0'; // slate-200
         Chart.defaults.font.family = "'Inter', sans-serif";
 
         // MOCKED Chart Data (Backend doesn't store history yet)
@@ -197,7 +208,7 @@
             zoneGrid.innerHTML = '';
 
             if (!zones || zones.length === 0) {
-                zoneGrid.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-8">No active zones detected yet. Start the app in a zone to see data.</p>';
+                zoneGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center py-8">No active zones detected yet. Start the app in a zone to see data.</p>';
                 return;
             }
 
@@ -207,27 +218,27 @@
                     zone.status.charAt(0).toUpperCase() + zone.status.slice(1).toLowerCase();
 
                 const card = document.createElement('div');
-                card.className = `bg-zinc-900 border ${theme.border} p-6 rounded-3xl transition-all hover:scale-[1.02] cursor-pointer`;
+                card.className = `glass-dash border ${theme.border} p-6 rounded-3xl transition-all hover:scale-[1.02] cursor-pointer shadow-sm`;
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-12 h-12 rounded-2xl ${theme.bg} flex items-center justify-center ${theme.color}">
-                            <i data-lucide="${theme.icon}" class="w-6 h-6"></i>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-xs font-bold ${theme.bg} ${theme.color} border ${theme.border}">
-                            ${displayStatus}
-                        </span>
-                    </div>
-                    <h4 class="text-lg font-bold mb-1">${zone.name}</h4>
-                    <div class="flex justify-between items-end mt-4">
-                        <div>
-                            <p class="text-zinc-500 text-xs font-bold uppercase">Today's Events</p>
-                            <p class="text-2xl font-black text-white">${zone.events_today}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-zinc-500 text-xs font-bold uppercase">Noise</p>
-                            <p class="text-white font-mono">${Math.round(zone.noise_level)} dB</p>
-                        </div>
-                    </div>
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-2xl ${theme.bg} flex items-center justify-center ${theme.color}">
+                    <i data-lucide="${theme.icon}" class="w-6 h-6"></i>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-bold ${theme.bg} ${theme.color} border ${theme.border}">
+                    ${displayStatus}
+                </span>
+            </div>
+            <h4 class="text-lg font-bold mb-1 text-slate-800">${zone.name}</h4>
+            <div class="flex justify-between items-end mt-4">
+                <div>
+                    <p class="text-slate-500 text-xs font-bold uppercase">Today's Events</p>
+                    <p class="text-2xl font-black text-slate-800">${zone.events_today}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-slate-500 text-xs font-bold uppercase">Noise</p>
+                    <p class="text-slate-700 font-mono">${Math.round(zone.noise_level)} dB</p>
+                </div>
+            </div>
                 `;
                 zoneGrid.appendChild(card);
             });
