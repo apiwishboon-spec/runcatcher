@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     SNAPSHOT_DIR: str = "snapshots"
     STATIC_DIR: str = "static"
     SNAPSHOT_RETENTION_HOURS: int = 5
+    
+    # Email Settings
+    EMAIL_SENDER: str = "apiwish.boon@gmail.com"
+    EMAIL_PASSWORD: str = "geoa pmxn uuvb ccci"
 
     class Config:
         env_file = ".env"

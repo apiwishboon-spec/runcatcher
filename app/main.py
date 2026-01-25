@@ -57,6 +57,12 @@ async def root():
     with open(index_path, "r") as f:
         return f.read()
 
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard_page():
+    dashboard_path = os.path.join(settings.STATIC_DIR, "dashboard.html")
+    with open(dashboard_path, "r") as f:
+        return f.read()
+
 @app.websocket("/ws/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: str):
     await manager.connect(websocket, room_id)
@@ -158,8 +164,54 @@ async def reset_admin_password():
     app.state.admin_password = code
     return {"password": code}
 
-@app.post("/api/auth/verify")
-async def verify_admin_password(data: dict):
     if data.get("password") == app.state.admin_password:
         return {"status": "ok"}
     raise HTTPException(status_code=401, detail="Invalid password")
+
+# Email Logic
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_admin_email_task(recipient_email: str, pin: str):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = f"Library Run Catcher service <{settings.EMAIL_SENDER}>"
+        msg['To'] = recipient_email
+        msg['Subject'] = "Admin Dashboard Access PIN"
+
+        body = f"""
+        <html>
+          <body>
+            <h2>Library Run Catcher - Admin Access</h2>
+            <p>You requested your current Admin Session PIN.</p>
+            <p><strong>Current PIN:</strong> <span style="font-family: monospace; font-size: 24px;">{pin}</span></p>
+            <p>Use this code to unlock the dashboard.</p>
+            <br>
+            <small>If you did not request this, please ignore this email.</small>
+          </body>
+        </html>
+        """
+        msg.attach(MIMEText(body, 'html'))
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(settings.EMAIL_SENDER, settings.EMAIL_PASSWORD)
+        text = msg.as_string()
+        server.sendmail(settings.EMAIL_SENDER, recipient_email, text)
+        server.quit()
+        print(f"Email sent to {recipient_email}")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+@app.post("/api/auth/forgot")
+async def forgot_password(data: dict, background_tasks: BackgroundTasks):
+    email = data.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email required")
+    
+    # Send current PIN to the provided email in background
+    code = app.state.admin_password
+    background_tasks.add_task(send_admin_email_task, email, code)
+    
+    return {"status": "sent", "message": "If the email is valid, the PIN has been sent."}
