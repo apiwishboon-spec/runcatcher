@@ -377,29 +377,181 @@
     </div>
 
     <!-- Sponsor Modal (small) -->
-    <div class="modal fade" id="sponsorModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content glass-card border-0">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Sponsor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center p-3">
-                    <img src="/static/spornserme.png" alt="Sponsor" class="img-fluid">
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
+    <!-- Sponsor Modal (small) -->
+<div class="modal fade" id="sponsorModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content glass-card border-0">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Sponsor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-3">
+                <img src="/static/spornserme.png" alt="Sponsor" class="img-fluid">
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
 
-    <footer class="container mt-5 mb-4 text-center d-flex justify-content-center align-items-center gap-2">
-        <p class="text-muted mb-0" style="font-size: 9pt;">© 2029 APIWISH ANUTARAVANICHKUL</p>
+<!-- Privacy Policy Modal (large, scrollable) -->
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content glass-card border-0">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" style="max-height:65vh; overflow:auto;">
+                <h4>Privacy Policy</h4>
+                <h5>LibraryRunCatcher</h5>
+                <p class="small text-muted"><strong>Last Updated:</strong> 2029-01-01</p>
+
+                <p class="small text-muted">LibraryRunCatcher is a privacy-first behavioral monitoring system built for educational environments. This Privacy Policy explains what data is processed, how it is handled, and why we intentionally keep it minimal as hell.</p>
+
+                <h6>1. Privacy by Architecture</h6>
+                <p class="small text-muted">LibraryRunCatcher is designed with these core principles baked in (not bolted on later):</p>
+                <ul class="small text-muted">
+                    <li>Client-side AI processing only</li>
+                    <li>No continuous recording</li>
+                    <li>No identity recognition</li>
+                    <li>Ephemeral data storage</li>
+                    <li>No data selling, ever</li>
+                    <li>Educational-use focus</li>
+                </ul>
+                <p class="small text-muted">If a feature violates these principles, it doesn’t make it into production. Period.</p>
+
+                <h6>2. Data Processing Overview</h6>
+                <h6>2.1 Camera and Microphone Access</h6>
+                <p class="small text-muted">Used solely for real-time motion speed and sound level detection. Raw video and audio never leave the user’s device. No facial recognition, voice identification, or biometric profiling.</p>
+
+                <h6>2.2 AI Pose and Motion Data</h6>
+                <p class="small text-muted">Non-identifiable skeletal keypoints, movement vectors and speed calculations. Processed in memory and discarded immediately unless an alert occurs.</p>
+
+                <h6>3. Incident Evidence Data</h6>
+                <p class="small text-muted">When a running or noise violation is detected, the system may generate a single evidence snapshot. This snapshot may include:</p>
+                <ul class="small text-muted">
+                    <li>Timestamp</li>
+                    <li>Zone or virtual camera cell</li>
+                    <li>Detection type</li>
+                    <li>Speed (m/s) or sound level (dB)</li>
+                </ul>
+                <p class="small text-muted">No continuous video is stored. No tracking across time. No personal identity attached.</p>
+
+                <h6>Retention Policy</h6>
+                <p class="small text-muted">Evidence is stored temporarily and automatically deleted after 5 hours. Background cleanup runs continuously.</p>
+
+                <h6>4. Data We Explicitly Do NOT Collect</h6>
+                <p class="small text-muted">LibraryRunCatcher does not collect:</p>
+                <ul class="small text-muted">
+                    <li>Names, emails, phone numbers</li>
+                    <li>Facial or biometric identifiers</li>
+                    <li>User accounts or profiles</li>
+                    <li>Location tracking data</li>
+                    <li>Advertising or analytics data</li>
+                    <li>Third-party tracking cookies</li>
+                </ul>
+
+                <h6>5. Multi-Device Sync (Librarian’s Watch)</h6>
+                <p class="small text-muted">Uses temporary, rotating room codes. No persistent identifiers. No accounts required. Connections exist only during active sessions. Once the session ends, the data disappears. Like a responsible adult.</p>
+
+                <h6>6. Cookies and Local Storage</h6>
+                <p class="small text-muted">Local storage is used only for UI preferences and temporary session state. No cross-site tracking. No marketing cookies. No creepy stuff.</p>
+
+                <h6>7. Security Measures</h6>
+                <p class="small text-muted">HTTPS enforced. No public access to evidence files. Automatic data expiration. No long-term server-side media storage.</p>
+
+                <h6>8. Student and Child Privacy</h6>
+                <p class="small text-muted">LibraryRunCatcher is designed for institutional supervision, not personal surveillance. No student identity data is collected. No profiling or behavioral scoring. Supports compliance with FERPA, GDPR principles, and Thailand PDPA.</p>
+
+                <h6>9. Changes to This Policy</h6>
+                <p class="small text-muted">If this policy changes, documentation will be updated. The core privacy principles will not be weakened. That’s a hard rule.</p>
+
+                <h6>10. Contact</h6>
+                <p class="small text-muted">Project Maintainer: APIWISH ANUTARAVANICHKUL<br>See official project repository for contact and documentation.</p>
+
+                <p class="small text-muted">© 2029 APIWISH ANUTARAVANICHKUL<br>LibraryRunCatcher — Privacy-First by Design</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms of Service Modal (large, scrollable) -->
+<div class="modal fade" id="tosModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content glass-card border-0">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Terms of Service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" style="max-height:65vh; overflow:auto;">
+                <h4>Terms of Service</h4>
+                <h5>LibraryRunCatcher</h5>
+                <p class="small text-muted"><strong>Last Updated:</strong> 2029-01-01</p>
+
+                <p class="small text-muted">By using LibraryRunCatcher, you agree to the following Terms of Service. This is the boring-but-important governance layer. Let’s keep it sane.</p>
+
+                <h6>1. Intended Use</h6>
+                <p class="small text-muted">LibraryRunCatcher is intended only for Libraries, Schools, Educational institutions, and Supervised learning environments.</p>
+                <p class="small text-muted">It is not intended for Personal surveillance, Law enforcement, Workplace monitoring, Home surveillance, or Punitive or discriminatory use. If you use it that way, that’s on you — not the software.</p>
+
+                <h6>2. User Responsibilities</h6>
+                <p class="small text-muted">By deploying LibraryRunCatcher, you agree to obtain proper institutional approval, inform staff and students when monitoring is active, follow applicable privacy and education laws, and use the system ethically and proportionally. Human judgment is required. The AI is a tool, not a judge.</p>
+
+                <h6>3. No Guarantee of Accuracy</h6>
+                <p class="small text-muted">LibraryRunCatcher uses probabilistic AI models. Detections are indicators, not absolute truth. False positives and negatives may occur. All decisions must be reviewed by a human authority.</p>
+
+                <h6>4. Evidence Usage</h6>
+                <p class="small text-muted">Generated evidence is contextual and time-bound and must be reviewed before action. It should follow institutional disciplinary policies. The system is not liable for misuse, overreach, or dumb decisions made downstream.</p>
+
+                <h6>5. Availability and Reliability</h6>
+                <p class="small text-muted">LibraryRunCatcher is provided “as is”: No uptime guarantees, no warranty of uninterrupted service, and features may change across versions.</p>
+
+                <h6>6. Open-Source License</h6>
+                <p class="small text-muted">LibraryRunCatcher is released under the Apache License 2.0. You may use, modify, and redistribute. You may not remove license notices, misrepresent authorship, or claim endorsement or certification.</p>
+
+                <h6>7. Limitation of Liability</h6>
+                <p class="small text-muted">To the maximum extent permitted by law, the authors are not liable for misuse of the system, data loss, policy violations, or disciplinary outcomes.</p>
+
+                <h6>8. Termination</h6>
+                <p class="small text-muted">You may stop using LibraryRunCatcher at any time. Use may be restricted if the system is deployed in violation of these terms or applicable laws.</p>
+
+                <h6>9. Governing Principles</h6>
+                <p class="small text-muted">This system is governed by Transparency, Data minimization, Human oversight, and Educational ethics.</p>
+
+                <h6>10. Acceptance</h6>
+                <p class="small text-muted">By deploying or using LibraryRunCatcher, you acknowledge that you have read, understood, and agreed to these Terms.</p>
+
+                <p class="small text-muted">© 2029 APIWISH ANUTARAVANICHKUL<br>LibraryRunCatcher — Built for Education, Not Surveillance</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="container mt-5 mb-4 text-center d-flex justify-content-center align-items-center gap-2">
+    <p class="text-muted mb-0" style="font-size: 9pt;">© 2029 APIWISH ANUTARAVANICHKUL</p>
+
+    <div class="d-flex align-items-center gap-2">
         <button class="btn btn-link btn-sm p-0" data-bs-toggle="modal" data-bs-target="#sponsorModal" title="Sponsor">
             <img src="/static/slogo.png" alt="Sponsor" height="18" class="rounded me-1">Sponsor
         </button>
-    </footer>
+
+        <button class="btn btn-link btn-sm p-0" data-bs-toggle="modal" data-bs-target="#privacyModal" title="Privacy Policy">
+            Privacy Policy
+        </button>
+
+        <button class="btn btn-link btn-sm p-0" data-bs-toggle="modal" data-bs-target="#tosModal" title="Terms of Service">
+            Terms of Service
+        </button>
+    </div>
+</footer>
 
     <script>
         function toggleDashboard() {
