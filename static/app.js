@@ -183,14 +183,14 @@ function drawGridOnOverlay() {
             // Draw cell background with activity highlight
             if (cellData && (now - cellData.lastActive) < fadeTime) {
                 const fadeAlpha = 1 - ((now - cellData.lastActive) / fadeTime);
-                let highlightColor = 'rgba(233, 84, 32, 0.1)';
+                let highlightColor = 'rgba(33, 100, 135, 0.1)';
 
                 if (cellData.status === 'RUNNING_DETECTED') {
                     highlightColor = `rgba(220, 53, 69, ${0.2 * fadeAlpha})`;
                 } else if (cellData.status === 'LOUD') {
                     highlightColor = `rgba(13, 202, 240, ${0.15 * fadeAlpha})`;
                 } else {
-                    highlightColor = `rgba(233, 84, 32, ${0.1 * fadeAlpha})`;
+                    highlightColor = `rgba(33, 100, 135, ${0.1 * fadeAlpha})`;
                 }
 
                 ctx.fillStyle = highlightColor;
@@ -199,8 +199,8 @@ function drawGridOnOverlay() {
 
             // Draw cell border with corner brackets
             ctx.strokeStyle = cellData && (now - cellData.lastActive) < fadeTime
-                ? (cellData.status === 'RUNNING_DETECTED' ? 'rgba(220, 53, 69, 0.8)' : 'rgba(233, 84, 32, 0.6)')
-                : 'rgba(233, 84, 32, 0.6)';
+                ? (cellData.status === 'RUNNING_DETECTED' ? 'rgba(220, 53, 69, 0.8)' : 'rgba(33, 100, 135, 0.6)')
+                : 'rgba(33, 100, 135, 0.6)';
             ctx.lineWidth = cellData && (now - cellData.lastActive) < fadeTime ? 3 : 2;
             ctx.setLineDash([]);
             ctx.strokeRect(x, y, cellWidth, cellHeight);
@@ -208,7 +208,7 @@ function drawGridOnOverlay() {
             // Draw corner brackets for active cells
             if (cellData && (now - cellData.lastActive) < fadeTime) {
                 const bracketSize = 15;
-                ctx.strokeStyle = cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420';
+                ctx.strokeStyle = cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#216487';
                 ctx.lineWidth = 3;
                 ctx.setLineDash([]);
 
@@ -244,7 +244,7 @@ function drawGridOnOverlay() {
     }
 
     // Draw grid lines
-    ctx.strokeStyle = 'rgba(233, 84, 32, 0.6)';
+    ctx.strokeStyle = 'rgba(33, 100, 135, 0.6)';
     ctx.lineWidth = 2;
     ctx.setLineDash([]);
 
@@ -268,7 +268,7 @@ function drawGridOnOverlay() {
 
     // Draw Camera Labels
     ctx.font = 'bold 14px Inter, sans-serif';
-    ctx.fillStyle = 'rgba(233, 84, 32, 1)';
+    ctx.fillStyle = 'rgba(33, 100, 135, 1)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
 
@@ -292,8 +292,8 @@ function drawGridOnOverlay() {
             ctx.fillRect(x - textWidth / 2 - 4, y - 2, textWidth + 8, textHeight);
 
             ctx.fillStyle = cellData && (Date.now() - cellData.lastActive) < 3000
-                ? (cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420')
-                : 'rgba(233, 84, 32, 1)';
+                ? (cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#216487')
+                : 'rgba(33, 100, 135, 1)';
             ctx.fillText(label, x, y);
         }
     }
@@ -316,14 +316,14 @@ function drawGrid() {
             // Draw cell background with activity highlight
             if (cellData && (now - cellData.lastActive) < fadeTime) {
                 const fadeAlpha = 1 - ((now - cellData.lastActive) / fadeTime);
-                let highlightColor = 'rgba(233, 84, 32, 0.1)'; // Default orange
+                let highlightColor = 'rgba(33, 100, 135, 0.1)'; // Default orange
 
                 if (cellData.status === 'RUNNING_DETECTED') {
                     highlightColor = `rgba(220, 53, 69, ${0.2 * fadeAlpha})`; // Red
                 } else if (cellData.status === 'LOUD') {
                     highlightColor = `rgba(13, 202, 240, ${0.15 * fadeAlpha})`; // Cyan
                 } else {
-                    highlightColor = `rgba(233, 84, 32, ${0.1 * fadeAlpha})`; // Orange
+                    highlightColor = `rgba(33, 100, 135, ${0.1 * fadeAlpha})`; // Orange
                 }
 
                 canvasCtx.fillStyle = highlightColor;
@@ -332,8 +332,8 @@ function drawGrid() {
 
             // Draw cell border with corner brackets (CCTV style)
             canvasCtx.strokeStyle = cellData && (now - cellData.lastActive) < fadeTime
-                ? (cellData.status === 'RUNNING_DETECTED' ? 'rgba(220, 53, 69, 0.8)' : 'rgba(233, 84, 32, 0.6)')
-                : 'rgba(233, 84, 32, 0.3)';
+                ? (cellData.status === 'RUNNING_DETECTED' ? 'rgba(220, 53, 69, 0.8)' : 'rgba(33, 100, 135, 0.6)')
+                : 'rgba(33, 100, 135, 0.3)';
             canvasCtx.lineWidth = cellData && (now - cellData.lastActive) < fadeTime ? 3 : 2;
             canvasCtx.setLineDash([]);
             canvasCtx.strokeRect(x, y, cellWidth, cellHeight);
@@ -341,7 +341,7 @@ function drawGrid() {
             // Draw corner brackets for active cells
             if (cellData && (now - cellData.lastActive) < fadeTime) {
                 const bracketSize = 15;
-                canvasCtx.strokeStyle = cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420';
+                canvasCtx.strokeStyle = cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#216487';
                 canvasCtx.lineWidth = 3;
                 canvasCtx.setLineDash([]);
 
@@ -377,7 +377,7 @@ function drawGrid() {
     }
 
     // Draw grid lines (darker, more visible)
-    canvasCtx.strokeStyle = 'rgba(233, 84, 32, 0.6)';
+    canvasCtx.strokeStyle = 'rgba(33, 100, 135, 0.6)';
     canvasCtx.lineWidth = 2;
     canvasCtx.setLineDash([]);
 
@@ -401,7 +401,7 @@ function drawGrid() {
 
     // Draw Camera Labels with activity count
     canvasCtx.font = 'bold 14px Inter, sans-serif';
-    canvasCtx.fillStyle = 'rgba(233, 84, 32, 1)';
+    canvasCtx.fillStyle = 'rgba(33, 100, 135, 1)';
     canvasCtx.textAlign = 'center';
     canvasCtx.textBaseline = 'top';
 
@@ -425,15 +425,15 @@ function drawGrid() {
             canvasCtx.fillRect(x - textWidth / 2 - 4, y - 2, textWidth + 8, textHeight);
 
             canvasCtx.fillStyle = cellData && (Date.now() - cellData.lastActive) < 3000
-                ? (cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#e95420')
-                : 'rgba(233, 84, 32, 1)';
+                ? (cellData.status === 'RUNNING_DETECTED' ? '#dc3545' : '#216487')
+                : 'rgba(33, 100, 135, 1)';
             canvasCtx.fillText(label, x, y);
         }
     }
 }
 
 function drawLandmarks(landmarks) {
-    canvasCtx.fillStyle = '#e95420';
+    canvasCtx.fillStyle = '#216487';
     for (const landmark of landmarks) {
         canvasCtx.beginPath();
         canvasCtx.arc(landmark.x * canvasElement.width, landmark.y * canvasElement.height, 2, 0, 2 * Math.PI);
@@ -905,7 +905,7 @@ async function captureSnapshot(zone) {
             const p1 = pathHistory[i];
             const p2 = pathHistory[i + 1];
             const alpha = (i / pathHistory.length) * 0.8;
-            ctx.strokeStyle = `rgba(233, 84, 32, ${alpha})`;
+            ctx.strokeStyle = `rgba(33, 100, 135, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(p1.x * tempCanvas.width, p1.y * tempCanvas.height);
             ctx.lineTo(p2.x * tempCanvas.width, p2.y * tempCanvas.height);
