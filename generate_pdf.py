@@ -22,10 +22,11 @@ html_content = f"""
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f6fafe;
         }}
-        h1 {{ color: #2c3e50; border-bottom: 3px solid #e74c3c; padding-bottom: 10px; }}
-        h2 {{ color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px; }}
-        h3 {{ color: #27ae60; }}
+        h1 {{ color: #216487; border-bottom: 3px solid #ffd9e2; padding-bottom: 10px; }}
+        h2 {{ color: #216487; border-bottom: 2px solid #ffd9e2; padding-bottom: 5px; }}
+        h3 {{ color: #216487; }}
         code {{ background: #f8f9fa; padding: 2px 6px; border-radius: 3px; }}
         pre {{ background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }}
         blockquote {{ border-left: 4px solid #bdc3c7; padding-left: 15px; margin-left: 0; }}

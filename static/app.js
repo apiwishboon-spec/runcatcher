@@ -974,7 +974,7 @@ async function downloadPDFReport() {
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        const primaryColor = [233, 84, 32];
+        const primaryColor = [33, 100, 135]; // MySK Deep Blue (#216487)
 
         // 1. Header
         doc.setFillColor(...primaryColor);
@@ -1067,7 +1067,7 @@ async function downloadAllReports() {
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        const primaryColor = [233, 84, 32];
+        const primaryColor = [33, 100, 135]; // MySK Deep Blue (#216487)
 
         for (let i = 0; i < alerts.length; i++) {
             const el = alerts[i];
