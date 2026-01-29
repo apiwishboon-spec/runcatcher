@@ -42,7 +42,15 @@
                 <img src="/static/logo.png" alt="Logo" height="32" class="me-2 rounded-circle bg-white p-1">
                 LibraryRunCatcher
             </a>
-            <div class="ms-auto">
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2 position-relative"
+                    data-bs-toggle="modal" data-bs-target="#notificationModal">
+                    <i data-lucide="bell" style="width: 16px; height: 16px;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="font-size: 0.6rem;">
+                        1
+                    </span>
+                </button>
                 <button onclick="toggleDashboard()"
                     class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2">
                     <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
@@ -375,7 +383,55 @@
             </div>
         </div>
     </div>
+    <!-- Notification Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-primary">Latest Updates & News</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="vstack gap-4">
+                        <!-- New Update -->
+                        <div class="d-flex gap-3 p-3 rounded-4 bg-light border-start border-4 border-primary">
+                            <div class="text-primary"><i data-lucide="sparkles"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1">New Version: v2.2 "The MySK Overhaul"</h6>
+                                <p class="small text-muted mb-0">Full theme redesign, premium intro animations, and
+                                    performance optimizations for mobile devices.</p>
+                                <small class="text-primary fw-bold" style="font-size: 0.7rem;">JUST NOW</small>
+                            </div>
+                        </div>
 
+                        <!-- Previous News -->
+                        <div class="d-flex gap-3 p-3">
+                            <div class="text-muted"><i data-lucide="info"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Render Deployment Live</h6>
+                                <p class="small text-muted mb-0">LibraryRunCatcher is now officially hosted on Render
+                                    for stable 24/7 monitoring.</p>
+                                <small class="text-muted" style="font-size: 0.7rem;">3 DAYS AGO</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 p-3">
+                            <div class="text-muted"><i data-lucide="shield-check"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Privacy Update</h6>
+                                <p class="small text-muted mb-0">All CCTV grid processing is now performed locally on
+                                    your device for maximum security.</p>
+                                <small class="text-muted" style="font-size: 0.7rem;">1 WEEK AGO</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Got it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Sponsor Modal (small) -->
     <!-- Sponsor Modal (small) -->
     <div class="modal fade" id="sponsorModal" tabindex="-1">
