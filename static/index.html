@@ -46,9 +46,10 @@
                 <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2 position-relative"
                     data-bs-toggle="modal" data-bs-target="#notificationModal">
                     <i data-lucide="bell" style="width: 16px; height: 16px;"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    <span id="notification-badge"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
                         style="font-size: 0.6rem;">
-                        1
+                        0
                     </span>
                 </button>
                 <button onclick="toggleDashboard()"
@@ -391,39 +392,10 @@
                     <h5 class="modal-title fw-bold text-primary">Latest Updates & News</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="vstack gap-4">
-                        <!-- New Update -->
-                        <div class="d-flex gap-3 p-3 rounded-4 bg-light border-start border-4 border-primary">
-                            <div class="text-primary"><i data-lucide="sparkles"></i></div>
-                            <div>
-                                <h6 class="fw-bold mb-1">New Version: v2.2 "The MySK Overhaul"</h6>
-                                <p class="small text-muted mb-0">Full theme redesign, premium intro animations, and
-                                    performance optimizations for mobile devices.</p>
-                                <small class="text-primary fw-bold" style="font-size: 0.7rem;">JUST NOW</small>
-                            </div>
-                        </div>
-
-                        <!-- Previous News -->
-                        <div class="d-flex gap-3 p-3">
-                            <div class="text-muted"><i data-lucide="info"></i></div>
-                            <div>
-                                <h6 class="fw-bold mb-1">Render Deployment Live</h6>
-                                <p class="small text-muted mb-0">LibraryRunCatcher is now officially hosted on Render
-                                    for stable 24/7 monitoring.</p>
-                                <small class="text-muted" style="font-size: 0.7rem;">3 DAYS AGO</small>
-                            </div>
-                        </div>
-
-                        <div class="d-flex gap-3 p-3">
-                            <div class="text-muted"><i data-lucide="shield-check"></i></div>
-                            <div>
-                                <h6 class="fw-bold mb-1">Privacy Update</h6>
-                                <p class="small text-muted mb-0">All CCTV grid processing is now performed locally on
-                                    your device for maximum security.</p>
-                                <small class="text-muted" style="font-size: 0.7rem;">1 WEEK AGO</small>
-                            </div>
-                        </div>
+                <div class="modal-body" id="notification-items-container">
+                    <div class="text-center py-4 text-muted">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                        Loading updates...
                     </div>
                 </div>
                 <div class="modal-footer border-0">
@@ -692,6 +664,61 @@
                 intro.style.display = 'none';
             }, 3600);
         }
+    </script>
+    <script>
+        // Notification System Logic
+        async function loadNotifications() {
+            const container = document.getElementById('notification-items-container');
+            const badge = document.getElementById('notification-badge');
+
+            try {
+                // Add version for cache busting
+                const response = await fetch('/static/notifications.json?v=' + Date.now());
+                const notifications = await response.json();
+
+                let newCount = 0;
+                let html = '<div class="vstack gap-3">';
+
+                notifications.forEach(item => {
+                    if (item.isNew) newCount++;
+
+                    const borderClass = item.isNew ? 'border-primary bg-light' : 'border-light';
+                    const iconColor = item.isNew ? 'text-primary' : 'text-muted';
+
+                    html += `
+                        <div class="d-flex gap-3 p-3 rounded-4 border-start border-4 ${borderClass}">
+                            <div class="${iconColor}"><i data-lucide="${item.icon || 'info'}"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1">${item.title}</h6>
+                                <p class="small text-muted mb-0">${item.description}</p>
+                                <small class="${item.isNew ? 'text-primary fw-bold' : 'text-muted'}" style="font-size: 0.7rem;">${item.date}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                container.innerHTML = html;
+
+                if (newCount > 0) {
+                    badge.innerText = newCount;
+                    badge.classList.remove('d-none');
+                } else {
+                    badge.classList.add('d-none');
+                }
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error('Failed to load notifications:', err);
+                container.innerHTML = '<div class="text-center py-4 text-muted small">No updates found.</div>';
+            }
+        }
+
+        // Load on startup
+        document.addEventListener('DOMContentLoaded', loadNotifications);
+
+        // Refresh every 5 minutes
+        setInterval(loadNotifications, 300000);
     </script>
 </body>
 

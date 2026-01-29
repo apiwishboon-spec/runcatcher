@@ -1,0 +1,29 @@
+[
+    {
+        "id": "v2.2",
+        "title": "New Version: v2.2 \"The MySK Overhaul\"",
+        "description": "Full theme redesign, premium intro animations, and performance optimizations for mobile devices.",
+        "type": "update",
+        "date": "JUST NOW",
+        "icon": "sparkles",
+        "isNew": true
+    },
+    {
+        "id": "render-live",
+        "title": "Render Deployment Live",
+        "description": "LibraryRunCatcher is now officially hosted on Render for stable 24/7 monitoring.",
+        "type": "news",
+        "date": "3 DAYS AGO",
+        "icon": "info",
+        "isNew": false
+    },
+    {
+        "id": "privacy",
+        "title": "Privacy Update",
+        "description": "All CCTV grid processing is now performed locally on your device for maximum security.",
+        "type": "security",
+        "date": "1 WEEK AGO",
+        "icon": "shield-check",
+        "isNew": false
+    }
+]
