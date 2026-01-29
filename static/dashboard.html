@@ -13,8 +13,26 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="/static/style.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: #f6fafe;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+        }
+
+        :root {
+            --primary-blue: #216487;
+            --accent-pink: #ffd9e2;
         }
 
         ::-webkit-scrollbar {
@@ -36,10 +54,18 @@
 
         /* Overrides for dashboard specifically to match theme */
         .glass-dash {
-            background: rgba(255, 255, 255, 0.85);
-            /* Light mode glass for united theme match */
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid #c1c7ce;
+            border-radius: 28px !important;
+        }
+
+        .text-mysk-blue {
+            color: var(--primary-blue);
+        }
+
+        .bg-mysk-blue {
+            background-color: var(--primary-blue);
         }
     </style>
 </head>
@@ -269,15 +295,15 @@
             modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm';
             modal.innerHTML = `
                 <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600">
+                    <div class="w-16 h-16 bg-[#c6e7ff] rounded-full flex items-center justify-center mx-auto mb-6 text-[#216487]">
                         <i data-lucide="lock" class="w-8 h-8"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-slate-800 mb-2">Admin Access</h2>
                     <p class="text-slate-500 mb-6 text-sm">Enter the session PIN shown on the main screen.</p>
                     
-                    <input type="password" id="admin-pin" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 mb-4 text-center font-mono text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="000000" maxlength="6">
+                    <input type="password" id="admin-pin" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 mb-4 text-center font-mono text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-[#216487]" placeholder="000000" maxlength="6">
                     
-                    <button onclick="submitLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors">
+                    <button onclick="submitLogin()" class="w-full bg-[#216487] hover:bg-[#1a516e] text-white font-bold py-3 rounded-xl transition-colors">
                         Unlock Dashboard
                     </button>
                     <p id="login-error" class="text-rose-500 text-xs mt-3 font-bold hidden">Invalid PIN</p>
