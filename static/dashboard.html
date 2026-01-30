@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#216487">
     <title>LibraryRunCatcher | Admin Dashboard</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="/static/style.css?v=2.2">
+    <link rel="stylesheet" href="/static/style.css?v=2.3">
+    <link rel="icon" type="image/png" href="/static/logo.png?v=2.3">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
@@ -78,9 +80,12 @@
     </div>
     <div class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-            <div>
-                <h1 class="text-4xl font-bold mb-2">Monitoring Central</h1>
-                <p class="text-zinc-500 font-medium">Real-time status, zone analytics, and incident tracking.</p>
+            <div class="flex items-center gap-4">
+                <img src="/static/logo.png?v=2.3" alt="Logo" class="w-16 h-16 rounded-2xl shadow-sm bg-white p-2">
+                <div>
+                    <h1 class="text-4xl font-bold mb-1 text-mysk-blue">LibraryRunCatcher</h1>
+                    <p class="text-zinc-500 font-medium">Monitoring Central | Real-time status & analytics.</p>
+                </div>
             </div>
             <div class="flex gap-3">
                 <button onclick="goBackToLive()"

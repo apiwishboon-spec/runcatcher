@@ -1,20 +1,20 @@
 [
     {
-        "id": "LibraryRunCatcher new look",
-        "title": "LibraryRunCatcher new look",
-        "description": "Full theme redesign, premium intro animations, and performance optimizations for mobile devices.",
+        "id": "mysk-theme-launch",
+        "title": "MySK School Theme Live!",
+        "description": "The new MySK professional design system is now active. Enjoy the Deep Blue & Soft Pink premium interface.",
         "type": "update",
-        "date": "29/1/29",
-        "icon": "rocket",
+        "date": "Jan 30, 2026",
+        "icon": "palette",
         "isNew": true
     },
     {
-        "id": "test",
-        "title": "test",
-        "description": "just a test.",
-        "type": "test",
-        "date": "xxxx",
-        "icon": "star",
+        "id": "pwa-overhaul",
+        "title": "PWA & Icon Refinement",
+        "description": "Brand new high-resolution logo and improved PWA installation experience.",
+        "type": "update",
+        "date": "Jan 30, 2026",
+        "icon": "smartphone",
         "isNew": true
     }
 ]

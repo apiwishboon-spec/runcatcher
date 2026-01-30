@@ -59,7 +59,7 @@ Automatically map detection triggers to specific virtual camera feeds in a multi
 
 **Grid Features:**
 - **Virtual Cameras**: Each cell acts as independent camera (Cam 1, Cam 2, etc.)
-- **Activity Highlighting**: Color-coded cell backgrounds (🔴 Red = Running, 🟡 Cyan = Loud, 🟠 Orange = Activity)
+- **Activity Highlighting**: Color-coded cell backgrounds (🔴 Red = Running, 🟡 Cyan = Loud, 🔵 Deep Blue = Activity)
 - **Corner Brackets**: CCTV-style brackets on active cells
 - **Activity Counters**: Detection count per cell (e.g., "Cam 1 (5)")
 - **Fade Effects**: Highlights disappear after 3 seconds

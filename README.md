@@ -54,7 +54,7 @@ LibraryRunCatcher is a sophisticated, privacy-first PWA designed for educational
 - **Backend**: Python 3.9+, FastAPI, Pydantic v2, Uvicorn
 - **Frontend**: Vanilla HTML5, CSS3 (Glassmorphism), ES6+ JavaScript
 - **AI/ML**: MediaPipe Pose v0.5, Web Audio API, FFT Analysis
-- **UI Framework**: Bootstrap 5 (United Theme), Lucide Icons
+- **UI Framework**: Bootstrap 5 + MySK Custom Theme (Deep Blue & Soft Pink), Lucide Icons
 - **Real-time**: WebSocket, Server-Sent Events
 - **PWA**: Service Workers, Web App Manifest
 - **PDF Generation**: jsPDF, HTML5 Canvas

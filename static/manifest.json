@@ -4,8 +4,8 @@
     "description": "Library Behavior Monitoring & Teacher Accountability",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#e95420",
-    "theme_color": "#e95420",
+    "background_color": "#216487",
+    "theme_color": "#216487",
     "icons": [
         {
             "src": "/static/logo.png",

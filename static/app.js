@@ -316,14 +316,14 @@ function drawGrid() {
             // Draw cell background with activity highlight
             if (cellData && (now - cellData.lastActive) < fadeTime) {
                 const fadeAlpha = 1 - ((now - cellData.lastActive) / fadeTime);
-                let highlightColor = 'rgba(33, 100, 135, 0.1)'; // Default orange
+                let highlightColor = 'rgba(33, 100, 135, 0.1)'; // Default MySK blue
 
                 if (cellData.status === 'RUNNING_DETECTED') {
                     highlightColor = `rgba(220, 53, 69, ${0.2 * fadeAlpha})`; // Red
                 } else if (cellData.status === 'LOUD') {
                     highlightColor = `rgba(13, 202, 240, ${0.15 * fadeAlpha})`; // Cyan
                 } else {
-                    highlightColor = `rgba(33, 100, 135, ${0.1 * fadeAlpha})`; // Orange
+                    highlightColor = `rgba(33, 100, 135, ${0.1 * fadeAlpha})`; // MySK blue
                 }
 
                 canvasCtx.fillStyle = highlightColor;
