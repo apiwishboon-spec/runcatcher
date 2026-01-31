@@ -1606,7 +1606,59 @@ class ParticleSystem {
 
 const particles = new ParticleSystem();
 
+// --- Map Sync Logic ---
+async function refreshZonesFromMap() {
+    const btn = document.getElementById('sync-zones-btn');
+    const select = document.getElementById('zone-select');
+    if (btn) btn.classList.add('animate-spin');
+
+    try {
+        const res = await fetch('/api/map/layout');
+        if (res.ok) {
+            const layout = await res.json();
+            const cameras = layout.cameras || [];
+
+            if (cameras.length > 0) {
+                // Clear existing custom options but keep default generic ones? 
+                // Let's just add new ones from map
+                cameras.forEach(cam => {
+                    if (!cam.zoneName) return;
+                    const value = cam.zoneName;
+                    const exists = Array.from(select.options).some(opt => opt.value === value);
+                    if (!exists) {
+                        const opt = document.createElement('option');
+                        opt.value = value;
+                        opt.textContent = value + ' (from Map)';
+                        select.appendChild(opt);
+                    }
+                });
+
+                // Show success feedback
+                if (btn) {
+                    btn.classList.replace('btn-outline-primary', 'btn-success');
+                    setTimeout(() => btn.classList.replace('btn-success', 'btn-outline-primary'), 2000);
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Failed to sync map zones:', e);
+    } finally {
+        if (btn) btn.classList.remove('animate-spin');
+    }
+}
+
+// Initialize zones on Load
+document.addEventListener('DOMContentLoaded', () => {
+    refreshZonesFromMap();
+    // Default room code if none set
+    if (!document.getElementById('sync-code-input').value) {
+        generateSyncCode(); // Auto-generate code on start
+    }
+});
+
 // PWA Registration
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/static/sw.js');
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js').catch(err => console.log('SW registration failed:', err));
+    });
 }

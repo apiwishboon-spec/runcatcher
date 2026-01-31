@@ -268,12 +268,18 @@
                             <div class="vstack gap-3">
                                 <div>
                                     <label class="form-label fw-bold">Monitoring Zone</label>
-                                    <select id="zone-select" class="form-select">
-                                        <option value="reading_area">Reading Area</option>
-                                        <option value="computer_lab">Computer Lab</option>
-                                        <option value="study_hall">Study Hall</option>
-                                        <option value="quiet_zone">Quiet Zone</option>
-                                    </select>
+                                    <div class="input-group">
+                                        <select id="zone-select" class="form-select">
+                                            <option value="reading_area">Reading Area</option>
+                                            <option value="computer_lab">Computer Lab</option>
+                                            <option value="study_hall">Study Hall</option>
+                                            <option value="quiet_zone">Quiet Zone</option>
+                                        </select>
+                                        <button class="btn btn-outline-primary" onclick="refreshZonesFromMap()"
+                                            id="sync-zones-btn" title="Sync with Floor Plan">
+                                            <i data-lucide="map" style="width: 16px; height: 16px;"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="row g-2">
                                     <div class="col-8">

@@ -69,6 +69,15 @@
         .bg-mysk-blue {
             background-color: var(--primary-blue);
         }
+
+        #map-snapshot-tooltip {
+            transition: opacity 0.3s ease;
+            z-index: 100 !important;
+        }
+
+        .map-item {
+            z-index: 50;
+        }
     </style>
 </head>
 
@@ -88,6 +97,16 @@
                 </div>
             </div>
             <div class="flex gap-3">
+                <nav class="flex gap-1 bg-slate-100 p-1 rounded-2xl mr-4">
+                    <button onclick="switchTab('metrics')" id="tab-metrics"
+                        class="px-6 py-2 rounded-xl text-sm font-bold transition-all bg-white shadow-sm text-mysk-blue">
+                        Metrics
+                    </button>
+                    <button onclick="switchTab('map')" id="tab-map"
+                        class="px-6 py-2 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-mysk-blue">
+                        Floor Plan
+                    </button>
+                </nav>
                 <button onclick="goBackToLive()"
                     class="glass-dash hover:bg-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all text-sm font-bold shadow-sm">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Live
@@ -99,59 +118,160 @@
             </div>
         </header>
 
-        <!-- KPI Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-            <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
-                <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600">
-                    <i data-lucide="layers" class="w-7 h-7 icon-layers"></i>
+        <!-- Metrics Tab -->
+        <div id="section-metrics" class="tab-content">
+
+            <!-- KPI Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600">
+                        <i data-lucide="layers" class="w-7 h-7 icon-layers"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Zones</p>
+                        <h3 class="text-3xl font-black text-slate-800" id="total-zones">0</h3>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Zones</p>
-                    <h3 class="text-3xl font-black text-slate-800" id="total-zones">0</h3>
+                <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-600">
+                        <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Running Incidents</p>
+                        <h3 class="text-3xl font-black text-slate-800" id="total-incidents">0</h3>
+                    </div>
+                </div>
+                <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
+                        <i data-lucide="volume-2" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Noise Warnings</p>
+                        <h3 class="text-3xl font-black text-slate-800" id="total-noise">0</h3>
+                    </div>
                 </div>
             </div>
-            <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
-                <div class="w-14 h-14 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-600">
-                    <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+
+            <!-- Charts Grid (Static Mock for now, requires more complex backend for historical chart data) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                <div class="glass-dash p-8 rounded-3xl shadow-sm">
+                    <h3 class="font-bold text-xl mb-8 text-slate-800">Incidents vs Threshold (Daily)</h3>
+                    <div class="h-[350px]">
+                        <canvas id="barChart"></canvas>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Running Incidents</p>
-                    <h3 class="text-3xl font-black text-slate-800" id="total-incidents">0</h3>
+                <div class="glass-dash p-8 rounded-3xl shadow-sm">
+                    <h3 class="font-bold text-xl mb-8 text-slate-800">Alert Distribution by Zone</h3>
+                    <div class="h-[300px] flex justify-center items-center relative">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div id="pie-legend" class="flex flex-wrap justify-center gap-x-8 gap-y-2 mt-8"></div>
                 </div>
             </div>
-            <div class="glass-dash p-8 rounded-3xl flex items-center gap-6 shadow-sm">
-                <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
-                    <i data-lucide="volume-2" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Noise Warnings</p>
-                    <h3 class="text-3xl font-black text-slate-800" id="total-noise">0</h3>
-                </div>
-            </div>
+
         </div>
 
-        <!-- Charts Grid (Static Mock for now, requires more complex backend for historical chart data) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-            <div class="glass-dash p-8 rounded-3xl shadow-sm">
-                <h3 class="font-bold text-xl mb-8 text-slate-800">Incidents vs Threshold (Daily)</h3>
-                <div class="h-[350px]">
-                    <canvas id="barChart"></canvas>
+        <!-- Floor Plan Tab -->
+        <div id="section-map" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Map Tools -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="glass-dash p-6 rounded-3xl shadow-sm">
+                        <h4 class="font-bold mb-4 text-mysk-blue">Map Tools</h4>
+                        <div class="grid grid-cols-1 gap-3">
+                            <button onclick="addMapItem('shape')"
+                                class="flex items-center gap-3 w-full p-4 rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-100 transition-all text-sm font-bold group">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                                    <i data-lucide="square" class="w-5 h-5"></i>
+                                </div>
+                                Add Area Shape
+                            </button>
+                            <button onclick="addMapItem('camera')"
+                                class="flex items-center gap-3 w-full p-4 rounded-2xl bg-slate-50 hover:bg-amber-50 border border-slate-100 transition-all text-sm font-bold group">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
+                                    <i data-lucide="camera" class="w-5 h-5"></i>
+                                </div>
+                                Add Camera Node
+                            </button>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-slate-100 space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                <span class="text-[10px] font-bold uppercase text-slate-400">Snap to Grid</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="snap-grid-toggle" class="sr-only peer" checked>
+                                    <div
+                                        class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-mysk-blue">
+                                    </div>
+                                </label>
+                            </div>
+                            <button onclick="saveMapLayout()" id="save-map-btn"
+                                class="w-full bg-mysk-blue text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-900/10 hover:scale-[1.02] transition-transform">
+                                <i data-lucide="save" class="w-4 h-4"></i> Save Layout
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Legend/Helper -->
+                    <div class="glass-dash p-6 rounded-3xl shadow-sm text-xs text-slate-500">
+                        <p class="font-bold mb-2 uppercase text-slate-400">Instructions</p>
+                        <ul class="space-y-2 list-disc pl-4">
+                            <li>Drag items on the canvas to layout your library.</li>
+                            <li>Click a camera to assign its <strong>Zone Name</strong>.</li>
+                            <li>Area shapes can be resized from the bottom-right corner.</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="glass-dash p-8 rounded-3xl shadow-sm">
-                <h3 class="font-bold text-xl mb-8 text-slate-800">Alert Distribution by Zone</h3>
-                <div class="h-[300px] flex justify-center items-center relative">
-                    <canvas id="pieChart"></canvas>
-                </div>
-                <div id="pie-legend" class="flex flex-wrap justify-center gap-x-8 gap-y-2 mt-8"></div>
-            </div>
-        </div>
 
-        <!-- Zone Quick Status Grid -->
-        <h3 class="font-bold text-2xl mb-6">Zone Details</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" id="zone-grid">
-            <!-- Dynamic Injection -->
+                <!-- Map Canvas -->
+                <div class="lg:col-span-3">
+                    <div id="map-canvas"
+                        class="w-full aspect-video glass-dash rounded-3xl shadow-sm relative overflow-hidden bg-white/50 border-2 border-dashed border-slate-200"
+                        style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px;">
+                        <!-- Grid Background -->
+                        <div
+                            class="absolute inset-0 pointer-events-none opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
+                        </div>
+
+                        <!-- Items will be injected here -->
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- Zone Assign Modal (Simple prompt fallback for now, but inline UI is better) -->
+    <div id="zone-modal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-[60] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+            <h3 class="font-bold text-xl mb-4 text-mysk-blue">Assign Camera Zone</h3>
+            <p class="text-sm text-slate-500 mb-6">Enter the camera or mobile device identifier (e.g., "Cam 1",
+                "Entrance").</p>
+            <input type="text" id="zone-name-input"
+                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 mb-6 focus:outline-none focus:ring-2 focus:ring-mysk-blue"
+                placeholder="Cam 1">
+            <div class="flex gap-3">
+                <button onclick="closeZoneModal()"
+                    class="flex-1 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-2xl transition-colors">Cancel</button>
+                <button onclick="confirmZoneAssign()"
+                    class="flex-1 py-3 font-bold bg-mysk-blue text-white rounded-2xl shadow-lg shadow-blue-200 transition-transform active:scale-95">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Snapshot Tooltip (Dynamic) -->
+    <div id="map-snapshot-tooltip" class="absolute pointer-events-none hidden z-[70] transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl border-2 border-rose-500 overflow-hidden w-48">
+            <div class="bg-rose-500 text-white text-[10px] font-bold px-3 py-1 flex justify-between items-center">
+                <span>EVIDENCE LIVE</span>
+                <span id="tooltip-time">12:00</span>
+            </div>
+            <img id="tooltip-img" src="" class="w-full aspect-square object-cover bg-slate-100">
+            <div class="p-2 text-center bg-white">
+                <p id="tooltip-zone" class="font-bold text-[10px] text-slate-800 truncate"></p>
+            </div>
+        </div>
+        <div class="w-3 h-3 bg-white border-b-2 border-r-2 border-rose-500 rotate-45 mx-auto -mt-1.5 shadow-xl"></div>
     </div>
 
     <script>
@@ -160,11 +280,6 @@
         Chart.defaults.borderColor = '#e2e8f0'; // slate-200
         Chart.defaults.font.family = "'Inter', sans-serif";
 
-        // MOCKED Chart Data (Backend doesn't store history yet)
-        const zoneData = [
-            { zone: 'Reading Area', incidents: 4, threshold: 20 },
-            { zone: 'Comp. Lab', incidents: 2, threshold: 15 },
-        ];
         const ctxBar = document.getElementById('barChart').getContext('2d');
         const barChart = new Chart(ctxBar, {
             type: 'bar',
@@ -181,9 +296,9 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } }, // Simplified
+                plugins: { legend: { display: false } },
                 scales: {
-                    y: { grid: { color: '#27272a', drawBorder: false }, beginAtZero: true },
+                    y: { grid: { color: '#e2e8f0', drawBorder: false }, beginAtZero: true },
                     x: { grid: { display: false } }
                 }
             }
@@ -194,21 +309,250 @@
             type: 'doughnut',
             data: {
                 labels: ['Empty'],
-                datasets: [{ data: [1], backgroundColor: ['#333'], borderWidth: 0 }]
+                datasets: [{ data: [1], backgroundColor: ['#f1f5f9'], borderWidth: 0 }]
             },
             options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { display: false } } }
         });
 
         // ----------------------------------------------------
-        // Dynamic Dashboard Logic
+        // Map Builder Logic
         // ----------------------------------------------------
-        const zoneGrid = document.getElementById('zone-grid');
+        let mapLayout = { shapes: [], cameras: [] };
+        let activeItemId = null;
+        let isDragging = false;
+        let offset = { x: 0, y: 0 };
+        const canvas = document.getElementById('map-canvas');
 
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(`section-${tab}`).classList.remove('hidden');
+
+            document.querySelectorAll('nav button').forEach(b => {
+                b.classList.remove('bg-white', 'shadow-sm', 'text-mysk-blue');
+                b.classList.add('text-slate-500');
+            });
+            document.getElementById(`tab-${tab}`).classList.add('bg-white', 'shadow-sm', 'text-mysk-blue');
+            document.getElementById(`tab-${tab}`).classList.remove('text-slate-500');
+
+            if (tab === 'map') loadMapLayout();
+        }
+
+        function addMapItem(type) {
+            const id = 'item-' + Date.now();
+            const item = {
+                id,
+                type,
+                x: 50,
+                y: 50,
+                w: type === 'shape' ? 150 : 60,
+                h: type === 'shape' ? 100 : 60,
+                label: type === 'camera' ? 'New Camera' : 'Area',
+                zoneName: '',
+                alerting: false
+            };
+
+            if (type === 'shape') mapLayout.shapes.push(item);
+            else mapLayout.cameras.push(item);
+
+            renderMap();
+        }
+
+        function renderMap() {
+            canvas.querySelectorAll('.map-item').forEach(e => e.remove());
+
+            [...mapLayout.shapes, ...mapLayout.cameras].forEach(item => {
+                const el = document.createElement('div');
+                el.id = item.id;
+                el.className = `map-item absolute cursor-move flex flex-col items-center justify-center p-2 rounded-2xl select-none transition-all group
+                    ${item.type === 'shape' ? 'bg-blue-500/10 border-2 border-blue-500/30 shadow-sm' : 'bg-white border border-slate-200 shadow-md'} 
+                    ${item.alerting ? 'ring-4 ring-rose-500 ring-offset-2 animate-pulse' : ''}`;
+
+                el.style.left = item.x + 'px';
+                el.style.top = item.y + 'px';
+                el.style.width = item.w + 'px';
+                el.style.height = item.h + 'px';
+
+                if (item.type === 'camera') {
+                    const statusText = item.alerting ? (item.currentStatus || 'ALERT') : 'QUIET';
+                    const iconBg = item.alerting ? 'bg-rose-500' : 'bg-emerald-100';
+                    const iconColor = item.alerting ? 'text-white' : 'text-emerald-600';
+                    const icon = item.alerting ? 'alert-circle' : 'camera';
+
+                    el.innerHTML = `
+                        <div class="w-8 h-8 rounded-full ${iconBg} flex items-center justify-center ${iconColor} mb-1 transition-colors">
+                            <i data-lucide="${icon}" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-[9px] font-black uppercase text-slate-800 truncate w-full text-center leading-tight">${item.zoneName || 'No Name'}</span>
+                        <span class="text-[8px] font-bold ${item.alerting ? 'text-rose-500' : 'text-slate-400'} uppercase tracking-tighter">${statusText}</span>
+                        <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full hidden group-hover:flex items-center justify-center text-[10px]">×</button>
+                    `;
+                    el.onclick = (e) => {
+                        e.stopPropagation();
+                        if (item.alerting) showMapTooltip(item);
+                        else openZoneModal(item.id);
+                    };
+                } else {
+                    el.innerHTML = `
+                        <span class="text-xs font-bold text-blue-700 opacity-60">${item.label}</span>
+                        <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full hidden group-hover:flex items-center justify-center text-[10px]">×</button>
+                        <div class="absolute bottom-1 right-1 cursor-nw-resize opacity-0 group-hover:opacity-100" onmousedown="startResize(event, '${item.id}')">
+                           <i data-lucide="corner-right-down" class="w-3 h-3 text-blue-400"></i>
+                        </div>
+                    `;
+                }
+
+                el.onmousedown = (e) => startDrag(e, item.id);
+                canvas.appendChild(el);
+            });
+            lucide.createIcons();
+        }
+
+        function startDrag(e, id) {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+            isDragging = true;
+            activeItemId = id;
+            const el = document.getElementById(id);
+            const rect = el.getBoundingClientRect();
+            offset = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            const canvasRect = canvas.getBoundingClientRect();
+            let x = e.clientX - canvasRect.left - offset.x;
+            let y = e.clientY - canvasRect.top - offset.y;
+
+            // Constrain
+            x = Math.max(0, Math.min(x, canvasRect.width - 60));
+            y = Math.max(0, Math.min(y, canvasRect.height - 60));
+
+            // Snap to Grid (24px grid)
+            if (document.getElementById('snap-grid-toggle').checked) {
+                x = Math.round(x / 24) * 24;
+                y = Math.round(y / 24) * 24;
+            }
+
+            const item = [...mapLayout.shapes, ...mapLayout.cameras].find(i => i.id === activeItemId);
+            if (item) {
+                item.x = x;
+                item.y = y;
+                const el = document.getElementById(activeItemId);
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+            }
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+
+        function startResize(e, id) {
+            e.stopPropagation();
+            e.preventDefault();
+            activeItemId = id;
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+        }
+
+        function resize(e) {
+            const item = mapLayout.shapes.find(i => i.id === activeItemId);
+            if (!item) return;
+            const el = document.getElementById(activeItemId);
+            const rect = el.getBoundingClientRect();
+            const newW = e.clientX - rect.left;
+            const newH = e.clientY - rect.top;
+
+            item.w = Math.max(100, newW);
+            item.h = Math.max(60, newH);
+            el.style.width = item.w + 'px';
+            el.style.height = item.h + 'px';
+        }
+
+        function stopResize() {
+            document.removeEventListener('mousemove', resize);
+            document.removeEventListener('mouseup', stopResize);
+        }
+
+        function deleteItem(id) {
+            mapLayout.shapes = mapLayout.shapes.filter(i => i.id !== id);
+            mapLayout.cameras = mapLayout.cameras.filter(i => i.id !== id);
+            renderMap();
+        }
+
+        function openZoneModal(id) {
+            activeItemId = id;
+            const item = mapLayout.cameras.find(i => i.id === id);
+            document.getElementById('zone-name-input').value = item.zoneName || '';
+            document.getElementById('zone-modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('zone-name-input').focus(), 100);
+        }
+
+        function closeZoneModal() {
+            document.getElementById('zone-modal').classList.add('hidden');
+        }
+
+        function confirmZoneAssign() {
+            const val = document.getElementById('zone-name-input').value;
+            const item = mapLayout.cameras.find(i => i.id === activeItemId);
+            if (item) {
+                item.zoneName = val;
+                renderMap();
+            }
+            closeZoneModal();
+        }
+
+        async function saveMapLayout() {
+            const btn = document.getElementById('save-map-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Saving...';
+            lucide.createIcons();
+
+            const token = sessionStorage.getItem('adminKey');
+            try {
+                const res = await fetch('/api/map/layout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Admin-Key': token },
+                    body: JSON.stringify(mapLayout)
+                });
+                if (res.ok) {
+                    btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Saved!';
+                    btn.classList.replace('bg-mysk-blue', 'bg-emerald-500');
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.classList.replace('bg-emerald-500', 'bg-mysk-blue');
+                        lucide.createIcons();
+                    }, 2000);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadMapLayout() {
+            try {
+                const res = await fetch('/api/map/layout');
+                if (res.ok) {
+                    mapLayout = await res.json();
+                    renderMap();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // ----------------------------------------------------
+        // Metrics & Monitoring Logic
+        // ----------------------------------------------------
         const statusThemes = {
             'QUIET': { icon: 'book-open', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
             'LOUD': { icon: 'volume-2', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
             'RUNNING_DETECTED': { icon: 'wind', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20' }
         };
+
+        const zoneGrid = document.createElement('div'); // In-memory zone grid for metrics
 
         async function updateDashboard() {
             const token = sessionStorage.getItem('adminKey');
@@ -221,83 +565,91 @@
                 const response = await fetch('/api/dashboard/stats', {
                     headers: { 'X-Admin-Key': token }
                 });
-
                 if (response.status === 401) {
                     sessionStorage.removeItem('adminKey');
                     showLoginModal();
                     return;
                 }
-
                 const data = await response.json();
 
-                // Update KPIs
+                // 1. Update Metrics
                 document.getElementById('total-incidents').innerText = data.total_incidents;
                 document.getElementById('total-noise').innerText = data.total_noise;
                 document.getElementById('total-zones').innerText = data.total_zones;
 
-                // Update Zone Grid
-                renderZones(data.zones);
-
-                // Update Bar Chart (Simple Real-time update)
                 if (data.zones.length > 0) {
                     barChart.data.labels = data.zones.map(z => z.name);
                     barChart.data.datasets[0].data = data.zones.map(z => z.events_today);
                     barChart.update();
                 }
 
+                // 2. Update Map Alerts (Real-time Sync)
+                let mapChanged = false;
+                mapLayout.cameras.forEach(cam => {
+                    if (!cam.zoneName) return;
+
+                    // Robust fuzzy matching: match "Lobby" with "Lobby (Cam 1)" case-insensitively
+                    const zoneAlert = data.zones.find(z => {
+                        const dbName = z.name.toLowerCase().trim();
+                        const mapName = cam.zoneName.toLowerCase().trim();
+                        return (dbName === mapName || dbName.startsWith(mapName + ' (cam')) && z.status !== 'QUIET';
+                    });
+
+                    const isAlerting = !!zoneAlert;
+                    const status = zoneAlert ? zoneAlert.status.replace('_', ' ') : 'QUIET';
+                    const snapshotUrl = zoneAlert ? zoneAlert.alert_snapshot_url : cam.lastSnapshot;
+
+                    if (cam.alerting !== isAlerting || cam.currentStatus !== status || cam.lastSnapshot !== snapshotUrl) {
+                        cam.alerting = isAlerting;
+                        cam.currentStatus = status;
+                        cam.lastSnapshot = snapshotUrl;
+                        mapChanged = true;
+                    }
+                });
+                if (mapChanged) renderMap();
+
             } catch (error) {
                 console.error("Failed to fetch stats:", error);
             }
         }
 
-        function renderZones(zones) {
-            zoneGrid.innerHTML = '';
+        function showMapTooltip(item) {
+            console.log('Showing tooltip for', item.zoneName, 'Snapshot:', item.lastSnapshot);
+            if (!item.lastSnapshot) return;
+            const tooltip = document.getElementById('map-snapshot-tooltip');
+            const img = document.getElementById('tooltip-img');
+            const zone = document.getElementById('tooltip-zone');
+            const tTime = document.getElementById('tooltip-time');
 
-            if (!zones || zones.length === 0) {
-                zoneGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center py-8">No active zones detected yet. Start the app in a zone to see data.</p>';
-                return;
-            }
+            img.src = item.lastSnapshot;
+            zone.innerText = item.zoneName;
+            tTime.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            zones.forEach(zone => {
-                const theme = statusThemes[zone.status] || statusThemes['QUIET'];
-                const displayStatus = zone.status === 'RUNNING_DETECTED' ? 'Running' :
-                    zone.status.charAt(0).toUpperCase() + zone.status.slice(1).toLowerCase();
+            // Position tooltip above the item
+            const el = document.getElementById(item.id);
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
 
-                const card = document.createElement('div');
-                card.className = `glass-dash border ${theme.border} p-6 rounded-3xl transition-all hover:scale-[1.02] cursor-pointer shadow-sm`;
-                card.innerHTML = `
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-2xl ${theme.bg} flex items-center justify-center ${theme.color}">
-                    <i data-lucide="${theme.icon}" class="w-6 h-6"></i>
-                </div>
-                <span class="px-3 py-1 rounded-full text-xs font-bold ${theme.bg} ${theme.color} border ${theme.border}">
-                    ${displayStatus}
-                </span>
-            </div>
-            <h4 class="text-lg font-bold mb-1 text-slate-800">${zone.name}</h4>
-            <div class="flex justify-between items-end mt-4">
-                <div>
-                    <p class="text-slate-500 text-xs font-bold uppercase">Today's Events</p>
-                    <p class="text-2xl font-black text-slate-800">${zone.events_today}</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-slate-500 text-xs font-bold uppercase">Noise</p>
-                    <p class="text-slate-700 font-mono">${Math.round(zone.noise_level)} dB</p>
-                </div>
-            </div>
-                `;
-                zoneGrid.appendChild(card);
-            });
-            lucide.createIcons();
+            tooltip.classList.remove('hidden');
+            // Use window.scroll to account for page scrolling
+            tooltip.style.left = (window.scrollX + rect.left + rect.width / 2 - 96) + 'px';
+            tooltip.style.top = (window.scrollY + rect.top - 200) + 'px';
+            tooltip.style.opacity = '1';
+
+            // Auto-hide after 5 seconds
+            if (window.tooltipTimer) clearTimeout(window.tooltipTimer);
+            window.tooltipTimer = setTimeout(() => {
+                tooltip.style.opacity = '0';
+                setTimeout(() => tooltip.classList.add('hidden'), 300);
+            }, 5000);
         }
 
         // Auth Modal Logic
         function showLoginModal() {
             if (document.getElementById('login-modal')) return;
-
             const modal = document.createElement('div');
             modal.id = 'login-modal';
-            modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm';
+            modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-[100] backdrop-blur-sm';
             modal.innerHTML = `
                 <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
                     <div class="w-16 h-16 bg-[#c6e7ff] rounded-full flex items-center justify-center mx-auto mb-6 text-[#216487]">
@@ -305,22 +657,14 @@
                     </div>
                     <h2 class="text-2xl font-bold text-slate-800 mb-2">Admin Access</h2>
                     <p class="text-slate-500 mb-6 text-sm">Enter the session PIN shown on the main screen.</p>
-                    
                     <input type="password" id="admin-pin" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 mb-4 text-center font-mono text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-[#216487]" placeholder="000000" maxlength="6">
-                    
-                    <button onclick="submitLogin()" class="w-full bg-[#216487] hover:bg-[#1a516e] text-white font-bold py-3 rounded-xl transition-colors">
-                        Unlock Dashboard
-                    </button>
+                    <button onclick="submitLogin()" class="w-full bg-[#216487] hover:bg-[#1a516e] text-white font-bold py-3 rounded-xl transition-colors">Unlock Dashboard</button>
                     <p id="login-error" class="text-rose-500 text-xs mt-3 font-bold hidden">Invalid PIN</p>
                 </div>
             `;
             document.body.appendChild(modal);
             lucide.createIcons();
-
-            // Focus input
             setTimeout(() => document.getElementById('admin-pin').focus(), 100);
-
-            // Allow Enter key
             document.getElementById('admin-pin').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') submitLogin();
             });
@@ -329,14 +673,12 @@
         async function submitLogin() {
             const pin = document.getElementById('admin-pin').value;
             if (pin.length < 6) return;
-
             try {
                 const res = await fetch('/api/auth/verify', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ password: pin })
                 });
-
                 if (res.ok) {
                     sessionStorage.setItem('adminKey', pin);
                     document.getElementById('login-modal').remove();
@@ -346,26 +688,20 @@
                     err.classList.remove('hidden');
                     err.classList.add('animate-pulse');
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // Navigation Logic
         function goBackToLive() {
             if (window.parent && window.parent !== window) {
-                // Inside iframe: Message parent to close overlay
                 window.parent.postMessage('closeDashboard', '*');
             } else {
-                // Standalone: Navigate back
                 window.location.href = '/';
             }
         }
 
-        // Poll every 2 seconds
         setInterval(updateDashboard, 2000);
         updateDashboard();
-
+        loadMapLayout();
     </script>
 </body>
 

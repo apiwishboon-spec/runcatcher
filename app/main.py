@@ -11,6 +11,7 @@ import json
 from typing import Dict, List
 
 app = FastAPI(title=settings.APP_NAME)
+app.state.map_layout = {"shapes": [], "cameras": []}
 
 from fastapi.encoders import jsonable_encoder
 
@@ -169,3 +170,19 @@ async def verify_admin_password(data: dict):
     if data.get("password") == app.state.admin_password:
         return {"status": "ok"}
     raise HTTPException(status_code=401, detail="Invalid password")
+
+@app.get("/api/map/layout")
+async def get_map_layout():
+    return app.state.map_layout
+
+@app.post("/api/map/layout")
+async def save_map_layout(layout: dict, request: Request):
+    # Optional: Auth check here if needed
+    auth_header = request.headers.get("X-Admin-Key")
+    if not auth_header or auth_header != app.state.admin_password:
+         # For simplicity in this demo, we might allow it if not set yet, 
+         # but let's stick to auth for safety.
+         raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    app.state.map_layout = layout
+    return {"status": "saved"}
