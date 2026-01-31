@@ -5,7 +5,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#216487">
-    <title>LibraryRunCatcher | Teacher Dashboard</title>
+    <title>LibraryRunCatcher | AI-Powered Behavioral Monitoring for Quiet Zones</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="LibraryRunCatcher | AI-Powered Behavioral Monitoring for Quiet Zones">
+    <meta name="description"
+        content="Advanced AI-powered monitoring for libraries and study halls. Detect running and noise levels in real-time using browser-side AI with privacy-first snapshots and multi-device sync.">
+    <meta name="keywords"
+        content="library monitoring, study hall behavior, AI security, school safety, quiet zone management, pose detection, running detection">
+    <meta name="author" content="APIWISH ANUTARAVANICHKUL">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://libraryruncatcher.com/">
+    <meta property="og:title" content="LibraryRunCatcher | AI-Powered Behavioral Monitoring">
+    <meta property="og:description"
+        content="Maintain peaceful study environments with browser-side AI. Detect disruptions and synchronize alerts across devices instantly.">
+    <meta property="og:image" content="/static/logo.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://libraryruncatcher.com/">
+    <meta property="twitter:title" content="LibraryRunCatcher | AI-Powered Behavioral Monitoring">
+    <meta property="twitter:description"
+        content="Maintain peaceful study environments with browser-side AI. Detect disruptions and synchronize alerts across devices instantly.">
+    <meta property="twitter:image" content="/static/logo.png">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "LibraryRunCatcher",
+      "operatingSystem": "Web Browser",
+      "applicationCategory": "EducationalApplication",
+      "description": "AI-powered behavioral monitoring system for libraries and schools to maintain quiet study environments.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/style.css?v=2.3">
     <link rel="icon" type="image/png" href="/static/logo.png?v=2.3">
@@ -21,8 +64,11 @@
 </head>
 
 <body class="bg-light">
+    <!-- Accessibility: Skip to Main Content Link -->
+    <a href="#main-monitoring" class="skip-link">Skip to monitoring</a>
+
     <!-- Particle System Canvas -->
-    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+    <canvas id="particle-canvas" class="particle-canvas" aria-hidden="true"></canvas>
 
     <!-- Dynamic Aura Background -->
     <div id="aura-bg" class="aura-bg state-quiet">
@@ -41,291 +87,310 @@
         </div>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4 border-bottom">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4 border-bottom">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img src="/static/logo.png?v=2.3" alt="LibraryRunCatcher Logo" height="32"
+                        class="me-2 rounded-circle bg-white p-1">
+                    LibraryRunCatcher
+                </a>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2 position-relative"
+                        data-bs-toggle="modal" data-bs-target="#notificationModal" aria-label="View latest updates">
+                        <i data-lucide="bell" style="width: 16px; height: 16px;" aria-hidden="true"></i>
+                        <span id="notification-badge"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                            style="font-size: 0.6rem;">
+                            0
+                        </span>
+                    </button>
+                    <button onclick="toggleDashboard()" aria-label="Open performance dashboard"
+                        class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2">
+                        <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline">Dashboard</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-monitoring">
+
+        <!-- Dashboard Overlay (Iframe) -->
+        <div id="dashboard-overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-white"
+            style="z-index: 10000; display: none;">
+            <iframe id="dashboard-frame" src="" class="w-100 h-100 border-0"></iframe>
+        </div>
+
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/static/logo.png?v=2.3" alt="Logo" height="32" class="me-2 rounded-circle bg-white p-1">
-                LibraryRunCatcher
-            </a>
-            <div class="ms-auto d-flex align-items-center gap-2">
-                <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2 position-relative"
-                    data-bs-toggle="modal" data-bs-target="#notificationModal">
-                    <i data-lucide="bell" style="width: 16px; height: 16px;"></i>
-                    <span id="notification-badge"
-                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
-                        style="font-size: 0.6rem;">
-                        0
-                    </span>
-                </button>
-                <button onclick="toggleDashboard()"
-                    class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2">
-                    <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
-                    <span class="d-none d-md-inline">Dashboard</span>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Dashboard Overlay (Iframe) -->
-    <div id="dashboard-overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-white"
-        style="z-index: 10000; display: none;">
-        <iframe id="dashboard-frame" src="" class="w-100 h-100 border-0"></iframe>
-    </div>
-
-    <div class="container">
-        <div class="row g-4">
-            <!-- Main Monitoring Card -->
-            <div class="col-md-8">
-                <div class="card border-0 shadow-sm glass-card">
-                    <div class="card-body p-4">
-                        <div
-                            class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
-                            <h4 class="card-title mb-0 w-100 text-center text-md-start">Live Monitoring</h4>
+            <div class="row g-4">
+                <!-- Main Monitoring Card -->
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-sm glass-card">
+                        <div class="card-body p-4">
                             <div
-                                class="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-md-end w-100">
-                                <button id="summon-btn"
-                                    class="btn btn-sm btn-danger d-flex align-items-center gap-2 px-3 fw-bold"
-                                    onclick="triggerStaffSummon()" title="Emergency: Summon All Staff">
-                                    <i data-lucide="bell-ring" style="width: 16px; height: 16px;"></i> SUMMON
-                                </button>
-                                <button id="preview-btn" class="btn btn-sm btn-outline-info" onclick="togglePreview()"
-                                    title="Show Camera Preview">
-                                    <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
-                                </button>
-                                <button id="fullscreen-btn" class="btn btn-sm btn-outline-secondary"
-                                    onclick="toggleFullscreen()" title="Toggle Fullscreen">
-                                    <i data-lucide="maximize" style="width: 16px; height: 16px;"></i>
-                                </button>
-                                <div class="form-check form-switch pt-1 ms-1">
-                                    <input class="form-check-input" type="checkbox" id="live-toggle">
-                                    <label class="form-check-label fw-bold small" for="live-toggle">Auto</label>
-                                </div>
-                                <div id="status-badge" class="badge bg-success py-2 px-3 rounded-pill ms-1">
-                                    All Quiet
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Camera Preview (Optional toggle) -->
-                        <div id="camera-container" class="position-relative mt-3 rounded overflow-hidden"
-                            style="display: none; aspect-ratio: 4/3; background: #000;">
-                            <video id="input-video" class="w-100 h-100 object-fit-contain"
-                                style="display: none;"></video>
-                            <canvas id="output-canvas" class="w-100 h-100 object-fit-contain"
-                                style="display: none;"></canvas>
-                            <canvas id="grid-overlay-canvas" class="position-absolute top-0 start-0 w-100 h-100"
-                                style="pointer-events: none; display: none;"></canvas>
-                            <div id="grid-overlay-label" class="position-absolute top-0 start-0 p-2 text-white small"
-                                style="background: rgba(0,0,0,0.5); display: none;">Grid Alignment Active</div>
-                        </div>
-
-                        <div id="status-display" class="text-center py-5">
-                            <div class="status-icon-wrapper mb-3">
-                                <i data-lucide="smile" id="main-icon" class="text-success" size="64"></i>
-                            </div>
-                            <h2 id="status-message" class="fw-bold text-dark">Environment is Peaceful</h2>
-                            <p class="text-muted">No disruptions detected in current zones.</p>
-                        </div>
-
-                        <div class="row text-center mt-4">
-                            <div class="col-6 col-md-3">
-                                <div class="p-3 bg-light rounded shadow-sm border">
-                                    <small class="text-uppercase text-muted d-block mb-1">Speed</small>
-                                    <span id="stat-speed" class="h4 fw-bold">0.0</span> <small>m/s</small>
-                                    <div class="progress mt-2" style="height: 4px;">
-                                        <div id="speed-meter" class="progress-bar bg-primary" role="progressbar"
-                                            style="width: 0%"></div>
+                                class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+                                <h4 class="card-title mb-0 w-100 text-center text-md-start">Live Monitoring</h4>
+                                <div
+                                    class="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-md-end w-100">
+                                    <button id="summon-btn" aria-label="Emergency Summon All Staff"
+                                        class="btn btn-sm btn-danger d-flex align-items-center gap-2 px-3 fw-bold"
+                                        onclick="triggerStaffSummon()" title="Emergency: Summon All Staff">
+                                        <i data-lucide="bell-ring" style="width: 16px; height: 16px;"
+                                            aria-hidden="true"></i> SUMMON
+                                    </button>
+                                    <button id="preview-btn" class="btn btn-sm btn-outline-info"
+                                        onclick="togglePreview()" title="Show Camera Preview"
+                                        aria-label="Toggle Camera Preview">
+                                        <i data-lucide="eye" style="width: 16px; height: 16px;" aria-hidden="true"></i>
+                                    </button>
+                                    <button id="fullscreen-btn" class="btn btn-sm btn-outline-secondary"
+                                        onclick="toggleFullscreen()" title="Toggle Fullscreen"
+                                        aria-label="Toggle Fullscreen Interface">
+                                        <i data-lucide="maximize" style="width: 16px; height: 16px;"
+                                            aria-hidden="true"></i>
+                                    </button>
+                                    <div class="form-check form-switch pt-1 ms-1">
+                                        <input class="form-check-input" type="checkbox" id="live-toggle">
+                                        <label class="form-check-label fw-bold small" for="live-toggle">Auto</label>
+                                    </div>
+                                    <div id="status-badge" class="badge bg-success py-2 px-3 rounded-pill ms-1"
+                                        role="status">
+                                        All Quiet
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-3">
-                                <div class="p-3 bg-light rounded shadow-sm border">
-                                    <small class="text-uppercase text-muted d-block mb-1">Noise</small>
-                                    <span id="stat-noise" class="h4 fw-bold">0</span> <small>dB</small>
-                                    <div class="progress mt-2" style="height: 4px;">
-                                        <div id="noise-meter" class="progress-bar bg-info" role="progressbar"
-                                            style="width: 0%"></div>
+
+                            <!-- Camera Preview (Optional toggle) -->
+                            <div id="camera-container" class="position-relative mt-3 rounded overflow-hidden"
+                                style="display: none; aspect-ratio: 4/3; background: #000;">
+                                <video id="input-video" class="w-100 h-100 object-fit-contain"
+                                    style="display: none;"></video>
+                                <canvas id="output-canvas" class="w-100 h-100 object-fit-contain"
+                                    style="display: none;"></canvas>
+                                <canvas id="grid-overlay-canvas" class="position-absolute top-0 start-0 w-100 h-100"
+                                    style="pointer-events: none; display: none;"></canvas>
+                                <div id="grid-overlay-label"
+                                    class="position-absolute top-0 start-0 p-2 text-white small"
+                                    style="background: rgba(0,0,0,0.5); display: none;">Grid Alignment Active</div>
+                            </div>
+
+                            <div id="status-display" class="text-center py-5">
+                                <div class="status-icon-wrapper mb-3">
+                                    <i data-lucide="smile" id="main-icon" class="text-success" size="64"></i>
+                                </div>
+                                <h2 id="status-message" class="fw-bold text-dark">Environment is Peaceful</h2>
+                                <p class="text-muted">No disruptions detected in current zones.</p>
+                            </div>
+
+                            <div class="row text-center mt-4">
+                                <div class="col-6 col-md-3">
+                                    <div class="p-3 bg-light rounded shadow-sm border">
+                                        <small class="text-uppercase text-muted d-block mb-1">Speed</small>
+                                        <span id="stat-speed" class="h4 fw-bold">0.0</span> <small>m/s</small>
+                                        <div class="progress mt-2" style="height: 4px;">
+                                            <div id="speed-meter" class="progress-bar bg-primary" role="progressbar"
+                                                style="width: 0%"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="p-3 bg-light rounded shadow-sm border">
-                                    <small class="text-uppercase text-muted d-block mb-1">Streak</small>
-                                    <span id="stat-streak" class="h4 fw-bold text-primary">0</span>
+                                <div class="col-6 col-md-3">
+                                    <div class="p-3 bg-light rounded shadow-sm border">
+                                        <small class="text-uppercase text-muted d-block mb-1">Noise</small>
+                                        <span id="stat-noise" class="h4 fw-bold">0</span> <small>dB</small>
+                                        <div class="progress mt-2" style="height: 4px;">
+                                            <div id="noise-meter" class="progress-bar bg-info" role="progressbar"
+                                                style="width: 0%"></div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="p-3 bg-light rounded shadow-sm border">
-                                    <small class="text-uppercase text-muted d-block mb-1">Zone</small>
-                                    <span id="stat-zone" class="h5 fw-bold">-</span>
+                                <div class="col-6 col-md-3">
+                                    <div class="p-3 bg-light rounded shadow-sm border">
+                                        <small class="text-uppercase text-muted d-block mb-1">Streak</small>
+                                        <span id="stat-streak" class="h4 fw-bold text-primary">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="p-3 bg-light rounded shadow-sm border">
+                                        <small class="text-uppercase text-muted d-block mb-1">Zone</small>
+                                        <span id="stat-zone" class="h5 fw-bold">-</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Alerts Sidebar -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm glass-card h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                            <h5 class="card-title mb-0 d-flex align-items-center">
-                                <i data-lucide="bell" class="me-2 text-warning"></i> Recent Alerts
-                            </h5>
-                            <div class="d-flex gap-2">
-                                <button id="download-all-btn" class="btn btn-sm btn-outline-primary"
-                                    onclick="downloadAllReports()">
-                                    <i data-lucide="download" class="me-1" style="width: 14px; height: 14px;"></i> All
-                                </button>
-                                <button id="clear-alerts-btn" class="btn btn-sm btn-outline-danger"
-                                    onclick="clearAllAlerts()">
-                                    <i data-lucide="trash-2" class="me-1" style="width: 14px; height: 14px;"></i> Clear
-                                </button>
-                            </div>
-                        </div>
-                        <div id="alerts-container" class="vstack gap-3">
-                            <div id="alerts-placeholder" class="text-center text-muted py-5">
-                                <small>No recent alerts.</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Zone Selection, Grid Settings & Librarian's Watch -->
-    <div class="container mt-4 mb-5">
-        <div class="row g-4">
-            <!-- Zone Selection -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm glass-card h-100">
-                    <div class="card-body p-4">
-                        <h5 class="card-title mb-3 d-flex align-items-center">
-                            <i data-lucide="map-pin" class="me-2 text-primary"></i> Zone Selection
-                        </h5>
-                        <div class="vstack gap-3">
-                            <div>
-                                <label class="form-label fw-bold">Monitoring Zone</label>
-                                <select id="zone-select" class="form-select">
-                                    <option value="reading_area">Reading Area</option>
-                                    <option value="computer_lab">Computer Lab</option>
-                                    <option value="study_hall">Study Hall</option>
-                                    <option value="quiet_zone">Quiet Zone</option>
-                                </select>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-8">
-                                    <input type="text" id="new-zone-input" class="form-control"
-                                        placeholder="New zone name...">
-                                </div>
-                                <div class="col-4">
-                                    <button id="add-zone-btn" class="btn btn-primary w-100" onclick="addNewZone()">
-                                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add
+                <!-- Alerts Sidebar -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm glass-card h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                                <h5 class="card-title mb-0 d-flex align-items-center">
+                                    <i data-lucide="bell" class="me-2 text-warning" aria-hidden="true"></i> Recent
+                                    Alerts
+                                </h5>
+                                <div class="d-flex gap-2">
+                                    <button id="download-all-btn" class="btn btn-sm btn-outline-primary"
+                                        onclick="downloadAllReports()" aria-label="Download All Reports as PDF">
+                                        <i data-lucide="download" class="me-1" style="width: 14px; height: 14px;"
+                                            aria-hidden="true"></i> All
+                                    </button>
+                                    <button id="clear-alerts-btn" class="btn btn-sm btn-outline-danger"
+                                        onclick="clearAllAlerts()" aria-label="Clear All Alerts History">
+                                        <i data-lucide="trash-2" class="me-1" style="width: 14px; height: 14px;"
+                                            aria-hidden="true"></i> Clear
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Grid Settings -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm glass-card h-100">
-                    <div class="card-body p-4">
-                        <h5 class="card-title mb-3 d-flex align-items-center">
-                            <i data-lucide="grid" class="me-2 text-info"></i> CCTV Grid Configuration
-                        </h5>
-                        <div class="vstack gap-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="grid-mode-toggle">
-                                <label class="form-check-label fw-bold" for="grid-mode-toggle">Enable Grid
-                                    Detection</label>
-                            </div>
-                            <div id="grid-settings-content" style="opacity: 0.5; pointer-events: none;">
-                                <div class="mb-3">
-                                    <label class="form-label small fw-bold">Quick Presets</label>
-                                    <div class="btn-group w-100" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
-                                            data-rows="2" data-cols="2">2×2</button>
-                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
-                                            data-rows="3" data-cols="3">3×3</button>
-                                        <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
-                                            data-rows="4" data-cols="4">4×4</button>
-                                    </div>
-                                </div>
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small fw-bold">Rows</label>
-                                        <input type="number" id="grid-rows" class="form-control" value="2" min="1"
-                                            max="4">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small fw-bold">Columns</label>
-                                        <input type="number" id="grid-cols" class="form-control" value="2" min="1"
-                                            max="4">
-                                    </div>
-                                </div>
-                                <div class="mt-2 text-muted small">
-                                    <i data-lucide="info" style="width: 12px; height: 12px;"></i> Active cells highlight
-                                    when motion detected.
+                            <div id="alerts-container" class="vstack gap-3" role="list" aria-live="polite">
+                                <div id="alerts-placeholder" class="text-center text-muted py-5">
+                                    <small>No recent alerts.</small>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Librarian's Watch Sync -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm glass-card h-100">
-                    <div class="card-body p-4">
-                        <h5
-                            class="card-title mb-3 d-flex align-items-center text-warning justify-content-between flex-wrap gap-2">
-                            <span class="d-flex align-items-center">
-                                <i data-lucide="smartphone" class="me-2"></i> Librarian's Watch
-                            </span>
-                            <a href="#" class="text-warning opacity-75 small text-decoration-none fw-normal"
-                                data-bs-toggle="modal" data-bs-target="#watchHelpModal">
-                                <i data-lucide="help-circle" style="width: 14px; height: 14px;"></i> How to use
-                            </a>
-                        </h5>
-                        <div class="vstack gap-3">
-                            <div class="d-flex gap-2">
-                                <input type="text" id="sync-code-input" class="form-control font-monospace"
-                                    placeholder="Room Code..." readonly>
-                                <button onclick="copySyncCode()" class="btn btn-outline-secondary" title="Copy Code">
-                                    <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
-                                </button>
-                                <button onclick="generateSyncCode()" class="btn btn-outline-warning">
-                                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
-                                </button>
-                            </div>
-                            <div id="sync-status" class="alert alert-light py-2 px-3 m-0 small border d-none">
-                                <div class="d-flex align-items-center">
-                                    <span class="spinner-grow spinner-grow-sm text-warning me-2" role="status"></span>
-                                    <span>Syncing Active...</span>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-7">
-                                    <input type="text" id="join-code-input" class="form-control"
-                                        placeholder="Enter Code...">
-                                </div>
-                                <div class="col-5">
-                                    <button onclick="joinSyncRoom()"
-                                        class="btn btn-warning w-100 text-white fw-bold">Join</button>
-                                </div>
-                            </div>
-                            <small class="text-muted">Sync multiple devices. Phone vibrates on alert.</small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <!-- Zone Selection, Grid Settings & Librarian's Watch -->
+        <div class="container mt-4 mb-5">
+            <div class="row g-4">
+                <!-- Zone Selection -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm glass-card h-100">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3 d-flex align-items-center">
+                                <i data-lucide="map-pin" class="me-2 text-primary"></i> Zone Selection
+                            </h5>
+                            <div class="vstack gap-3">
+                                <div>
+                                    <label class="form-label fw-bold">Monitoring Zone</label>
+                                    <select id="zone-select" class="form-select">
+                                        <option value="reading_area">Reading Area</option>
+                                        <option value="computer_lab">Computer Lab</option>
+                                        <option value="study_hall">Study Hall</option>
+                                        <option value="quiet_zone">Quiet Zone</option>
+                                    </select>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-8">
+                                        <input type="text" id="new-zone-input" class="form-control"
+                                            placeholder="New zone name...">
+                                    </div>
+                                    <div class="col-4">
+                                        <button id="add-zone-btn" class="btn btn-primary w-100" onclick="addNewZone()">
+                                            <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid Settings -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm glass-card h-100">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3 d-flex align-items-center">
+                                <i data-lucide="grid" class="me-2 text-info"></i> CCTV Grid Configuration
+                            </h5>
+                            <div class="vstack gap-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="grid-mode-toggle">
+                                    <label class="form-check-label fw-bold" for="grid-mode-toggle">Enable Grid
+                                        Detection</label>
+                                </div>
+                                <div id="grid-settings-content" style="opacity: 0.5; pointer-events: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Quick Presets</label>
+                                        <div class="btn-group w-100" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
+                                                data-rows="2" data-cols="2">2×2</button>
+                                            <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
+                                                data-rows="3" data-cols="3">3×3</button>
+                                            <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
+                                                data-rows="4" data-cols="4">4×4</button>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-6">
+                                            <label class="form-label small fw-bold">Rows</label>
+                                            <input type="number" id="grid-rows" class="form-control" value="2" min="1"
+                                                max="4">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small fw-bold">Columns</label>
+                                            <input type="number" id="grid-cols" class="form-control" value="2" min="1"
+                                                max="4">
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-muted small">
+                                        <i data-lucide="info" style="width: 12px; height: 12px;"></i> Active cells
+                                        highlight
+                                        when motion detected.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Librarian's Watch Sync -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm glass-card h-100">
+                        <div class="card-body p-4">
+                            <h5
+                                class="card-title mb-3 d-flex align-items-center text-warning justify-content-between flex-wrap gap-2">
+                                <span class="d-flex align-items-center">
+                                    <i data-lucide="smartphone" class="me-2"></i> Librarian's Watch
+                                </span>
+                                <a href="#" class="text-warning opacity-75 small text-decoration-none fw-normal"
+                                    data-bs-toggle="modal" data-bs-target="#watchHelpModal">
+                                    <i data-lucide="help-circle" style="width: 14px; height: 14px;"></i> How to use
+                                </a>
+                            </h5>
+                            <div class="vstack gap-3">
+                                <div class="d-flex gap-2">
+                                    <input type="text" id="sync-code-input" class="form-control font-monospace"
+                                        placeholder="Room Code..." readonly>
+                                    <button onclick="copySyncCode()" class="btn btn-outline-secondary"
+                                        title="Copy Code">
+                                        <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                                    </button>
+                                    <button onclick="generateSyncCode()" class="btn btn-outline-warning">
+                                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
+                                    </button>
+                                </div>
+                                <div id="sync-status" class="alert alert-light py-2 px-3 m-0 small border d-none">
+                                    <div class="d-flex align-items-center">
+                                        <span class="spinner-grow spinner-grow-sm text-warning me-2"
+                                            role="status"></span>
+                                        <span>Syncing Active...</span>
+                                    </div>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-7">
+                                        <input type="text" id="join-code-input" class="form-control"
+                                            placeholder="Enter Code...">
+                                    </div>
+                                    <div class="col-5">
+                                        <button onclick="joinSyncRoom()"
+                                            class="btn btn-warning w-100 text-white fw-bold">Join</button>
+                                    </div>
+                                </div>
+                                <small class="text-muted">Sync multiple devices. Phone vibrates on alert.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
 
     <!-- Modal for snapshot viewing -->
     <div class="modal fade" id="snapshotModal" tabindex="-1">
@@ -449,7 +514,8 @@
                     <p class="small text-muted">Our AI does not "watch" you in the traditional sense. All video and
                         audio streams are processed locally in your browser using MediaPipe and Web Audio API.
                         <strong>Raw video and audio data never leave your device.</strong> The server only receives
-                        metadata about alerts, not the live feed.</p>
+                        metadata about alerts, not the live feed.
+                    </p>
 
                     <h6>2. Incident Snapshots & Evidence</h6>
                     <p class="small text-muted">The system only captures a snapshot when a specific "Run" or "Noise"

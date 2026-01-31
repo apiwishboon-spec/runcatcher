@@ -11,6 +11,29 @@
     --btn-radius: 100px;
 }
 
+/* Accessibility: Focus States and Skip Link */
+*:focus-visible {
+    outline: 3px solid var(--primary-blue) !important;
+    outline-offset: 4px !important;
+}
+
+.skip-link {
+    position: absolute;
+    top: -50px;
+    left: 20px;
+    background: var(--primary-blue);
+    color: white;
+    padding: 10px 20px;
+    z-index: 10001;
+    text-decoration: none;
+    border-radius: 0 0 10px 10px;
+    transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
 body {
     background: var(--bg-base);
     min-height: 100vh;

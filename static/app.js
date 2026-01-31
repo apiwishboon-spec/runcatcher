@@ -812,6 +812,8 @@ function addAlertToList(result) {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const alertEl = document.createElement('div');
     alertEl.className = `p-3 bg-white rounded shadow-sm border alert-item alert-${result.status === 'RUNNING_DETECTED' ? 'running' : 'loud'}`;
+    alertEl.setAttribute('role', 'listitem');
+    alertEl.setAttribute('aria-label', `${result.status.replace('_', ' ')} alert in ${result.zone_name} at ${time}`);
 
     // Store metadata in data attributes for the modal
     alertEl.dataset.time = time;
@@ -831,7 +833,9 @@ function addAlertToList(result) {
                     <small class="text-muted">${result.zone_name} • ${time}</small>
                 </div>
             </div>
-            <button class="btn btn-sm btn-outline-primary mt-2" onclick="showSnapshot(this.closest('.alert-item'))">View</button>
+            <button class="btn btn-sm btn-outline-primary mt-2" 
+                onclick="showSnapshot(this.closest('.alert-item'))"
+                aria-label="View ${result.status.replace('_', ' ')} evidence snapshot">View</button>
         </div>
     `;
     alertsContainer.prepend(alertEl);
