@@ -1650,10 +1650,6 @@ async function refreshZonesFromMap() {
 // Initialize zones on Load
 document.addEventListener('DOMContentLoaded', () => {
     refreshZonesFromMap();
-    // Default room code if none set
-    if (!document.getElementById('sync-code-input').value) {
-        generateSyncCode(); // Auto-generate code on start
-    }
 });
 
 // PWA Registration
