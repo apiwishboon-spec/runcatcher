@@ -1,8 +1,8 @@
-# 🛡️ LibraryRunCatcher v2.0
+# 🛡️ LibraryRunCatcher v3.0
 
-> **Advanced AI-Powered Behavioral Monitoring & Teacher Accountability System**
+> **Advanced AI-Powered Behavioral Monitoring, Interactive Floor Plans & Teacher Accountability**
 
-LibraryRunCatcher is a sophisticated, privacy-first PWA designed for educational environments. Utilizing cutting-edge browser-side AI, it automatically detects running and excessive noise while providing teachers with comprehensive evidence and multi-device synchronization capabilities.
+LibraryRunCatcher is a sophisticated, privacy-first Monitoring Hub designed for educational environments. Utilizing cutting-edge browser-side AI, it automatically detects running and excessive noise while providing teachers with an interactive **Floor Plan Monitoring Hub** and multi-device synchronization.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-green.svg)](https://www.python.org/)
@@ -12,222 +12,73 @@ LibraryRunCatcher is a sophisticated, privacy-first PWA designed for educational
 
 ## ✨ Key Features
 
-### 🤖 Advanced AI Detection
-- **Real-time Pose Tracking**: MediaPipe-powered skeletal analysis for precise movement detection
-- **Audio Monitoring**: Web Audio API with FFT analysis for noise level detection
-- **Smart Thresholds**: Configurable sensitivity for running (>10 m/s) and noise (>75 dB)
+### 🗺️ Interactive Floor Plan Builder (New!)
+- **Drag-and-Drop Layout**: Create a digital twin of your library with custom area shapes and camera nodes.
+- **Snap-to-Grid Design**: Build precise layouts with a toggleable 24px grid system.
+- **Live Snapshot Tooltips**: Click any pulsing red camera node to reveal a live evidence snapshot, timestamp, and zone data without leaving the map.
+- **Alert Persistence**: Red alerts stay visible for **60 seconds**, ensuring you never miss an incident even if it happens while you're away.
 
-### 📹 CCTV-Style Grid Monitoring
-- **Virtual Multi-Camera**: 2×2, 3×3, 4×4 grid layouts with independent cell detection
-- **Activity Visualization**: Color-coded cell highlighting with CCTV-style corner brackets
-- **Cell Statistics**: Activity counters and real-time status per camera zone
-- **Grid Calibration**: Preview mode with overlay for perfect alignment
+### 🤖 Advanced AI Detection
+- **Real-time Pose Tracking**: MediaPipe-powered skeletal analysis for precise movement detection.
+- **Audio Monitoring**: Web Audio API with FFT analysis for noise level detection.
+- **Smart Thresholds**: Intelligent detection of running (>10 m/s) and disruptive noise (>75 dB).
 
 ### 🔄 Multi-Device Synchronization
-- **Librarian's Watch**: Sync laptops with phones/watches for instant notifications
-- **Real-time Alerts**: Haptic feedback and audio alerts on secondary devices
-- **Emergency Summon**: One-tap alert to all synced devices with location info
-- **Private Rooms**: Secure, code-based device pairing
+- **Librarian's Watch Sync**: Pair laptops with mobile phones/watches for instant haptic notifications.
+- **Room Code Pairing**: Secure, ephemeral pairing for private monitoring sessions.
+- **Zone Syncing**: Automatically import your custom Floor Plan names into the mobile monitoring station with one click.
 
 ### 📸 Forensic Evidence Capture
-- **Real Camera Snapshots**: Actual photos (not skeleton overlays) with evidence metadata
-- **Forensic Overlays**: Red bounding boxes, status labels, timestamps, and kinetic trails
-- **PDF Reports**: Individual and bulk incident reports with evidence
-- **Ephemeral Storage**: 5-hour automatic cleanup for privacy compliance
-
-### 🎨 Premium User Experience
-- **Glassmorphic UI**: Modern, translucent design with real-time sensor meters
-- **Preview Mode**: Clean camera feed without skeleton distractions
-- **Responsive Design**: Optimized for desktop, tablet, and mobile
-- **PWA Support**: Installable app with offline capabilities
-
-### 🔒 Privacy & Security First
-- **Client-side AI**: No video data ever leaves the device
-- **No Raw Video Storage**: Only processed evidence snapshots
-- **Automatic Cleanup**: 5-hour retention with background deletion
-- **No Personal Data**: Skeletal tracking only - no faces or identifiers
+- **Real-time Snapshots**: High-quality photo capture (not just skeleton overlays) upon detection.
+- **Forensic Overlays**: Red target framing, kinetic path trails, and technical metadata.
+- **PDF Report Generation**: Professional incident reports ready for printing or digital distribution.
 
 ---
 
 ## 🛠️ Tech Stack
 
 - **Backend**: Python 3.9+, FastAPI, Pydantic v2, Uvicorn
-- **Frontend**: Vanilla HTML5, CSS3 (Glassmorphism), ES6+ JavaScript
-- **AI/ML**: MediaPipe Pose v0.5, Web Audio API, FFT Analysis
-- **UI Framework**: Bootstrap 5 + MySK Custom Theme (Deep Blue & Soft Pink), Lucide Icons
-- **Real-time**: WebSocket, Server-Sent Events
-- **PWA**: Service Workers, Web App Manifest
-- **PDF Generation**: jsPDF, HTML5 Canvas
+- **Frontend**: Vanilla HTML5, ES6 Javacript, CSS3 (Glassmorphism & Tailwind)
+- **AI/ML**: MediaPipe Pose v0.5, Web Audio API (FFT Analysis)
+- **UI Framework**: Bootstrap 5 + Lucide Icons + Chart.js
+- **Persistence**: Session-based in-memory storage (with JSON Layout Backup)
 
 ---
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- **Python**: 3.9 or higher
-- **Browser**: Chrome 88+, Firefox 85+, Safari 14+, Edge 88+
-- **Hardware**: Webcam + microphone, 4GB RAM minimum
-
 ### Installation
 
 ```bash
-# Clone repository
+# Clone the repository
 git clone https://github.com/apiwishboon-spec/runcatcher.git
 cd runcatcher
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Start development server
+# Start the server
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-**Access**: Open `http://127.0.0.1:8000` in your browser
+**Access**: 
+- **Monitoring Station**: `http://127.0.0.1:8000/`
+- **Admin Dashboard**: `http://127.0.0.1:8000/dashboard` (Requires session PIN)
+
+### Admin Setup
+1. Open the monitoring station to generate your unique **6-digit Session PIN**.
+2. Navigate to the **Admin Dashboard**.
+3. Use the **Floor Plan Builder** to drag cameras onto your library layout.
+4. **Save Layout** to sync across all devices.
 
 ---
 
-## 📖 Usage Guide
+## 🛡️ Privacy & Compliance
 
-### Basic Monitoring
-
-1. **Grant Permissions**: Allow camera and microphone access
-2. **Enable Auto-Detect**: Toggle the main switch
-3. **Monitor Sensors**: Watch real-time speed/noise meters
-4. **Review Alerts**: Click "View" on sidebar alerts for evidence
-
-### Advanced Features
-
-#### CCTV Grid Mode
-```bash
-1. Enable "CCTV Grid Configuration"
-2. Choose preset: 2×2, 3×3, or 4×4
-3. Use Preview mode (👁️) for calibration
-4. Monitor independent cell activity
-```
-
-#### Librarian's Watch Sync
-```bash
-# On laptop (station):
-1. Generate sync code
-2. Click "Join"
-
-# On phone (watch):
-1. Open same URL
-2. Enter code and "Join"
-3. Keep browser active for notifications
-```
-
-#### Zone Management
-- **Built-in Zones**: Reading Area, Computer Lab, Study Hall, Quiet Zone
-- **Custom Zones**: Add unlimited custom monitoring areas
-- **Independent Tracking**: Each zone maintains separate statistics
-
-### PWA Installation
-
-#### Desktop (Chrome/Edge)
-- Click install icon in address bar
-- Or: Menu → "Install LibraryRunCatcher"
-
-#### Mobile (iOS Safari)
-- Tap Share → "Add to Home Screen"
-
-#### Mobile (Android Chrome)
-- Menu → "Add to Home Screen"
-
----
-
-## 📊 System Architecture
-
-### Detection Pipeline
-```
-Camera Feed → MediaPipe Pose → Centroid Tracking → Speed Analysis
-Audio Input → FFT Analysis → dB Calculation → Threshold Comparison
-```
-
-### Data Flow
-```
-Detection Event → Snapshot Capture → Forensic Overlay → PDF Report
-                 ↓
-WebSocket Broadcast → Librarian's Watch → Haptic Alert
-```
-
-### Privacy Architecture
-- **Zero Server Storage**: All AI processing client-side
-- **Ephemeral Evidence**: 5-hour automatic cleanup
-- **No Raw Video**: Only processed snapshots with metadata
-
----
-
-## 🔧 Configuration
-
-### Detection Thresholds
-```python
-SPEED_THRESHOLD_RUNNING = 10.0  # m/s
-NOISE_THRESHOLD_LOUD = 75       # dB
-```
-
-### Grid Presets
-- **2×2**: 4 virtual cameras (balanced)
-- **3×3**: 9 virtual cameras (detailed)
-- **4×4**: 16 virtual cameras (maximum coverage)
-
-### Retention Settings
-- **Alert Lifespan**: 5 hours
-- **Cleanup Interval**: Every 60 seconds
-- **File Format**: JPEG with metadata overlay
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-| Problem | Solution |
-|---------|----------|
-| "Camera access denied" | Check browser permissions, reload page |
-| Speed meter frozen | Toggle preview mode, refresh browser |
-| Grid not displaying | Enable grid mode, check preview |
-| Watch not syncing | Verify same URL and code, check network |
-| "Undefined" in alerts | Restart server, clear browser cache |
-
-### Performance Tips
-- Use Chrome for best performance
-- Close unnecessary browser tabs
-- Ensure stable internet for sync features
-- 8GB RAM recommended for large grids
-
----
-
-## 📚 Documentation
-
-- **[Complete Manual](MANUAL.md)**: Comprehensive user guide with screenshots
-- **API Documentation**: Available at `/docs` when server is running
-- **Code Examples**: See `app/` directory for backend implementation
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Setup
-```bash
-# Install dev dependencies
-pip install -r requirements-dev.txt
-
-# Run tests
-pytest
-
-# Format code
-black .
-isort .
-```
+- **No Video Storage**: Raw video data never leaves the browser.
+- **Client-Side AI**: All pose estimation is done locally on the monitoring device.
+- **Ephemeral Evidence**: Snapshots are automatically deleted after 5 hours to ensure privacy compliance.
+- **No Biometrics**: Detection is based on skeletal motion patterns, not facial recognition.
 
 ---
 
@@ -235,21 +86,5 @@ isort .
 
 **Apache License 2.0**
 
-Created for educational and behavioral correction purposes. See [LICENSE](LICENSE) for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **MediaPipe** for pose detection technology
-- **FastAPI** for the robust backend framework
-- **Bootstrap** for the beautiful UI components
-- Educational institutions using this for positive behavioral reinforcement
-
----
-
-<p align="center">
-  <strong>LibraryRunCatcher v2.0</strong><br>
-  Advanced AI-Powered Behavioral Monitoring<br>
-  © 2026 APIWISH ANUTARAVANICHKUL
-</p>
+© 2026 APIWISH ANUTARAVANICHKUL
+Created for educational behavioral reinforcement and safety monitoring.
