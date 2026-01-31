@@ -15,7 +15,7 @@
         "type": "update",
         "date": "Jan 30, 2026",
         "icon": "palette",
-        "isNew": true
+        "isNew": false
     },
     {
         "id": "pwa-overhaul",
@@ -24,6 +24,6 @@
         "type": "update",
         "date": "Jan 30, 2026",
         "icon": "smartphone",
-        "isNew": true
+        "isNew": false
     }
 ]
