@@ -1038,7 +1038,7 @@ async function downloadPDFReport() {
         // Copyright
         doc.setFontSize(9);
         doc.setTextColor(150, 150, 150);
-        doc.text('© 2029 APIWISH ANUTARAVANICHKUL', 20, footerY + 15);
+        doc.text('© 2026 APIWISH ANUTARAVANICHKUL', 20, footerY + 15);
 
         doc.save(`Report_${el.dataset.zone}_${el.dataset.time.replace(/:/g, '-')}.pdf`);
 
@@ -1127,7 +1127,7 @@ async function downloadAllReports() {
             // Copyright
             doc.setFontSize(9);
             doc.setTextColor(150, 150, 150);
-            doc.text('© 2029 APIWISH ANUTARAVANICHKUL', 20, footerY + 15);
+            doc.text('© 2026 APIWISH ANUTARAVANICHKUL', 20, footerY + 15);
         }
 
         doc.save(`Library_All_Alerts_${new Date().toISOString().split('T')[0]}.pdf`);

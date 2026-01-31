@@ -251,5 +251,5 @@ Created for educational and behavioral correction purposes. See [LICENSE](LICENS
 <p align="center">
   <strong>LibraryRunCatcher v2.0</strong><br>
   Advanced AI-Powered Behavioral Monitoring<br>
-  © 2029 APIWISH ANUTARAVANICHKUL
+  © 2026 APIWISH ANUTARAVANICHKUL
 </p>
