@@ -344,8 +344,8 @@
                 type,
                 x: 50,
                 y: 50,
-                w: type === 'shape' ? 150 : 60,
-                h: type === 'shape' ? 100 : 60,
+                w: type === 'shape' ? 150 : 80,
+                h: type === 'shape' ? 100 : 80,
                 label: type === 'camera' ? 'New Camera' : 'Area',
                 zoneName: '',
                 alerting: false
@@ -379,12 +379,12 @@
                     const icon = item.alerting ? 'alert-circle' : 'camera';
 
                     el.innerHTML = `
-                        <div class="w-8 h-8 rounded-full ${iconBg} flex items-center justify-center ${iconColor} mb-1 transition-colors">
-                            <i data-lucide="${icon}" class="w-4 h-4"></i>
+                        <div class="w-10 h-10 rounded-full ${iconBg} flex items-center justify-center ${iconColor} mb-2 transition-colors">
+                            <i data-lucide="${icon}" class="w-5 h-5"></i>
                         </div>
-                        <span class="text-[9px] font-black uppercase text-slate-800 truncate w-full text-center leading-tight">${item.zoneName || 'No Name'}</span>
-                        <span class="text-[8px] font-bold ${item.alerting ? 'text-rose-500' : 'text-slate-400'} uppercase tracking-tighter">${statusText}</span>
-                        <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full hidden group-hover:flex items-center justify-center text-[10px]">×</button>
+                        <span class="text-[10px] font-black uppercase text-slate-800 truncate w-full text-center leading-tight">${item.zoneName || 'No Name'}</span>
+                        <span class="text-[9px] font-bold ${item.alerting ? 'text-rose-500' : 'text-slate-400'} uppercase tracking-tighter">${statusText}</span>
+                        <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full hidden group-hover:flex items-center justify-center text-[12px]">×</button>
                     `;
                     el.onclick = (e) => {
                         e.stopPropagation();
