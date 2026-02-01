@@ -41,7 +41,7 @@ let notificationsEnabled = false;
 let currentAlertSound = 'chime';
 const ALERT_SOUNDS = {
     chime: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3',
-    beep: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
+    beep: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',
     siren: 'https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3',
     silent: null
 };
