@@ -228,184 +228,207 @@
                                 <i data-lucide="save" class="w-4 h-4"></i> Save Layout
                             </button>
                         </div>
-                    </div>
-                    <!-- Legend/Helper -->
-                    <div class="glass-dash p-6 rounded-3xl shadow-sm text-xs text-slate-500">
-                        <p class="font-bold mb-2 uppercase text-slate-400">Instructions</p>
-                        <ul class="space-y-2 list-disc pl-4">
-                            <li>Drag items on the canvas to layout your library.</li>
-                            <li>Click a camera to assign its <strong>Zone Name</strong>.</li>
-                            <li>Area shapes can be resized from the bottom-right corner.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Map Canvas -->
-                <div class="lg:col-span-3">
-                    <div id="map-canvas"
-                        class="w-full aspect-video glass-dash rounded-3xl shadow-sm relative overflow-hidden bg-white/50 border-2 border-dashed border-slate-200"
-                        style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px;">
-                        <!-- Grid Background -->
-                        <div
-                            class="absolute inset-0 pointer-events-none opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
+                        <!-- Legend/Helper -->
+                        <div class="glass-dash p-6 rounded-3xl shadow-sm text-xs text-slate-500">
+                            <p class="font-bold mb-2 uppercase text-slate-400">Instructions</p>
+                            <ul class="space-y-2 list-disc pl-4">
+                                <li>Drag items on the canvas to layout your library.</li>
+                                <li>Click a camera to assign its <strong>Zone Name</strong>.</li>
+                                <li>Area shapes can be resized from the bottom-right corner.</li>
+                            </ul>
                         </div>
+                        <!-- Room Settings -->
+                        <div class="glass-dash p-6 rounded-3xl shadow-sm">
+                            <h5 class="text-[10px] font-bold uppercase text-slate-400 mb-4">Room Settings</h5>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-600 mb-2 block">Alert Sound</label>
+                                    <select id="alert-sound-select" onchange="broadcastSoundPreference()"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-mysk-blue">
+                                        <option value="chime">🔔 Chime (Default)</option>
+                                        <option value="beep">📢 Beep</option>
+                                        <option value="siren">🚨 Siren</option>
+                                        <option value="silent">🔇 Silent</option>
+                                    </select>
+                                    <p class="text-[10px] text-slate-400 mt-2">This setting syncs to all devices in this
+                                        room.</p>
+                                </div>
+                                <button onclick="testAlertSound()"
+                                    class="w-full flex items-center justify-center gap-2 py-3 bg-amber-100 text-amber-700 rounded-xl font-bold text-xs hover:bg-amber-200 transition-colors">
+                                    <i data-lucide="volume-2" class="w-4 h-4"></i> Test Sound
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                        <!-- Items will be injected here -->
+                    <!-- Map Canvas -->
+                    <div class="lg:col-span-3">
+                        <div id="map-canvas"
+                            class="w-full aspect-video glass-dash rounded-3xl shadow-sm relative overflow-hidden bg-white/50 border-2 border-dashed border-slate-200"
+                            style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px;">
+                            <!-- Grid Background -->
+                            <div
+                                class="absolute inset-0 pointer-events-none opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
+                            </div>
+
+                            <!-- Items will be injected here -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Zone Assign Modal (Simple prompt fallback for now, but inline UI is better) -->
-    <div id="zone-modal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-[60] flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
-            <h3 class="font-bold text-xl mb-4 text-mysk-blue">Assign Camera Zone</h3>
-            <p class="text-sm text-slate-500 mb-6">Enter the camera or mobile device identifier (e.g., "Cam 1",
-                "Entrance").</p>
-            <input type="text" id="zone-name-input"
-                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 mb-6 focus:outline-none focus:ring-2 focus:ring-mysk-blue"
-                placeholder="Cam 1">
-            <div class="flex gap-3">
-                <button onclick="closeZoneModal()"
-                    class="flex-1 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-2xl transition-colors">Cancel</button>
-                <button onclick="confirmZoneAssign()"
-                    class="flex-1 py-3 font-bold bg-mysk-blue text-white rounded-2xl shadow-lg shadow-blue-200 transition-transform active:scale-95">Save</button>
+        <!-- Zone Assign Modal (Simple prompt fallback for now, but inline UI is better) -->
+        <div id="zone-modal"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-[60] flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+                <h3 class="font-bold text-xl mb-4 text-mysk-blue">Assign Camera Zone</h3>
+                <p class="text-sm text-slate-500 mb-6">Enter the camera or mobile device identifier (e.g., "Cam 1",
+                    "Entrance").</p>
+                <input type="text" id="zone-name-input"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 mb-6 focus:outline-none focus:ring-2 focus:ring-mysk-blue"
+                    placeholder="Cam 1">
+                <div class="flex gap-3">
+                    <button onclick="closeZoneModal()"
+                        class="flex-1 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-2xl transition-colors">Cancel</button>
+                    <button onclick="confirmZoneAssign()"
+                        class="flex-1 py-3 font-bold bg-mysk-blue text-white rounded-2xl shadow-lg shadow-blue-200 transition-transform active:scale-95">Save</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Map Snapshot Tooltip (Dynamic) -->
-    <div id="map-snapshot-tooltip" class="absolute pointer-events-none hidden z-[70] transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl border-2 border-rose-500 overflow-hidden w-48">
-            <div class="bg-rose-500 text-white text-[10px] font-bold px-3 py-1 flex justify-between items-center">
-                <span>EVIDENCE LIVE</span>
-                <span id="tooltip-time">12:00</span>
+        <!-- Map Snapshot Tooltip (Dynamic) -->
+        <div id="map-snapshot-tooltip"
+            class="absolute pointer-events-none hidden z-[70] transition-opacity duration-300">
+            <div class="bg-white rounded-2xl shadow-2xl border-2 border-rose-500 overflow-hidden w-48">
+                <div class="bg-rose-500 text-white text-[10px] font-bold px-3 py-1 flex justify-between items-center">
+                    <span>EVIDENCE LIVE</span>
+                    <span id="tooltip-time">12:00</span>
+                </div>
+                <img id="tooltip-img" src="" class="w-full aspect-square object-cover bg-slate-100">
+                <div class="p-2 text-center bg-white">
+                    <p id="tooltip-zone" class="font-bold text-[10px] text-slate-800 truncate"></p>
+                </div>
             </div>
-            <img id="tooltip-img" src="" class="w-full aspect-square object-cover bg-slate-100">
-            <div class="p-2 text-center bg-white">
-                <p id="tooltip-zone" class="font-bold text-[10px] text-slate-800 truncate"></p>
+            <div class="w-3 h-3 bg-white border-b-2 border-r-2 border-rose-500 rotate-45 mx-auto -mt-1.5 shadow-xl">
             </div>
         </div>
-        <div class="w-3 h-3 bg-white border-b-2 border-r-2 border-rose-500 rotate-45 mx-auto -mt-1.5 shadow-xl"></div>
-    </div>
 
-    <script>
-        lucide.createIcons();
-        Chart.defaults.color = '#64748b'; // slate-500
-        Chart.defaults.borderColor = '#e2e8f0'; // slate-200
-        Chart.defaults.font.family = "'Inter', sans-serif";
+        <script>
+            lucide.createIcons();
+            Chart.defaults.color = '#64748b'; // slate-500
+            Chart.defaults.borderColor = '#e2e8f0'; // slate-200
+            Chart.defaults.font.family = "'Inter', sans-serif";
 
-        const ctxBar = document.getElementById('barChart').getContext('2d');
-        const barChart = new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: ['Scanning...'],
-                datasets: [{
-                    label: 'Incidents',
-                    data: [0],
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 6,
-                    barPercentage: 0.6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { grid: { color: '#e2e8f0', drawBorder: false }, beginAtZero: true },
-                    x: { grid: { display: false } }
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            const barChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Scanning...'],
+                    datasets: [{
+                        label: 'Incidents',
+                        data: [0],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#e2e8f0', drawBorder: false }, beginAtZero: true },
+                        x: { grid: { display: false } }
+                    }
                 }
-            }
-        });
-
-        const ctxPie = document.getElementById('pieChart').getContext('2d');
-        const pieChart = new Chart(ctxPie, {
-            type: 'doughnut',
-            data: {
-                labels: ['Empty'],
-                datasets: [{ data: [1], backgroundColor: ['#f1f5f9'], borderWidth: 0 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { display: false } } }
-        });
-
-        // ----------------------------------------------------
-        // Map Builder Logic
-        // ----------------------------------------------------
-        let mapLayout = { shapes: [], cameras: [] };
-        let activeItemId = null;
-        let isDragging = false;
-        let offset = { x: 0, y: 0 };
-        const canvas = document.getElementById('map-canvas');
-
-        // Debounce helper for auto-save
-        const debounce = (func, wait) => {
-            let timeout;
-            return (...args) => {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func(...args), wait);
-            };
-        };
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.getElementById(`section-${tab}`).classList.remove('hidden');
-
-            document.querySelectorAll('nav button').forEach(b => {
-                b.classList.remove('bg-white', 'shadow-sm', 'text-mysk-blue');
-                b.classList.add('text-slate-500');
             });
-            document.getElementById(`tab-${tab}`).classList.add('bg-white', 'shadow-sm', 'text-mysk-blue');
-            document.getElementById(`tab-${tab}`).classList.remove('text-slate-500');
 
-            if (tab === 'map') loadMapLayout();
-        }
+            const ctxPie = document.getElementById('pieChart').getContext('2d');
+            const pieChart = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Empty'],
+                    datasets: [{ data: [1], backgroundColor: ['#f1f5f9'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { display: false } } }
+            });
 
-        function addMapItem(type) {
-            const id = 'item-' + Date.now();
-            const item = {
-                id,
-                type,
-                x: 50,
-                y: 50,
-                w: type === 'shape' ? 150 : 80,
-                h: type === 'shape' ? 100 : 80,
-                label: type === 'camera' ? 'New Camera' : 'Area',
-                zoneName: '',
-                alerting: false
+            // ----------------------------------------------------
+            // Map Builder Logic
+            // ----------------------------------------------------
+            let mapLayout = { shapes: [], cameras: [] };
+            let activeItemId = null;
+            let isDragging = false;
+            let offset = { x: 0, y: 0 };
+            const canvas = document.getElementById('map-canvas');
+
+            // Debounce helper for auto-save
+            const debounce = (func, wait) => {
+                let timeout;
+                return (...args) => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func(...args), wait);
+                };
             };
 
-            if (type === 'shape') mapLayout.shapes.push(item);
-            else mapLayout.cameras.push(item);
+            function switchTab(tab) {
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(`section-${tab}`).classList.remove('hidden');
 
-            renderMap();
-            debouncedSave();
-        }
+                document.querySelectorAll('nav button').forEach(b => {
+                    b.classList.remove('bg-white', 'shadow-sm', 'text-mysk-blue');
+                    b.classList.add('text-slate-500');
+                });
+                document.getElementById(`tab-${tab}`).classList.add('bg-white', 'shadow-sm', 'text-mysk-blue');
+                document.getElementById(`tab-${tab}`).classList.remove('text-slate-500');
 
-        function renderMap() {
-            canvas.querySelectorAll('.map-item').forEach(e => e.remove());
+                if (tab === 'map') loadMapLayout();
+            }
 
-            [...mapLayout.shapes, ...mapLayout.cameras].forEach(item => {
-                const el = document.createElement('div');
-                el.id = item.id;
-                el.className = `map-item absolute cursor-move flex flex-col items-center justify-center p-2 rounded-2xl select-none transition-all group
+            function addMapItem(type) {
+                const id = 'item-' + Date.now();
+                const item = {
+                    id,
+                    type,
+                    x: 50,
+                    y: 50,
+                    w: type === 'shape' ? 150 : 80,
+                    h: type === 'shape' ? 100 : 80,
+                    label: type === 'camera' ? 'New Camera' : 'Area',
+                    zoneName: '',
+                    alerting: false
+                };
+
+                if (type === 'shape') mapLayout.shapes.push(item);
+                else mapLayout.cameras.push(item);
+
+                renderMap();
+                debouncedSave();
+            }
+
+            function renderMap() {
+                canvas.querySelectorAll('.map-item').forEach(e => e.remove());
+
+                [...mapLayout.shapes, ...mapLayout.cameras].forEach(item => {
+                    const el = document.createElement('div');
+                    el.id = item.id;
+                    el.className = `map-item absolute cursor-move flex flex-col items-center justify-center p-2 rounded-2xl select-none transition-all group
                     ${item.type === 'shape' ? 'bg-blue-500/10 border-2 border-blue-500/30 shadow-sm' : 'bg-white border border-slate-200 shadow-md'} 
                     ${item.alerting ? 'ring-4 ring-rose-500 ring-offset-2 animate-pulse' : ''}`;
 
-                el.style.left = item.x + 'px';
-                el.style.top = item.y + 'px';
-                el.style.width = item.w + 'px';
-                el.style.height = item.h + 'px';
+                    el.style.left = item.x + 'px';
+                    el.style.top = item.y + 'px';
+                    el.style.width = item.w + 'px';
+                    el.style.height = item.h + 'px';
 
-                if (item.type === 'camera') {
-                    const statusText = item.alerting ? (item.currentStatus || 'ALERT') : 'QUIET';
-                    const iconBg = item.alerting ? 'bg-rose-500' : 'bg-emerald-100';
-                    const iconColor = item.alerting ? 'text-white' : 'text-emerald-600';
-                    const icon = item.alerting ? 'alert-circle' : 'camera';
+                    if (item.type === 'camera') {
+                        const statusText = item.alerting ? (item.currentStatus || 'ALERT') : 'QUIET';
+                        const iconBg = item.alerting ? 'bg-rose-500' : 'bg-emerald-100';
+                        const iconColor = item.alerting ? 'text-white' : 'text-emerald-600';
+                        const icon = item.alerting ? 'alert-circle' : 'camera';
 
-                    el.innerHTML = `
+                        el.innerHTML = `
                         <div class="w-10 h-10 rounded-full ${iconBg} flex items-center justify-center ${iconColor} mb-2 transition-colors">
                             <i data-lucide="${icon}" class="w-5 h-5"></i>
                         </div>
@@ -413,400 +436,400 @@
                         <span class="text-[9px] font-bold ${item.alerting ? 'text-rose-500' : 'text-slate-400'} uppercase tracking-tighter">${statusText}</span>
                         <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full hidden group-hover:flex items-center justify-center text-[12px]">×</button>
                     `;
-                    el.onclick = (e) => {
-                        e.stopPropagation();
-                        if (item.alerting) showMapTooltip(item);
-                        else openZoneModal(item.id);
-                    };
-                } else {
-                    el.innerHTML = `
+                        el.onclick = (e) => {
+                            e.stopPropagation();
+                            if (item.alerting) showMapTooltip(item);
+                            else openZoneModal(item.id);
+                        };
+                    } else {
+                        el.innerHTML = `
                         <span class="text-xs font-bold text-blue-700 opacity-60">${item.label}</span>
                         <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full hidden group-hover:flex items-center justify-center text-[10px]">×</button>
                         <div class="absolute bottom-1 right-1 cursor-nw-resize opacity-0 group-hover:opacity-100" onmousedown="startResize(event, '${item.id}')">
                            <i data-lucide="corner-right-down" class="w-3 h-3 text-blue-400"></i>
                         </div>
                     `;
+                    }
+
+                    el.onmousedown = (e) => startDrag(e, item.id);
+                    canvas.appendChild(el);
+                });
+                lucide.createIcons();
+            }
+
+            function startDrag(e, id) {
+                if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+                isDragging = true;
+                activeItemId = id;
+                const el = document.getElementById(id);
+                const rect = el.getBoundingClientRect();
+                offset = {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', stopDrag);
+            }
+
+            function drag(e) {
+                if (!isDragging) return;
+                const canvasRect = canvas.getBoundingClientRect();
+                let x = e.clientX - canvasRect.left - offset.x;
+                let y = e.clientY - canvasRect.top - offset.y;
+
+                // Constrain
+                x = Math.max(0, Math.min(x, canvasRect.width - 60));
+                y = Math.max(0, Math.min(y, canvasRect.height - 60));
+
+                // Snap to Grid (24px grid)
+                if (document.getElementById('snap-grid-toggle').checked) {
+                    x = Math.round(x / 24) * 24;
+                    y = Math.round(y / 24) * 24;
                 }
 
-                el.onmousedown = (e) => startDrag(e, item.id);
-                canvas.appendChild(el);
-            });
-            lucide.createIcons();
-        }
-
-        function startDrag(e, id) {
-            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-            isDragging = true;
-            activeItemId = id;
-            const el = document.getElementById(id);
-            const rect = el.getBoundingClientRect();
-            offset = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', stopDrag);
-        }
-
-        function drag(e) {
-            if (!isDragging) return;
-            const canvasRect = canvas.getBoundingClientRect();
-            let x = e.clientX - canvasRect.left - offset.x;
-            let y = e.clientY - canvasRect.top - offset.y;
-
-            // Constrain
-            x = Math.max(0, Math.min(x, canvasRect.width - 60));
-            y = Math.max(0, Math.min(y, canvasRect.height - 60));
-
-            // Snap to Grid (24px grid)
-            if (document.getElementById('snap-grid-toggle').checked) {
-                x = Math.round(x / 24) * 24;
-                y = Math.round(y / 24) * 24;
+                const item = [...mapLayout.shapes, ...mapLayout.cameras].find(i => i.id === activeItemId);
+                if (item) {
+                    item.x = x;
+                    item.y = y;
+                    const el = document.getElementById(activeItemId);
+                    el.style.left = x + 'px';
+                    el.style.top = y + 'px';
+                    debouncedSave();
+                }
             }
 
-            const item = [...mapLayout.shapes, ...mapLayout.cameras].find(i => i.id === activeItemId);
-            if (item) {
-                item.x = x;
-                item.y = y;
+            function stopDrag() {
+                isDragging = false;
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('mouseup', stopDrag);
+            }
+
+            function startResize(e, id) {
+                e.stopPropagation();
+                e.preventDefault();
+                activeItemId = id;
+                document.addEventListener('mousemove', resize);
+                document.addEventListener('mouseup', stopResize);
+            }
+
+            function resize(e) {
+                const item = mapLayout.shapes.find(i => i.id === activeItemId);
+                if (!item) return;
                 const el = document.getElementById(activeItemId);
-                el.style.left = x + 'px';
-                el.style.top = y + 'px';
+                const rect = el.getBoundingClientRect();
+                const newW = e.clientX - rect.left;
+                const newH = e.clientY - rect.top;
+
+                item.w = Math.max(100, newW);
+                item.h = Math.max(60, newH);
+                el.style.width = item.w + 'px';
+                el.style.height = item.h + 'px';
                 debouncedSave();
             }
-        }
 
-        function stopDrag() {
-            isDragging = false;
-            document.removeEventListener('mousemove', drag);
-            document.removeEventListener('mouseup', stopDrag);
-        }
+            function stopResize() {
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            }
 
-        function startResize(e, id) {
-            e.stopPropagation();
-            e.preventDefault();
-            activeItemId = id;
-            document.addEventListener('mousemove', resize);
-            document.addEventListener('mouseup', stopResize);
-        }
-
-        function resize(e) {
-            const item = mapLayout.shapes.find(i => i.id === activeItemId);
-            if (!item) return;
-            const el = document.getElementById(activeItemId);
-            const rect = el.getBoundingClientRect();
-            const newW = e.clientX - rect.left;
-            const newH = e.clientY - rect.top;
-
-            item.w = Math.max(100, newW);
-            item.h = Math.max(60, newH);
-            el.style.width = item.w + 'px';
-            el.style.height = item.h + 'px';
-            debouncedSave();
-        }
-
-        function stopResize() {
-            document.removeEventListener('mousemove', resize);
-            document.removeEventListener('mouseup', stopResize);
-        }
-
-        function deleteItem(id) {
-            mapLayout.shapes = mapLayout.shapes.filter(i => i.id !== id);
-            mapLayout.cameras = mapLayout.cameras.filter(i => i.id !== id);
-            renderMap();
-            debouncedSave();
-        }
-
-        function openZoneModal(id) {
-            activeItemId = id;
-            const item = mapLayout.cameras.find(i => i.id === id);
-            document.getElementById('zone-name-input').value = item.zoneName || '';
-            document.getElementById('zone-modal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('zone-name-input').focus(), 100);
-        }
-
-        function closeZoneModal() {
-            document.getElementById('zone-modal').classList.add('hidden');
-        }
-
-        function confirmZoneAssign() {
-            const val = document.getElementById('zone-name-input').value;
-            const item = mapLayout.cameras.find(i => i.id === activeItemId);
-            if (item) {
-                item.zoneName = val;
+            function deleteItem(id) {
+                mapLayout.shapes = mapLayout.shapes.filter(i => i.id !== id);
+                mapLayout.cameras = mapLayout.cameras.filter(i => i.id !== id);
                 renderMap();
                 debouncedSave();
             }
-            closeZoneModal();
-        }
 
-        async function saveMapLayout() {
-            const btn = document.getElementById('save-map-btn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Saving...';
-            lucide.createIcons();
-
-            const token = sessionStorage.getItem('adminKey');
-            const room = new URLSearchParams(window.location.search).get('room') || 'default';
-
-            try {
-                const res = await fetch(`/api/map/layout?room=${room}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-Admin-Key': token },
-                    body: JSON.stringify(mapLayout)
-                });
-                if (res.ok) {
-                    btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Saved!';
-                    btn.classList.replace('bg-mysk-blue', 'bg-emerald-500');
-                    setTimeout(() => {
-                        btn.innerHTML = originalText;
-                        btn.classList.replace('bg-emerald-500', 'bg-mysk-blue');
-                        lucide.createIcons();
-                    }, 2000);
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        const debouncedSave = debounce(saveMapLayout, 1500);
-
-        async function loadMapLayout() {
-            const room = new URLSearchParams(window.location.search).get('room') || 'default';
-            try {
-                const res = await fetch(`/api/map/layout?room=${room}`);
-                if (res.ok) {
-                    mapLayout = await res.json();
-                    renderMap();
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        // --- Secure Import/Export Logic ---
-        const LRC_HEADER = "LRC-V1-";
-
-        function exportLayout() {
-            try {
-                const dataStr = JSON.stringify({
-                    version: "1.0",
-                    room: new URLSearchParams(window.location.search).get('room') || 'default',
-                    timestamp: new Date().toISOString(),
-                    layout: mapLayout
-                });
-                
-                // Obfuscate with Base64
-                const encoded = LRC_HEADER + btoa(unescape(encodeURIComponent(dataStr)));
-                
-                const blob = new Blob([encoded], { type: 'application/octet-stream' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `layout_${new Date().toISOString().slice(0, 10)}.lrc`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            } catch (e) {
-                alert("Failed to export layout. Structure might be too large.");
-                console.error(e);
+            function openZoneModal(id) {
+                activeItemId = id;
+                const item = mapLayout.cameras.find(i => i.id === id);
+                document.getElementById('zone-name-input').value = item.zoneName || '';
+                document.getElementById('zone-modal').classList.remove('hidden');
+                setTimeout(() => document.getElementById('zone-name-input').focus(), 100);
             }
-        }
 
-        function triggerImport() {
-            document.getElementById('layout-import-input').click();
-        }
+            function closeZoneModal() {
+                document.getElementById('zone-modal').classList.add('hidden');
+            }
 
-        function importLayout(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result.trim();
-                
-                if (!content.startsWith(LRC_HEADER)) {
-                    alert("⚠️ INVALID FILE: This is not a valid LibraryRunCatcher (.lrc) backup.");
-                    return;
+            function confirmZoneAssign() {
+                const val = document.getElementById('zone-name-input').value;
+                const item = mapLayout.cameras.find(i => i.id === activeItemId);
+                if (item) {
+                    item.zoneName = val;
+                    renderMap();
+                    debouncedSave();
                 }
+                closeZoneModal();
+            }
+
+            async function saveMapLayout() {
+                const btn = document.getElementById('save-map-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Saving...';
+                lucide.createIcons();
+
+                const token = sessionStorage.getItem('adminKey');
+                const room = new URLSearchParams(window.location.search).get('room') || 'default';
 
                 try {
-                    const encodedData = content.substring(LRC_HEADER.length);
-                    const decodedStr = decodeURIComponent(escape(atob(encodedData)));
-                    const data = JSON.parse(decodedStr);
-
-                    if (data && data.layout) {
-                        mapLayout = data.layout;
-                        renderMap();
-                        debouncedSave(); // Sync to server memory
-                        alert("✅ SUCCESS: Layout restored successfully.");
-                    } else {
-                        throw new Error("Invalid structure");
+                    const res = await fetch(`/api/map/layout?room=${room}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Admin-Key': token },
+                        body: JSON.stringify(mapLayout)
+                    });
+                    if (res.ok) {
+                        btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Saved!';
+                        btn.classList.replace('bg-mysk-blue', 'bg-emerald-500');
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.classList.replace('bg-emerald-500', 'bg-mysk-blue');
+                            lucide.createIcons();
+                        }, 2000);
                     }
-                } catch (err) {
-                    alert("❌ ERROR: The layout file is corrupted and cannot be loaded.");
-                    console.error(err);
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = ''; // Reset input
-        }
-
-        // ----------------------------------------------------
-        // Metrics & Monitoring Logic
-        // ----------------------------------------------------
-        const statusThemes = {
-            'QUIET': { icon: 'book-open', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-            'LOUD': { icon: 'volume-2', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
-            'RUNNING_DETECTED': { icon: 'wind', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20' }
-        };
-
-        const zoneGrid = document.createElement('div'); // In-memory zone grid for metrics
-
-        async function updateDashboard() {
-            const token = sessionStorage.getItem('adminKey');
-            if (!token) {
-                showLoginModal();
-                return;
+                } catch (e) { console.error(e); }
             }
 
-            const room = new URLSearchParams(window.location.search).get('room') || 'default';
+            const debouncedSave = debounce(saveMapLayout, 1500);
 
-            try {
-                const response = await fetch(`/api/dashboard/stats?room=${room}`, {
-                    headers: { 'X-Admin-Key': token }
-                });
-                if (response.status === 401) {
-                    sessionStorage.removeItem('adminKey');
+            async function loadMapLayout() {
+                const room = new URLSearchParams(window.location.search).get('room') || 'default';
+                try {
+                    const res = await fetch(`/api/map/layout?room=${room}`);
+                    if (res.ok) {
+                        mapLayout = await res.json();
+                        renderMap();
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            // --- Secure Import/Export Logic ---
+            const LRC_HEADER = "LRC-V1-";
+
+            function exportLayout() {
+                try {
+                    const dataStr = JSON.stringify({
+                        version: "1.0",
+                        room: new URLSearchParams(window.location.search).get('room') || 'default',
+                        timestamp: new Date().toISOString(),
+                        layout: mapLayout
+                    });
+
+                    // Obfuscate with Base64
+                    const encoded = LRC_HEADER + btoa(unescape(encodeURIComponent(dataStr)));
+
+                    const blob = new Blob([encoded], { type: 'application/octet-stream' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `layout_${new Date().toISOString().slice(0, 10)}.lrc`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                } catch (e) {
+                    alert("Failed to export layout. Structure might be too large.");
+                    console.error(e);
+                }
+            }
+
+            function triggerImport() {
+                document.getElementById('layout-import-input').click();
+            }
+
+            function importLayout(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const content = e.target.result.trim();
+
+                    if (!content.startsWith(LRC_HEADER)) {
+                        alert("⚠️ INVALID FILE: This is not a valid LibraryRunCatcher (.lrc) backup.");
+                        return;
+                    }
+
+                    try {
+                        const encodedData = content.substring(LRC_HEADER.length);
+                        const decodedStr = decodeURIComponent(escape(atob(encodedData)));
+                        const data = JSON.parse(decodedStr);
+
+                        if (data && data.layout) {
+                            mapLayout = data.layout;
+                            renderMap();
+                            debouncedSave(); // Sync to server memory
+                            alert("✅ SUCCESS: Layout restored successfully.");
+                        } else {
+                            throw new Error("Invalid structure");
+                        }
+                    } catch (err) {
+                        alert("❌ ERROR: The layout file is corrupted and cannot be loaded.");
+                        console.error(err);
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = ''; // Reset input
+            }
+
+            // ----------------------------------------------------
+            // Metrics & Monitoring Logic
+            // ----------------------------------------------------
+            const statusThemes = {
+                'QUIET': { icon: 'book-open', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+                'LOUD': { icon: 'volume-2', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+                'RUNNING_DETECTED': { icon: 'wind', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20' }
+            };
+
+            const zoneGrid = document.createElement('div'); // In-memory zone grid for metrics
+
+            async function updateDashboard() {
+                const token = sessionStorage.getItem('adminKey');
+                if (!token) {
                     showLoginModal();
                     return;
                 }
-                const data = await response.json();
 
-                // 1. Update Metrics
-                document.getElementById('total-incidents').innerText = data.total_incidents;
-                document.getElementById('total-noise').innerText = data.total_noise;
-                document.getElementById('total-zones').innerText = data.total_zones;
+                const room = new URLSearchParams(window.location.search).get('room') || 'default';
 
-                if (data.zones && data.zones.length > 0) {
-                    barChart.data.labels = data.zones.map(z => z.name);
-                    barChart.data.datasets[0].data = data.zones.map(z => z.events_today);
-                    barChart.update();
+                try {
+                    const response = await fetch(`/api/dashboard/stats?room=${room}`, {
+                        headers: { 'X-Admin-Key': token }
+                    });
+                    if (response.status === 401) {
+                        sessionStorage.removeItem('adminKey');
+                        showLoginModal();
+                        return;
+                    }
+                    const data = await response.json();
+
+                    // 1. Update Metrics
+                    document.getElementById('total-incidents').innerText = data.total_incidents;
+                    document.getElementById('total-noise').innerText = data.total_noise;
+                    document.getElementById('total-zones').innerText = data.total_zones;
+
+                    if (data.zones && data.zones.length > 0) {
+                        barChart.data.labels = data.zones.map(z => z.name);
+                        barChart.data.datasets[0].data = data.zones.map(z => z.events_today);
+                        barChart.update();
+                    }
+
+                    // 2. Sync Map State (Internal fallback for non-WS updates)
+                    syncMapStates(data.zones);
+
+                } catch (error) {
+                    console.error("Failed to fetch stats:", error);
                 }
-
-                // 2. Sync Map State (Internal fallback for non-WS updates)
-                syncMapStates(data.zones);
-
-            } catch (error) {
-                console.error("Failed to fetch stats:", error);
             }
-        }
 
-        function syncMapStates(zones) {
-            if (!zones) return;
-            let mapChanged = false;
-            mapLayout.cameras.forEach(cam => {
-                if (!cam.zoneName) return;
+            function syncMapStates(zones) {
+                if (!zones) return;
+                let mapChanged = false;
+                mapLayout.cameras.forEach(cam => {
+                    if (!cam.zoneName) return;
 
-                const zoneAlert = zones.find(z => {
-                    const dbName = z.name.toLowerCase().trim();
-                    const mapName = cam.zoneName.toLowerCase().trim();
-                    return (dbName === mapName || dbName.startsWith(mapName + ' (cam')) && z.status !== 'QUIET';
-                });
+                    const zoneAlert = zones.find(z => {
+                        const dbName = z.name.toLowerCase().trim();
+                        const mapName = cam.zoneName.toLowerCase().trim();
+                        return (dbName === mapName || dbName.startsWith(mapName + ' (cam')) && z.status !== 'QUIET';
+                    });
 
-                const isAlerting = !!zoneAlert;
-                const status = zoneAlert ? zoneAlert.status.replace('_', ' ') : 'QUIET';
-                const snapshotUrl = zoneAlert ? zoneAlert.alert_snapshot_url : cam.lastSnapshot;
+                    const isAlerting = !!zoneAlert;
+                    const status = zoneAlert ? zoneAlert.status.replace('_', ' ') : 'QUIET';
+                    const snapshotUrl = zoneAlert ? zoneAlert.alert_snapshot_url : cam.lastSnapshot;
 
-                if (cam.alerting !== isAlerting || cam.currentStatus !== status || cam.lastSnapshot !== snapshotUrl) {
-                    cam.alerting = isAlerting;
-                    cam.currentStatus = status;
-                    cam.lastSnapshot = snapshotUrl;
-                    mapChanged = true;
-                }
-            });
-            if (mapChanged) renderMap();
-        }
-
-        // --- WebSocket Real-time Sync ---
-        let dashboardSocket = null;
-        function connectToRoomSocket() {
-            const room = new URLSearchParams(window.location.search).get('room');
-            if (!room) return;
-
-            if (dashboardSocket) dashboardSocket.close();
-
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            dashboardSocket = new WebSocket(`${protocol}//${window.location.host}/ws/${room}`);
-
-            dashboardSocket.onmessage = (event) => {
-                const result = JSON.parse(event.data);
-                if (result.status) {
-                    // Instantly update the matching camera on the map
-                    handleLiveUpdate(result);
-                }
-            };
-            dashboardSocket.onclose = () => setTimeout(connectToRoomSocket, 3000);
-        }
-
-        function handleLiveUpdate(result) {
-            let mapChanged = false;
-            mapLayout.cameras.forEach(cam => {
-                if (!cam.zoneName) return;
-
-                const dbName = result.zone_name.toLowerCase().trim();
-                const mapName = cam.zoneName.toLowerCase().trim();
-                const isMatch = (dbName === mapName || dbName.startsWith(mapName + ' (cam'));
-
-                if (isMatch) {
-                    const isAlerting = result.status !== 'QUIET';
-                    const statusText = result.status.replace('_', ' ');
-
-                    if (cam.alerting !== isAlerting || cam.currentStatus !== statusText) {
+                    if (cam.alerting !== isAlerting || cam.currentStatus !== status || cam.lastSnapshot !== snapshotUrl) {
                         cam.alerting = isAlerting;
-                        cam.currentStatus = statusText;
-                        if (result.alert_snapshot_url) cam.lastSnapshot = result.alert_snapshot_url;
+                        cam.currentStatus = status;
+                        cam.lastSnapshot = snapshotUrl;
                         mapChanged = true;
                     }
-                }
-            });
-            if (mapChanged) renderMap();
-        }
+                });
+                if (mapChanged) renderMap();
+            }
 
-        function showMapTooltip(item) {
-            console.log('Showing tooltip for', item.zoneName, 'Snapshot:', item.lastSnapshot);
-            if (!item.lastSnapshot) return;
-            const tooltip = document.getElementById('map-snapshot-tooltip');
-            const img = document.getElementById('tooltip-img');
-            const zone = document.getElementById('tooltip-zone');
-            const tTime = document.getElementById('tooltip-time');
+            // --- WebSocket Real-time Sync ---
+            let dashboardSocket = null;
+            function connectToRoomSocket() {
+                const room = new URLSearchParams(window.location.search).get('room');
+                if (!room) return;
 
-            img.src = item.lastSnapshot;
-            zone.innerText = item.zoneName;
-            tTime.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                if (dashboardSocket) dashboardSocket.close();
 
-            // Position tooltip above the item
-            const el = document.getElementById(item.id);
-            if (!el) return;
-            const rect = el.getBoundingClientRect();
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                dashboardSocket = new WebSocket(`${protocol}//${window.location.host}/ws/${room}`);
 
-            tooltip.classList.remove('hidden');
-            // Use window.scroll to account for page scrolling
-            tooltip.style.left = (window.scrollX + rect.left + rect.width / 2 - 96) + 'px';
-            tooltip.style.top = (window.scrollY + rect.top - 200) + 'px';
-            tooltip.style.opacity = '1';
+                dashboardSocket.onmessage = (event) => {
+                    const result = JSON.parse(event.data);
+                    if (result.status) {
+                        // Instantly update the matching camera on the map
+                        handleLiveUpdate(result);
+                    }
+                };
+                dashboardSocket.onclose = () => setTimeout(connectToRoomSocket, 3000);
+            }
 
-            // Auto-hide after 5 seconds
-            if (window.tooltipTimer) clearTimeout(window.tooltipTimer);
-            window.tooltipTimer = setTimeout(() => {
-                tooltip.style.opacity = '0';
-                setTimeout(() => tooltip.classList.add('hidden'), 300);
-            }, 5000);
-        }
+            function handleLiveUpdate(result) {
+                let mapChanged = false;
+                mapLayout.cameras.forEach(cam => {
+                    if (!cam.zoneName) return;
 
-        // Auth Modal Logic
-        function showLoginModal() {
-            if (document.getElementById('login-modal')) return;
-            const modal = document.createElement('div');
-            modal.id = 'login-modal';
-            modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-[100] backdrop-blur-sm';
-            modal.innerHTML = `
+                    const dbName = result.zone_name.toLowerCase().trim();
+                    const mapName = cam.zoneName.toLowerCase().trim();
+                    const isMatch = (dbName === mapName || dbName.startsWith(mapName + ' (cam'));
+
+                    if (isMatch) {
+                        const isAlerting = result.status !== 'QUIET';
+                        const statusText = result.status.replace('_', ' ');
+
+                        if (cam.alerting !== isAlerting || cam.currentStatus !== statusText) {
+                            cam.alerting = isAlerting;
+                            cam.currentStatus = statusText;
+                            if (result.alert_snapshot_url) cam.lastSnapshot = result.alert_snapshot_url;
+                            mapChanged = true;
+                        }
+                    }
+                });
+                if (mapChanged) renderMap();
+            }
+
+            function showMapTooltip(item) {
+                console.log('Showing tooltip for', item.zoneName, 'Snapshot:', item.lastSnapshot);
+                if (!item.lastSnapshot) return;
+                const tooltip = document.getElementById('map-snapshot-tooltip');
+                const img = document.getElementById('tooltip-img');
+                const zone = document.getElementById('tooltip-zone');
+                const tTime = document.getElementById('tooltip-time');
+
+                img.src = item.lastSnapshot;
+                zone.innerText = item.zoneName;
+                tTime.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                // Position tooltip above the item
+                const el = document.getElementById(item.id);
+                if (!el) return;
+                const rect = el.getBoundingClientRect();
+
+                tooltip.classList.remove('hidden');
+                // Use window.scroll to account for page scrolling
+                tooltip.style.left = (window.scrollX + rect.left + rect.width / 2 - 96) + 'px';
+                tooltip.style.top = (window.scrollY + rect.top - 200) + 'px';
+                tooltip.style.opacity = '1';
+
+                // Auto-hide after 5 seconds
+                if (window.tooltipTimer) clearTimeout(window.tooltipTimer);
+                window.tooltipTimer = setTimeout(() => {
+                    tooltip.style.opacity = '0';
+                    setTimeout(() => tooltip.classList.add('hidden'), 300);
+                }, 5000);
+            }
+
+            // Auth Modal Logic
+            function showLoginModal() {
+                if (document.getElementById('login-modal')) return;
+                const modal = document.createElement('div');
+                modal.id = 'login-modal';
+                modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-[100] backdrop-blur-sm';
+                modal.innerHTML = `
                 <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
                     <div class="w-16 h-16 bg-[#c6e7ff] rounded-full flex items-center justify-center mx-auto mb-6 text-[#216487]">
                         <i data-lucide="lock" class="w-8 h-8"></i>
@@ -818,51 +841,118 @@
                     <p id="login-error" class="text-rose-500 text-xs mt-3 font-bold hidden">Invalid PIN</p>
                 </div>
             `;
-            document.body.appendChild(modal);
-            lucide.createIcons();
-            setTimeout(() => document.getElementById('admin-pin').focus(), 100);
-            document.getElementById('admin-pin').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') submitLogin();
-            });
-        }
-
-        async function submitLogin() {
-            const pin = document.getElementById('admin-pin').value;
-            if (pin.length < 6) return;
-            const room = new URLSearchParams(window.location.search).get('room') || 'default';
-
-            try {
-                const res = await fetch('/api/auth/verify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: pin, room: room })
+                document.body.appendChild(modal);
+                lucide.createIcons();
+                setTimeout(() => document.getElementById('admin-pin').focus(), 100);
+                document.getElementById('admin-pin').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') submitLogin();
                 });
-                if (res.ok) {
-                    sessionStorage.setItem('adminKey', pin);
-                    document.getElementById('login-modal').remove();
-                    updateDashboard();
-                    connectToRoomSocket();
-                } else {
-                    const err = document.getElementById('login-error');
-                    err.classList.remove('hidden');
-                    err.classList.add('animate-pulse');
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        function goBackToLive() {
-            if (window.parent && window.parent !== window) {
-                window.parent.postMessage('closeDashboard', '*');
-            } else {
-                window.location.href = '/';
             }
-        }
 
-        setInterval(updateDashboard, 5000); // Poll slower for stats now that WS handles icons
-        updateDashboard();
-        loadMapLayout();
-        connectToRoomSocket();
-    </script>
+            async function submitLogin() {
+                const pin = document.getElementById('admin-pin').value;
+                if (pin.length < 6) return;
+                const room = new URLSearchParams(window.location.search).get('room') || 'default';
+
+                try {
+                    const res = await fetch('/api/auth/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password: pin, room: room })
+                    });
+                    if (res.ok) {
+                        sessionStorage.setItem('adminKey', pin);
+                        document.getElementById('login-modal').remove();
+                        updateDashboard();
+                        connectToRoomSocket();
+                    } else {
+                        const err = document.getElementById('login-error');
+                        err.classList.remove('hidden');
+                        err.classList.add('animate-pulse');
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            function goBackToLive() {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage('closeDashboard', '*');
+                } else {
+                    window.location.href = '/';
+                }
+            }
+
+            setInterval(updateDashboard, 5000); // Poll slower for stats now that WS handles icons
+            updateDashboard();
+            loadMapLayout();
+            connectToRoomSocket();
+
+            // --- Alert Sound System ---
+            const ALERT_SOUNDS = {
+                chime: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3',
+                beep: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
+                siren: 'https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3',
+                silent: null
+            };
+            let currentAlertSound = 'chime';
+
+            function broadcastSoundPreference() {
+                const select = document.getElementById('alert-sound-select');
+                const sound = select.value;
+                currentAlertSound = sound;
+
+                if (dashboardSocket && dashboardSocket.readyState === WebSocket.OPEN) {
+                    dashboardSocket.send(JSON.stringify({
+                        type: 'SOUND_PREFERENCE',
+                        sound: sound
+                    }));
+                }
+            }
+
+            function testAlertSound() {
+                playAlertSound(currentAlertSound);
+            }
+
+            function playAlertSound(soundKey) {
+                const url = ALERT_SOUNDS[soundKey];
+                if (!url) return; // Silent
+                try {
+                    const audio = new Audio(url);
+                    audio.volume = 0.7;
+                    audio.play().catch(e => console.log('Audio play blocked:', e));
+                } catch (e) { console.error('Audio error:', e); }
+            }
+
+            // Override WebSocket handler to support sound preference
+            const originalOnMessage = dashboardSocket ? dashboardSocket.onmessage : null;
+            function enhancedOnMessage(event) {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'SOUND_PREFERENCE') {
+                    // Sync sound preference from another admin
+                    currentAlertSound = data.sound;
+                    const select = document.getElementById('alert-sound-select');
+                    if (select) select.value = data.sound;
+                    return;
+                }
+
+                // Normal status update
+                if (data.status) {
+                    handleLiveUpdate(data);
+                }
+            }
+
+            // Re-attach enhanced handler after socket connects
+            const originalConnectFn = connectToRoomSocket;
+            connectToRoomSocket = function () {
+                originalConnectFn();
+                setTimeout(() => {
+                    if (dashboardSocket) {
+                        dashboardSocket.onmessage = enhancedOnMessage;
+                    }
+                }, 100);
+            };
+            connectToRoomSocket();
+        </script>
 </body>
 
 </html>

@@ -1,12 +1,30 @@
 [
     {
+        "id": "push-notifications-launch",
+        "title": "Push Notifications 🔔",
+        "description": "Never miss an alert again! LibraryRunCatcher now sends browser push notifications even when the tab is in the background. Just allow notifications when prompted.",
+        "type": "new-feature",
+        "date": "Feb 1, 2026",
+        "icon": "bell-ring",
+        "isNew": true
+    },
+    {
+        "id": "custom-alert-sounds",
+        "title": "Custom Alert Sounds",
+        "description": "Choose your preferred alert tone in the Admin Dashboard: Chime, Beep, Siren, or Silent. The setting syncs to all devices in your room automatically!",
+        "type": "new-feature",
+        "date": "Feb 1, 2026",
+        "icon": "volume-2",
+        "isNew": true
+    },
+    {
         "id": "realtime-websocket-engine",
         "title": "Ultra-Fast Real-time Engine",
         "description": "Say goodbye to 2-second polling! Our new WebSocket-driven engine ensures map alerts are delivered instantly with 90% less network overhead. Experience zero-latency sync across all your devices.",
         "type": "performance",
         "date": "Feb 1, 2026",
         "icon": "zap",
-        "isNew": true
+        "isNew": false
     },
     {
         "id": "user-manual-launch",

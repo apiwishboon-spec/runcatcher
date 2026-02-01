@@ -36,6 +36,57 @@ let watchSocket = null;
 let currentRoomId = null;
 let globalCamera = null;
 
+// --- Push Notification & Sound System ---
+let notificationsEnabled = false;
+let currentAlertSound = 'chime';
+const ALERT_SOUNDS = {
+    chime: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3',
+    beep: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
+    siren: 'https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3',
+    silent: null
+};
+
+// Request notification permission on load
+async function requestNotificationPermission() {
+    if ('Notification' in window) {
+        const permission = await Notification.requestPermission();
+        notificationsEnabled = (permission === 'granted');
+        console.log('Push Notifications:', notificationsEnabled ? 'Enabled' : 'Denied');
+    }
+}
+
+function showPushNotification(title, body, icon = '/static/logo.png') {
+    if (!notificationsEnabled) return;
+    try {
+        const notification = new Notification(title, {
+            body: body,
+            icon: icon,
+            badge: icon,
+            tag: 'lrc-alert', // Prevents duplicate notifications
+            requireInteraction: true
+        });
+        notification.onclick = () => {
+            window.focus();
+            notification.close();
+        };
+    } catch (e) {
+        console.error('Notification error:', e);
+    }
+}
+
+function playAlertSound() {
+    const url = ALERT_SOUNDS[currentAlertSound];
+    if (!url) return; // Silent mode
+    try {
+        const audio = new Audio(url);
+        audio.volume = 0.7;
+        audio.play().catch(e => console.log('Audio autoplay blocked:', e));
+    } catch (e) { console.error('Audio error:', e); }
+}
+
+// Initialize on page load
+requestNotificationPermission();
+
 const pose = new Pose({
     locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
 });
@@ -669,13 +720,20 @@ function connectToWatchSocket(roomId) {
     watchSocket.onmessage = (event) => {
         const result = JSON.parse(event.data);
 
-        // 1. Emergency Staff Summon (High Priority)
+        // 1. Sound Preference Sync (from Dashboard)
+        if (result.type === 'SOUND_PREFERENCE') {
+            currentAlertSound = result.sound;
+            console.log('Sound preference updated:', currentAlertSound);
+            return;
+        }
+
+        // 2. Emergency Staff Summon (High Priority)
         if (result.type === 'EMERGENCY') {
             handleStaffSummonAlert(result);
             return;
         }
 
-        // 2. Regular Detection Data
+        // 3. Regular Detection Data
         updateUI(result);
 
         // Haptic Feedback for Mobile
@@ -683,10 +741,22 @@ function connectToWatchSocket(roomId) {
             navigator.vibrate([200, 100, 200]);
         }
 
-        // Alert Sound
-        if (result.status === 'RUNNING_DETECTED') {
-            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-            audio.play().catch(e => console.log('Audio blocked by browser'));
+        // Alert Sound (uses customizable sound from dashboard)
+        if (result.status === 'RUNNING_DETECTED' || result.status === 'LOUD') {
+            playAlertSound();
+
+            // Push Notification (works even when tab is in background)
+            if (result.status === 'RUNNING_DETECTED') {
+                showPushNotification(
+                    '🏃 Running Detected!',
+                    `Zone: ${result.zone_name} | Speed: ${result.movement_speed} m/s`
+                );
+            } else if (result.status === 'LOUD') {
+                showPushNotification(
+                    '📢 Loud Noise Alert!',
+                    `Zone: ${result.zone_name} | Level: ${result.noise_level} dB`
+                );
+            }
         }
     };
 
