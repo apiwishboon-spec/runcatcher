@@ -83,10 +83,11 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
         manager.disconnect(websocket, room_id)
 
 @app.post("/upload/snapshot")
-async def upload_snapshot(data: dict):
+async def upload_snapshot(request: Request):
     """
     Receives base64 image data and saves it to the snapshots directory.
     """
+    data = await request.json()
     try:
         header, encoded = data["image"].split(",", 1)
         image_data = base64.b64decode(encoded)
@@ -160,15 +161,17 @@ import random
 import string
 
 @app.post("/api/auth/reset")
-async def reset_admin_password(data: dict):
+async def reset_admin_password(request: Request):
     """Generates a new random 6-digit PIN for a specific room."""
+    data = await request.json()
     room = data.get("room", "default")
     code = ''.join(random.choices(string.digits, k=6))
     app.state.room_passwords[room] = code
     return {"password": code}
 
 @app.post("/api/auth/verify")
-async def verify_admin_password(data: dict):
+async def verify_admin_password(request: Request):
+    data = await request.json()
     room = data.get("room", "default")
     stored_pass = app.state.room_passwords.get(room)
     if data.get("password") == stored_pass:
@@ -180,7 +183,7 @@ async def get_map_layout(room: str = "default"):
     return app.state.room_layouts.get(room, {"shapes": [], "cameras": []})
 
 @app.post("/api/map/layout")
-async def save_map_layout(request: Request, layout: dict, room: str = "default"):
+async def save_map_layout(request: Request, room: str = "default"):
     # Auth check
     auth_header = request.headers.get("X-Admin-Key")
     stored_pass = app.state.room_passwords.get(room)
@@ -188,5 +191,6 @@ async def save_map_layout(request: Request, layout: dict, room: str = "default")
     if not auth_header or auth_header != stored_pass:
          raise HTTPException(status_code=401, detail="Unauthorized")
     
+    layout = await request.json()
     app.state.room_layouts[room] = layout
     return {"status": "saved"}
