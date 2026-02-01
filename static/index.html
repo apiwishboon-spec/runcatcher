@@ -842,7 +842,8 @@
                 // Open
                 if (!frame.src.includes('dashboard')) {
                     const roomParam = currentRoomId ? `?room=${currentRoomId}` : '';
-                    frame.src = "/dashboard" + roomParam;
+                    const connector = roomParam ? '&' : '?';
+                    frame.src = "/dashboard" + roomParam + connector + "v=" + Date.now();
                 }
                 overlay.style.display = 'block';
                 document.body.style.overflow = 'hidden'; // Prevent background scrolling
