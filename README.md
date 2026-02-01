@@ -32,6 +32,19 @@ Sync multiple devices (phones, tablets, PCs) to a single room. Every device acts
 
 ---
 
+## 💡 Use Cases
+
+### 🏛️ In the Library: "Silent Study Enforcement"
+Librarians can use the interactive map to identify recurring "hotspots" of movement or noise. For example, if a specific corner frequently pulses red, it may indicate a need for more study carrels, better acoustic padding, or a relocation of loud equipment.
+
+### 🏢 Beyond Libraries: "Museum & Gallery Guard"
+**LibraryRunCatcher** isn't just for books. In art galleries or museums, the system can monitor fragile "No-Run" zones. If a visitor moves too quickly (running) near a precious artifact, the system can trigger an immediate auditory alert and capture a snapshot for security, keeping the exhibits safe.
+
+### 💻 Co-working Spaces: "Focus Zone Integrity"
+Premium co-working offices use this to maintain "Deep Work" floors. Real-time noise monitoring ensures that phone calls and loud conversations are kept to designated meeting rooms, preserving the high-focus environment that members pay for.
+
+---
+
 ## 🛠️ Technology Stack
 - **Backend**: FastAPI (Python 3.x)
 - **Real-time**: WebSockets for instant synchronization.

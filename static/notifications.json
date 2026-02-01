@@ -25,5 +25,14 @@
         "date": "Jan 30, 2026",
         "icon": "smartphone",
         "isNew": false
+    },
+    {
+        "id": "realtime-websocket-engine",
+        "title": "Ultra-Fast Real-time Engine",
+        "description": "Say goodbye to 2-second polling! Our new WebSocket-driven engine ensures map alerts are delivered instantly with 90% less network overhead. Experience zero-latency sync across all your devices.",
+        "type": "performance",
+        "date": "Feb 1, 2026",
+        "icon": "zap",
+        "isNew": true
     }
 ]
