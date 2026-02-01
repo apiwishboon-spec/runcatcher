@@ -1,5 +1,14 @@
 [
     {
+        "id": "realtime-websocket-engine",
+        "title": "Ultra-Fast Real-time Engine",
+        "description": "Say goodbye to 2-second polling! Our new WebSocket-driven engine ensures map alerts are delivered instantly with 90% less network overhead. Experience zero-latency sync across all your devices.",
+        "type": "performance",
+        "date": "Feb 1, 2026",
+        "icon": "zap",
+        "isNew": true
+    },
+    {
         "id": "interactive-floor-plan-builder",
         "title": "Interactive Floor Plan Builder",
         "description": "Design a digital twin of your library with our new drag-and-drop floor plan builder. Create custom area shapes, place camera nodes with snap-to-grid precision (24px grid toggle), and monitor incidents directly on the map. Click pulsing red camera nodes to view live evidence snapshots with timestamps and zone data. Red alerts persist for 60 seconds, so no incident slips through the cracks—even when you’re away.",
@@ -26,13 +35,4 @@
         "icon": "smartphone",
         "isNew": false
     },
-    {
-        "id": "realtime-websocket-engine",
-        "title": "Ultra-Fast Real-time Engine",
-        "description": "Say goodbye to 2-second polling! Our new WebSocket-driven engine ensures map alerts are delivered instantly with 90% less network overhead. Experience zero-latency sync across all your devices.",
-        "type": "performance",
-        "date": "Feb 1, 2026",
-        "icon": "zap",
-        "isNew": true
-    }
 ]
