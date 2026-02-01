@@ -639,48 +639,73 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold text-info mb-3">🚀 Getting Started</h6>
-                            <ul class="small vstack gap-2 text-muted">
-                                <li><strong>1. Create a Room:</strong> Go to "Librarian's Watch" and click the refresh
-                                    icon to get a room code.</li>
-                                <li><strong>2. Setup Zones:</strong> Choose a zone name (or add a new one) that
-                                    describes the area the camera is watching.</li>
-                                <li><strong>3. Enable Detection:</strong> Switch on the "Auto" toggle or press the blue
-                                    Eye icon to start the camera feed.</li>
-                            </ul>
+                    <!-- Phase 1: Easy Setup -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-info d-flex align-items-center mb-3">
+                            <span class="badge bg-info me-2">1</span> 🛠️ Easy Setup (First Time)
+                        </h6>
+                        <div class="ms-4 small text-muted">
+                            <p class="mb-2"><strong>Get your Room Identity:</strong> Look for the <strong>"Librarian's
+                                    Watch"</strong> box at the bottom. Click the 🔄 icon to generate a code (like
+                                WATCH-ABC), then click <strong>"Join"</strong>. This ensures your data stays private to
+                                you.</p>
+                            <p class="mb-2"><strong>Unlock the Dashboard:</strong> When you first join, a
+                                <strong>6-digit PIN</strong> will pop up. <strong>Write this down!</strong> You will
+                                need this to open the Map and see statistics.</p>
+                            <p class="mb-0"><strong>Say "Hello" to the Camera:</strong> Click the <b>blue Eye icon</b>
+                                👁️ above the monitoring box. Your browser will ask for permission to use your
+                                camera—click <strong>"Allow"</strong>.</p>
                         </div>
-                        <div class="col-md-6">
-                            <h6 class="fw-bold text-info mb-3">📊 The Dashboard</h6>
-                            <ul class="small vstack gap-2 text-muted">
-                                <li><strong>Map Architect:</strong> Drag and drop cameras to match your library layout.
-                                </li>
-                                <li><strong>Real-time Stats:</strong> See noise and speed levels live from any connected
-                                    device.</li>
-                                <li><strong>Portability:</strong> Use "Export .lrc" to save your map to your computer,
-                                    and "Restore" to load it back if the server restarts.</li>
-                            </ul>
+                    </div>
+
+                    <!-- Phase 2: Daily Use -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-success d-flex align-items-center mb-3">
+                            <span class="badge bg-success me-2">2</span> 🕵️ Daily Use
+                        </h6>
+                        <div class="ms-4 small text-muted">
+                            <p class="mb-2"><strong>Monitoring:</strong> Keep this page open on your front-desk
+                                computer. If someone runs or is too loud, the screen will glow <strong>Red</strong> and
+                                play a short sound.</p>
+                            <p class="mb-2"><strong>Checking Evidence:</strong> Look at the <strong>"Recent
+                                    Alerts"</strong> list on the right. You can click any alert to see a photo of what
+                                happened. These photos are deleted automatically after 5 hours.</p>
+                            <p class="mb-0"><strong>Multi-Device:</strong> You can enter the same code on your
+                                smartphone to receive vibrations in your pocket while you walk around the library.</p>
+                        </div>
+                    </div>
+
+                    <!-- Phase 3: The Map -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-primary d-flex align-items-center mb-3">
+                            <span class="badge bg-primary me-2">3</span> 🗺️ The Map & Saving
+                        </h6>
+                        <div class="ms-4 small text-muted">
+                            <p class="mb-2"><strong>Design:</strong> Open the <strong>Dashboard</strong> and enter your
+                                PIN. You can drag and drop camera icons to match your bookshelves. It saves
+                                automatically as you move things.</p>
+                            <p class="mb-0"><strong>Important Backup:</strong> Because the server "forgets" things when
+                                it restarts, use the <strong>"Export .lrc"</strong> button to save your map to your
+                                computer. If the map is ever empty, just click <strong>"Restore"</strong> and pick that
+                                file.</p>
                         </div>
                     </div>
 
                     <hr class="my-4 opacity-10">
 
-                    <h6 class="fw-bold text-dark mb-3">💡 Use Cases</h6>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="p-3 bg-light rounded-3 border">
-                                <span class="fw-bold d-block mb-1">🏛️ In the Library</span>
-                                <p class="small text-muted mb-0">Monitor "silent zones" to ensure students can study
-                                    without distraction. Detect running in narrow aisles for safety.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-3 bg-light rounded-3 border">
-                                <span class="fw-bold d-block mb-1">🏢 Beyond Libraries</span>
-                                <p class="small text-muted mb-0">Use in Art Galleries to protect fragile statues from
-                                    fast-moving crowds or in Co-working spaces to maintain quiet focus areas.</p>
-                            </div>
+                    <!-- Troubleshooting -->
+                    <div class="bg-light p-3 rounded-4 border">
+                        <h7 class="fw-bold text-dark d-flex align-items-center mb-2">
+                            <i data-lucide="help-circle" class="me-2 text-muted" style="width: 16px;"></i> Common
+                            Problems
+                        </h7>
+                        <div class="small text-muted">
+                            <div class="mb-2"><strong>Camera is black?</strong> Make sure you clicked "Allow" in the
+                                pop-up at the top of your screen. If you missed it, refresh the page.</div>
+                            <div class="mb-2"><strong>Dashboard is empty?</strong> Enter your Room Code in "Librarian's
+                                Watch" first, then click "Join".</div>
+                            <div><strong>Forgot your PIN?</strong> Just click the 🔄 icon to generate a new room and a
+                                new PIN.</div>
                         </div>
                     </div>
                 </div>
