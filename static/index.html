@@ -139,11 +139,11 @@
                                 <h4 class="card-title mb-0 w-100 text-center text-md-start">Live Monitoring</h4>
                                 <div
                                     class="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-md-end w-100">
-                                    <button id="summon-btn" aria-label="Emergency Summon All Staff"
+                                    <button id="summon-btn" aria-label="Emergency SOS Alert"
                                         class="btn btn-sm btn-danger d-flex align-items-center gap-2 px-3 fw-bold"
-                                        onclick="triggerStaffSummon()" title="Emergency: Summon All Staff">
-                                        <i data-lucide="bell-ring" style="width: 16px; height: 16px;"
-                                            aria-hidden="true"></i> SUMMON
+                                        onclick="triggerStaffSummon()" title="Emergency: SOS Alert to All Staff">
+                                        <i data-lucide="siren" style="width: 16px; height: 16px;"
+                                            aria-hidden="true"></i> SOS
                                     </button>
                                     <button id="preview-btn" class="btn btn-sm btn-outline-info"
                                         onclick="togglePreview()" title="Show Camera Preview"
@@ -703,8 +703,8 @@
                                         the laptop's camera.</li>
                                     <li><strong>Haptic Feedback:</strong> Your phone will vibrate when an alert is
                                         triggered.</li>
-                                    <li><strong>Emergency Summon:</strong> Click <span
-                                            class="badge bg-danger">SUMMON</span> to send a full-screen alarm to all
+                                    <li><strong>Emergency SOS:</strong> Click <span class="badge bg-danger">SOS</span>
+                                        to send a full-screen alarm to all
                                         synced devices.</li>
                                 </ul>
                             </div>
@@ -712,14 +712,19 @@
                         <div class="col-md-6">
                             <div class="p-3 border rounded-3 h-100">
                                 <p class="fw-bold mb-2 text-success"><i data-lucide="layout-dashboard" class="me-1"
-                                        style="width:14px;"></i> Admin Dashboard</p>
+                                        style="width:14px;"></i> Admin Dashboard & Map</p>
                                 <ul class="small text-muted mb-0 ps-3">
                                     <li><strong>Interactive Map:</strong> Drag and drop camera nodes to build your floor
                                         plan.</li>
+                                    <li><strong>Add Zones:</strong> Click "Add Shape" to draw study areas, bookshelves,
+                                        or corridors on the map.</li>
+                                    <li><strong>Sync Zones:</strong> Click the <i data-lucide="map"
+                                            style="width:12px;"></i> button in Zone Selection to sync your drawn shapes
+                                        as zone options.</li>
                                     <li><strong>Real-time Alerts:</strong> Pulsing red icons show active incidents.
                                         Click to see snapshots.</li>
-                                    <li><strong>Metrics Chart:</strong> View total incidents and noise warnings per
-                                        zone.</li>
+                                    <li><strong>Import/Export:</strong> Use "Export .lrc" to backup your map. Use
+                                        "Restore" to load it back after server restarts.</li>
                                     <li><strong>Secure Access:</strong> Requires a 6-digit PIN generated when you create
                                         a room.</li>
                                 </ul>
