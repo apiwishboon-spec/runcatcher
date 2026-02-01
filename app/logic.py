@@ -3,29 +3,37 @@ from .config import settings
 import time
 from typing import Optional
 
-# Simple in-memory storage for streaks and zone states
+# Multi-tenant storage for streaks, zone states and stats
 # In production, use Redis or a database
-zone_streaks = {}
-zone_states = {}
-total_stats = {
-    "incidents": 0,
-    "noise_warnings": 0
-}
+room_data = {}
 
 ALERT_HOLD_TIME = 60 # seconds
 
+def get_room_context(room_id: str):
+    """Ensures a room's data structure exists."""
+    if room_id not in room_data:
+        room_data[room_id] = {
+            "streaks": {},
+            "states": {},
+            "stats": {"incidents": 0, "noise_warnings": 0}
+        }
+    return room_data[room_id]
+
 def classify_behavior(reading: SensorReading, alert_snapshot_url: Optional[str] = None) -> DetectionResult:
     """
-    Core logic to classify behavior based on thresholds.
+    Core logic to classify behavior based on thresholds, scoped by room_id.
     """
+    room_id = reading.room_id or "default"
+    ctx = get_room_context(room_id)
+    
     status = BehaviorStatus.QUIET
     message = "Environment is peaceful."
     snapshot_url = alert_snapshot_url
     now = time.time()
     
     # Initialize zone state if not exists
-    if reading.zone_name not in zone_states:
-        zone_states[reading.zone_name] = {
+    if reading.zone_name not in ctx["states"]:
+        ctx["states"][reading.zone_name] = {
             "name": reading.zone_name,
             "status": BehaviorStatus.QUIET,
             "events_today": 0,
@@ -43,9 +51,9 @@ def classify_behavior(reading: SensorReading, alert_snapshot_url: Optional[str] 
         is_alert = True
         if not snapshot_url:
             snapshot_url = "/static/logo.png"
-        zone_streaks[reading.zone_name] = 0
-        zone_states[reading.zone_name]["events_today"] += 1
-        total_stats["incidents"] += 1
+        ctx["streaks"][reading.zone_name] = 0
+        ctx["states"][reading.zone_name]["events_today"] += 1
+        ctx["stats"]["incidents"] += 1
         
     elif reading.noise_level > settings.NOISE_THRESHOLD_LOUD:
         status = BehaviorStatus.LOUD
@@ -53,13 +61,13 @@ def classify_behavior(reading: SensorReading, alert_snapshot_url: Optional[str] 
         is_alert = True
         if not snapshot_url:
              snapshot_url = "/static/logo.png"
-        zone_streaks[reading.zone_name] = 0
-        zone_states[reading.zone_name]["events_today"] += 1
-        total_stats["noise_warnings"] += 1
+        ctx["streaks"][reading.zone_name] = 0
+        ctx["states"][reading.zone_name]["events_today"] += 1
+        ctx["stats"]["noise_warnings"] += 1
     else:
         # Increment quiet streak
-        current_streak = zone_streaks.get(reading.zone_name, 0)
-        zone_streaks[reading.zone_name] = current_streak + 1
+        current_streak = ctx["streaks"].get(reading.zone_name, 0)
+        ctx["streaks"][reading.zone_name] = current_streak + 1
         message = f"Thank you for keeping the {reading.zone_name} quiet."
 
     # Update global state for dashboard
@@ -74,24 +82,26 @@ def classify_behavior(reading: SensorReading, alert_snapshot_url: Optional[str] 
         updates["last_alert_time"] = now
         updates["last_alert_status"] = status
         
-    zone_states[reading.zone_name].update(updates)
+    ctx["states"][reading.zone_name].update(updates)
 
     return DetectionResult(
         status=status,
         message=message,
-        streak=zone_streaks.get(reading.zone_name, 0),
+        streak=ctx["streaks"].get(reading.zone_name, 0),
         alert_snapshot_url=snapshot_url,
         zone_name=reading.zone_name,
         movement_speed=reading.movement_speed,
-        noise_level=reading.noise_level
+        noise_level=reading.noise_level,
+        room_id=room_id
     )
 
-def get_dashboard_stats():
-    """Returns the current state of all zones and totals, with alert persistence."""
+def get_dashboard_stats(room_id: str = "default"):
+    """Returns the current state of all zones and totals for a specific room."""
     now = time.time()
+    ctx = get_room_context(room_id)
     zones_to_report = []
     
-    for zone_id, state in zone_states.items():
+    for zone_id, state in ctx["states"].items():
         report_state = state.copy()
         # Hold alert status for ALERT_HOLD_TIME (60s)
         last_alert_time = state.get("last_alert_time", 0)
@@ -102,7 +112,7 @@ def get_dashboard_stats():
 
     return {
         "zones": zones_to_report,
-        "total_zones": len(zone_states),
-        "total_incidents": total_stats["incidents"],
-        "total_noise": total_stats["noise_warnings"]
+        "total_zones": len(ctx["states"]),
+        "total_incidents": ctx["stats"]["incidents"],
+        "total_noise": ctx["stats"]["noise_warnings"]
     }

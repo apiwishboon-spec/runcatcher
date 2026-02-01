@@ -552,10 +552,15 @@ async function generateSyncCode() {
     const code = 'WATCH-' + Math.random().toString(36).substring(2, 8).toUpperCase();
     document.getElementById('sync-code-input').value = code;
     document.getElementById('join-code-input').value = code;
+    currentRoomId = code;
 
-    // Also generate Admin PIN for the dashboard
+    // Also generate Admin PIN for the dashboard, tied to this room
     try {
-        const res = await fetch('/api/auth/reset', { method: 'POST' });
+        const res = await fetch('/api/auth/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ room: code })
+        });
         const data = await res.json();
         const pin = data.password;
 

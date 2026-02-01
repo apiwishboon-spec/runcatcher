@@ -11,7 +11,9 @@ import json
 from typing import Dict, List
 
 app = FastAPI(title=settings.APP_NAME)
-app.state.map_layout = {"shapes": [], "cameras": []}
+# Multi-tenant state (In-memory, resets on restart)
+app.state.room_layouts = {}
+app.state.room_passwords = {}
 
 from fastapi.encoders import jsonable_encoder
 
@@ -141,48 +143,50 @@ async def get_alerts(zone_name: str):
     return {"zone": zone_name, "alerts": []}
 
 @app.get("/api/dashboard/stats")
-async def dashboard_stats(request: Request):
+async def dashboard_stats(request: Request, room: str = "default"):
     from .logic import get_dashboard_stats
     
     # Check for authentication
     auth_header = request.headers.get("X-Admin-Key")
-    if not auth_header or auth_header != app.state.admin_password:
+    stored_pass = app.state.room_passwords.get(room)
+    
+    if not auth_header or auth_header != stored_pass:
         raise HTTPException(status_code=401, detail="Unauthorized")
         
-    return get_dashboard_stats()
+    return get_dashboard_stats(room)
 
 # Admin Authentication
 import random
 import string
 
-# Initialize admin password in app state
-app.state.admin_password = "admin" # Default fallabck
-
 @app.post("/api/auth/reset")
-async def reset_admin_password():
-    """Generates a new random 6-digit PIN for the session."""
+async def reset_admin_password(data: dict):
+    """Generates a new random 6-digit PIN for a specific room."""
+    room = data.get("room", "default")
     code = ''.join(random.choices(string.digits, k=6))
-    app.state.admin_password = code
+    app.state.room_passwords[room] = code
     return {"password": code}
 
 @app.post("/api/auth/verify")
 async def verify_admin_password(data: dict):
-    if data.get("password") == app.state.admin_password:
+    room = data.get("room", "default")
+    stored_pass = app.state.room_passwords.get(room)
+    if data.get("password") == stored_pass:
         return {"status": "ok"}
     raise HTTPException(status_code=401, detail="Invalid password")
 
 @app.get("/api/map/layout")
-async def get_map_layout():
-    return app.state.map_layout
+async def get_map_layout(room: str = "default"):
+    return app.state.room_layouts.get(room, {"shapes": [], "cameras": []})
 
 @app.post("/api/map/layout")
-async def save_map_layout(layout: dict, request: Request):
-    # Optional: Auth check here if needed
+async def save_map_layout(request: Request, layout: dict, room: str = "default"):
+    # Auth check
     auth_header = request.headers.get("X-Admin-Key")
-    if not auth_header or auth_header != app.state.admin_password:
-         # For simplicity in this demo, we might allow it if not set yet, 
-         # but let's stick to auth for safety.
+    stored_pass = app.state.room_passwords.get(room)
+    
+    if not auth_header or auth_header != stored_pass:
          raise HTTPException(status_code=401, detail="Unauthorized")
     
-    app.state.map_layout = layout
+    app.state.room_layouts[room] = layout
     return {"status": "saved"}

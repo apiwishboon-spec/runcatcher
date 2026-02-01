@@ -196,6 +196,23 @@
                                 Add Camera Node
                             </button>
                         </div>
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                            <h5 class="text-[10px] font-bold uppercase text-slate-400 mb-3">Backup & Portability</h5>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="exportLayout()" title="Save to computer"
+                                    class="flex flex-col items-center gap-2 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-all text-[10px] font-bold">
+                                    <i data-lucide="download-cloud" class="w-4 h-4 text-blue-500"></i>
+                                    Export .lrc
+                                </button>
+                                <button onclick="triggerImport()" title="Load from computer"
+                                    class="flex flex-col items-center gap-2 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-all text-[10px] font-bold">
+                                    <i data-lucide="upload-cloud" class="w-4 h-4 text-emerald-500"></i>
+                                    Restore
+                                </button>
+                                <input type="file" id="layout-import-input" class="hidden" accept=".lrc"
+                                    onchange="importLayout(event)">
+                            </div>
+                        </div>
                         <div class="mt-8 pt-6 border-t border-slate-100 space-y-4">
                             <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
                                 <span class="text-[10px] font-bold uppercase text-slate-400">Snap to Grid</span>
@@ -323,6 +340,15 @@
         let offset = { x: 0, y: 0 };
         const canvas = document.getElementById('map-canvas');
 
+        // Debounce helper for auto-save
+        const debounce = (func, wait) => {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        };
+
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
             document.getElementById(`section-${tab}`).classList.remove('hidden');
@@ -355,6 +381,7 @@
             else mapLayout.cameras.push(item);
 
             renderMap();
+            debouncedSave();
         }
 
         function renderMap() {
@@ -444,6 +471,7 @@
                 const el = document.getElementById(activeItemId);
                 el.style.left = x + 'px';
                 el.style.top = y + 'px';
+                debouncedSave();
             }
         }
 
@@ -473,6 +501,7 @@
             item.h = Math.max(60, newH);
             el.style.width = item.w + 'px';
             el.style.height = item.h + 'px';
+            debouncedSave();
         }
 
         function stopResize() {
@@ -484,6 +513,7 @@
             mapLayout.shapes = mapLayout.shapes.filter(i => i.id !== id);
             mapLayout.cameras = mapLayout.cameras.filter(i => i.id !== id);
             renderMap();
+            debouncedSave();
         }
 
         function openZoneModal(id) {
@@ -504,6 +534,7 @@
             if (item) {
                 item.zoneName = val;
                 renderMap();
+                debouncedSave();
             }
             closeZoneModal();
         }
@@ -515,8 +546,10 @@
             lucide.createIcons();
 
             const token = sessionStorage.getItem('adminKey');
+            const room = new URLSearchParams(window.location.search).get('room') || 'default';
+
             try {
-                const res = await fetch('/api/map/layout', {
+                const res = await fetch(`/api/map/layout?room=${room}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-Admin-Key': token },
                     body: JSON.stringify(mapLayout)
@@ -533,14 +566,86 @@
             } catch (e) { console.error(e); }
         }
 
+        const debouncedSave = debounce(saveMapLayout, 1500);
+
         async function loadMapLayout() {
+            const room = new URLSearchParams(window.location.search).get('room') || 'default';
             try {
-                const res = await fetch('/api/map/layout');
+                const res = await fetch(`/api/map/layout?room=${room}`);
                 if (res.ok) {
                     mapLayout = await res.json();
                     renderMap();
                 }
             } catch (e) { console.error(e); }
+        }
+
+        // --- Secure Import/Export Logic ---
+        const LRC_HEADER = "LRC-V1-";
+
+        function exportLayout() {
+            try {
+                const dataStr = JSON.stringify({
+                    version: "1.0",
+                    room: new URLSearchParams(window.location.search).get('room') || 'default',
+                    timestamp: new Date().toISOString(),
+                    layout: mapLayout
+                });
+                
+                // Obfuscate with Base64
+                const encoded = LRC_HEADER + btoa(unescape(encodeURIComponent(dataStr)));
+                
+                const blob = new Blob([encoded], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `layout_${new Date().toISOString().slice(0, 10)}.lrc`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (e) {
+                alert("Failed to export layout. Structure might be too large.");
+                console.error(e);
+            }
+        }
+
+        function triggerImport() {
+            document.getElementById('layout-import-input').click();
+        }
+
+        function importLayout(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result.trim();
+                
+                if (!content.startsWith(LRC_HEADER)) {
+                    alert("⚠️ INVALID FILE: This is not a valid LibraryRunCatcher (.lrc) backup.");
+                    return;
+                }
+
+                try {
+                    const encodedData = content.substring(LRC_HEADER.length);
+                    const decodedStr = decodeURIComponent(escape(atob(encodedData)));
+                    const data = JSON.parse(decodedStr);
+
+                    if (data && data.layout) {
+                        mapLayout = data.layout;
+                        renderMap();
+                        debouncedSave(); // Sync to server memory
+                        alert("✅ SUCCESS: Layout restored successfully.");
+                    } else {
+                        throw new Error("Invalid structure");
+                    }
+                } catch (err) {
+                    alert("❌ ERROR: The layout file is corrupted and cannot be loaded.");
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset input
         }
 
         // ----------------------------------------------------
@@ -561,8 +666,10 @@
                 return;
             }
 
+            const room = new URLSearchParams(window.location.search).get('room') || 'default';
+
             try {
-                const response = await fetch('/api/dashboard/stats', {
+                const response = await fetch(`/api/dashboard/stats?room=${room}`, {
                     headers: { 'X-Admin-Key': token }
                 });
                 if (response.status === 401) {
@@ -577,40 +684,89 @@
                 document.getElementById('total-noise').innerText = data.total_noise;
                 document.getElementById('total-zones').innerText = data.total_zones;
 
-                if (data.zones.length > 0) {
+                if (data.zones && data.zones.length > 0) {
                     barChart.data.labels = data.zones.map(z => z.name);
                     barChart.data.datasets[0].data = data.zones.map(z => z.events_today);
                     barChart.update();
                 }
 
-                // 2. Update Map Alerts (Real-time Sync)
-                let mapChanged = false;
-                mapLayout.cameras.forEach(cam => {
-                    if (!cam.zoneName) return;
-
-                    // Robust fuzzy matching: match "Lobby" with "Lobby (Cam 1)" case-insensitively
-                    const zoneAlert = data.zones.find(z => {
-                        const dbName = z.name.toLowerCase().trim();
-                        const mapName = cam.zoneName.toLowerCase().trim();
-                        return (dbName === mapName || dbName.startsWith(mapName + ' (cam')) && z.status !== 'QUIET';
-                    });
-
-                    const isAlerting = !!zoneAlert;
-                    const status = zoneAlert ? zoneAlert.status.replace('_', ' ') : 'QUIET';
-                    const snapshotUrl = zoneAlert ? zoneAlert.alert_snapshot_url : cam.lastSnapshot;
-
-                    if (cam.alerting !== isAlerting || cam.currentStatus !== status || cam.lastSnapshot !== snapshotUrl) {
-                        cam.alerting = isAlerting;
-                        cam.currentStatus = status;
-                        cam.lastSnapshot = snapshotUrl;
-                        mapChanged = true;
-                    }
-                });
-                if (mapChanged) renderMap();
+                // 2. Sync Map State (Internal fallback for non-WS updates)
+                syncMapStates(data.zones);
 
             } catch (error) {
                 console.error("Failed to fetch stats:", error);
             }
+        }
+
+        function syncMapStates(zones) {
+            if (!zones) return;
+            let mapChanged = false;
+            mapLayout.cameras.forEach(cam => {
+                if (!cam.zoneName) return;
+
+                const zoneAlert = zones.find(z => {
+                    const dbName = z.name.toLowerCase().trim();
+                    const mapName = cam.zoneName.toLowerCase().trim();
+                    return (dbName === mapName || dbName.startsWith(mapName + ' (cam')) && z.status !== 'QUIET';
+                });
+
+                const isAlerting = !!zoneAlert;
+                const status = zoneAlert ? zoneAlert.status.replace('_', ' ') : 'QUIET';
+                const snapshotUrl = zoneAlert ? zoneAlert.alert_snapshot_url : cam.lastSnapshot;
+
+                if (cam.alerting !== isAlerting || cam.currentStatus !== status || cam.lastSnapshot !== snapshotUrl) {
+                    cam.alerting = isAlerting;
+                    cam.currentStatus = status;
+                    cam.lastSnapshot = snapshotUrl;
+                    mapChanged = true;
+                }
+            });
+            if (mapChanged) renderMap();
+        }
+
+        // --- WebSocket Real-time Sync ---
+        let dashboardSocket = null;
+        function connectToRoomSocket() {
+            const room = new URLSearchParams(window.location.search).get('room');
+            if (!room) return;
+
+            if (dashboardSocket) dashboardSocket.close();
+
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            dashboardSocket = new WebSocket(`${protocol}//${window.location.host}/ws/${room}`);
+
+            dashboardSocket.onmessage = (event) => {
+                const result = JSON.parse(event.data);
+                if (result.status) {
+                    // Instantly update the matching camera on the map
+                    handleLiveUpdate(result);
+                }
+            };
+            dashboardSocket.onclose = () => setTimeout(connectToRoomSocket, 3000);
+        }
+
+        function handleLiveUpdate(result) {
+            let mapChanged = false;
+            mapLayout.cameras.forEach(cam => {
+                if (!cam.zoneName) return;
+
+                const dbName = result.zone_name.toLowerCase().trim();
+                const mapName = cam.zoneName.toLowerCase().trim();
+                const isMatch = (dbName === mapName || dbName.startsWith(mapName + ' (cam'));
+
+                if (isMatch) {
+                    const isAlerting = result.status !== 'QUIET';
+                    const statusText = result.status.replace('_', ' ');
+
+                    if (cam.alerting !== isAlerting || cam.currentStatus !== statusText) {
+                        cam.alerting = isAlerting;
+                        cam.currentStatus = statusText;
+                        if (result.alert_snapshot_url) cam.lastSnapshot = result.alert_snapshot_url;
+                        mapChanged = true;
+                    }
+                }
+            });
+            if (mapChanged) renderMap();
         }
 
         function showMapTooltip(item) {
@@ -673,16 +829,19 @@
         async function submitLogin() {
             const pin = document.getElementById('admin-pin').value;
             if (pin.length < 6) return;
+            const room = new URLSearchParams(window.location.search).get('room') || 'default';
+
             try {
                 const res = await fetch('/api/auth/verify', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: pin })
+                    body: JSON.stringify({ password: pin, room: room })
                 });
                 if (res.ok) {
                     sessionStorage.setItem('adminKey', pin);
                     document.getElementById('login-modal').remove();
                     updateDashboard();
+                    connectToRoomSocket();
                 } else {
                     const err = document.getElementById('login-error');
                     err.classList.remove('hidden');
@@ -699,9 +858,10 @@
             }
         }
 
-        setInterval(updateDashboard, 2000);
+        setInterval(updateDashboard, 5000); // Poll slower for stats now that WS handles icons
         updateDashboard();
         loadMapLayout();
+        connectToRoomSocket();
     </script>
 </body>
 

@@ -652,7 +652,8 @@
             if (overlay.style.display === 'none') {
                 // Open
                 if (!frame.src.includes('dashboard')) {
-                    frame.src = "/dashboard";
+                    const roomParam = currentRoomId ? `?room=${currentRoomId}` : '';
+                    frame.src = "/dashboard" + roomParam;
                 }
                 overlay.style.display = 'block';
                 document.body.style.overflow = 'hidden'; // Prevent background scrolling
