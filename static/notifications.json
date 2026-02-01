@@ -9,6 +9,15 @@
         "isNew": true
     },
     {
+        "id": "user-manual-launch",
+        "title": "New User Manual",
+        "description": "Need help getting started? Check out the new 'How to Use' guide in the top menu. It covers everything from camera setup to multi-device sync.",
+        "type": "new-feature",
+        "date": "Feb 1, 2026",
+        "icon": "book-open",
+        "isNew": true
+    },
+    {
         "id": "interactive-floor-plan-builder",
         "title": "Interactive Floor Plan Builder",
         "description": "Design a digital twin of your library with our new drag-and-drop floor plan builder. Create custom area shapes, place camera nodes with snap-to-grid precision (24px grid toggle), and monitor incidents directly on the map. Click pulsing red camera nodes to view live evidence snapshots with timestamps and zone data. Red alerts persist for 60 seconds, so no incident slips through the cracks—even when you’re away.",
@@ -34,14 +43,5 @@
         "date": "Jan 30, 2026",
         "icon": "smartphone",
         "isNew": false
-    },
-    {
-        "id": "interactive-manual",
-        "title": "Interactive Manual Live",
-        "description": "New to LibraryRunCatcher? Click the 'Having problems?' button in the top menu to view our new step-by-step setup guide and creative use cases.",
-        "type": "help",
-        "date": "Feb 1, 2026",
-        "icon": "book-open",
-        "isNew": true
     }
 ]

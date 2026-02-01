@@ -96,11 +96,6 @@
                     LibraryRunCatcher
                 </a>
                 <div class="ms-auto d-flex align-items-center gap-2">
-                    <button class="btn btn-sm btn-outline-info d-flex align-items-center gap-2" data-bs-toggle="modal"
-                        data-bs-target="#manualModal" aria-label="Open User Manual">
-                        <i data-lucide="help-circle" style="width: 14px; height: 14px;" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline">Having problems? Click me</span>
-                    </button>
                     <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2 position-relative"
                         data-bs-toggle="modal" data-bs-target="#notificationModal" aria-label="View latest updates">
                         <i data-lucide="bell" style="width: 16px; height: 16px;" aria-hidden="true"></i>
@@ -109,6 +104,11 @@
                             style="font-size: 0.6rem;">
                             0
                         </span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-info d-flex align-items-center gap-2" data-bs-toggle="modal"
+                        data-bs-target="#manualModal" aria-label="Open User Manual">
+                        <i data-lucide="help-circle" style="width: 14px; height: 14px;" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline">Having problems? Click me</span>
                     </button>
                     <button onclick="toggleDashboard()" aria-label="Open performance dashboard"
                         class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2">
@@ -485,95 +485,6 @@
             </div>
         </div>
     </div>
-
-    <!-- User Manual Modal -->
-    <div class="modal fade" id="manualModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content glass-card border-0 shadow-lg">
-                <div class="modal-header border-0 bg-info text-white">
-                    <h5 class="modal-title fw-bold d-flex align-items-center">
-                        <i data-lucide="book-open" class="me-2"></i> User Manual & Setup Guide
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="row g-4 text-start">
-                        <!-- Step 1 -->
-                        <div class="col-md-6">
-                            <div class="d-flex gap-3 h-100">
-                                <div class="badge rounded-pill bg-info flex-shrink-0"
-                                    style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
-                                    1</div>
-                                <div>
-                                    <h6 class="fw-bold mb-1">Grant Permissions</h6>
-                                    <p class="small text-muted">Allow camera and microphone access. We use Edge AI, so
-                                        data stays on your device.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Step 2 -->
-                        <div class="col-md-6">
-                            <div class="d-flex gap-3 h-100">
-                                <div class="badge rounded-pill bg-info flex-shrink-0"
-                                    style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
-                                    2</div>
-                                <div>
-                                    <h6 class="fw-bold mb-1">Configure Zones</h6>
-                                    <p class="small text-muted">Open the <strong>Dashboard</strong> to build your floor
-                                        plan. Or manually select a zone for the current camera.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Step 3 -->
-                        <div class="col-md-6">
-                            <div class="d-flex gap-3 h-100">
-                                <div class="badge rounded-pill bg-info flex-shrink-0"
-                                    style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
-                                    3</div>
-                                <div>
-                                    <h6 class="fw-bold mb-1">Device Sync</h6>
-                                    <p class="small text-muted">Use <strong>Librarian's Watch</strong> to sync with your
-                                        phone. It will vibrate in your pocket when alerts trigger.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Step 4 -->
-                        <div class="col-md-6">
-                            <div class="d-flex gap-3 h-100">
-                                <div class="badge rounded-pill bg-info flex-shrink-0"
-                                    style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
-                                    4</div>
-                                <div>
-                                    <h6 class="fw-bold mb-1">Data Backup</h6>
-                                    <p class="small text-muted">Use <strong>Export .lrc</strong> in the Dashboard to
-                                        save your map backups locally.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 p-3 bg-light rounded-4 border border-info border-opacity-25">
-                        <h6 class="fw-bold text-info mb-2 d-flex align-items-center">
-                            <i data-lucide="lightbulb" class="me-2 text-warning" style="width: 16px;"></i> Creative Use
-                            Cases
-                        </h6>
-                        <ul class="small text-muted vstack gap-2 mb-0">
-                            <li><strong>Silent Study Enforcer:</strong> Identify "hotspots" of disruption to optimize
-                                furniture layout.</li>
-                            <li><strong>Museum & Gallery Guard:</strong> Monitor speed near fragile artifacts for
-                                immediate security snapshots.</li>
-                            <li><strong>Co-working Focus:</strong> Maintain "Deep Work" floor integrity with real-time
-                                dB monitoring.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-info text-white w-100 fw-bold" data-bs-dismiss="modal">Let's
-                        Get Started!</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Sponsor Modal (small) -->
     <!-- Sponsor Modal (small) -->
     <div class="modal fade" id="sponsorModal" tabindex="-1">
@@ -712,6 +623,70 @@
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Manual Modal -->
+    <div class="modal fade" id="manualModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-0 bg-info text-white">
+                    <h5 class="modal-title fw-bold d-flex align-items-center">
+                        <i data-lucide="book-open" class="me-2"></i> How to use LibraryRunCatcher
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-info mb-3">🚀 Getting Started</h6>
+                            <ul class="small vstack gap-2 text-muted">
+                                <li><strong>1. Create a Room:</strong> Go to "Librarian's Watch" and click the refresh
+                                    icon to get a room code.</li>
+                                <li><strong>2. Setup Zones:</strong> Choose a zone name (or add a new one) that
+                                    describes the area the camera is watching.</li>
+                                <li><strong>3. Enable Detection:</strong> Switch on the "Auto" toggle or press the blue
+                                    Eye icon to start the camera feed.</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-info mb-3">📊 The Dashboard</h6>
+                            <ul class="small vstack gap-2 text-muted">
+                                <li><strong>Map Architect:</strong> Drag and drop cameras to match your library layout.
+                                </li>
+                                <li><strong>Real-time Stats:</strong> See noise and speed levels live from any connected
+                                    device.</li>
+                                <li><strong>Portability:</strong> Use "Export .lrc" to save your map to your computer,
+                                    and "Restore" to load it back if the server restarts.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 opacity-10">
+
+                    <h6 class="fw-bold text-dark mb-3">💡 Use Cases</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <span class="fw-bold d-block mb-1">🏛️ In the Library</span>
+                                <p class="small text-muted mb-0">Monitor "silent zones" to ensure students can study
+                                    without distraction. Detect running in narrow aisles for safety.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <span class="fw-bold d-block mb-1">🏢 Beyond Libraries</span>
+                                <p class="small text-muted mb-0">Use in Art Galleries to protect fragile statues from
+                                    fast-moving crowds or in Co-working spaces to maintain quiet focus areas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-info text-white w-100 fw-bold" data-bs-dismiss="modal">I'm
+                        ready to monitor!</button>
                 </div>
             </div>
         </div>
