@@ -549,6 +549,12 @@ async function sendDetection(zone, speed, noise, alert_snapshot_url = null) {
 }
 // --- Librarian's Watch Sync ---
 async function generateSyncCode() {
+    const btn = document.querySelector('button[onclick="generateSyncCode()"]');
+    const originalBtnHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader" class="spinner-border spinner-border-sm"></i>';
+    lucide.createIcons();
+
     const code = 'WATCH-' + Math.random().toString(36).substring(2, 8).toUpperCase();
     document.getElementById('sync-code-input').value = code;
     document.getElementById('join-code-input').value = code;
@@ -561,13 +567,27 @@ async function generateSyncCode() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ room: code })
         });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Server returned ${res.status}: ${errorText}`);
+        }
+
         const data = await res.json();
         const pin = data.password;
 
-        // Show PIN one time
-        showAdminPinModal(pin);
+        if (pin) {
+            showAdminPinModal(pin);
+        } else {
+            throw new Error("Server response missing password field");
+        }
     } catch (e) {
         console.error("Failed to generate admin PIN", e);
+        alert("⚠️ SECURITY ALERT: Failed to generate Admin PIN. The dashboard will be locked for this room. Error: " + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
+        lucide.createIcons();
     }
 }
 
