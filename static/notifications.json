@@ -35,4 +35,13 @@
         "icon": "smartphone",
         "isNew": false
     },
+    {
+        "id": "interactive-manual",
+        "title": "Interactive Manual Live",
+        "description": "New to LibraryRunCatcher? Click the 'Having problems?' button in the top menu to view our new step-by-step setup guide and creative use cases.",
+        "type": "help",
+        "date": "Feb 1, 2026",
+        "icon": "book-open",
+        "isNew": true
+    }
 ]
