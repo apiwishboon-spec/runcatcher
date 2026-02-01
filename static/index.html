@@ -630,84 +630,174 @@
 
     <!-- User Manual Modal -->
     <div class="modal fade" id="manualModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content glass-card border-0">
                 <div class="modal-header border-0 bg-info text-white">
                     <h5 class="modal-title fw-bold d-flex align-items-center">
-                        <i data-lucide="book-open" class="me-2"></i> How to use LibraryRunCatcher
+                        <i data-lucide="book-open" class="me-2"></i> Complete User Manual
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <!-- Phase 1: Easy Setup -->
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-info d-flex align-items-center mb-3">
-                            <span class="badge bg-info me-2">1</span> 🛠️ Easy Setup (First Time)
-                        </h6>
-                        <div class="ms-4 small text-muted">
-                            <p class="mb-2"><strong>Get your Room Identity:</strong> Look for the <strong>"Librarian's
-                                    Watch"</strong> box at the bottom. Click the 🔄 icon to generate a code (like
-                                WATCH-ABC), then click <strong>"Join"</strong>. This ensures your data stays private to
-                                you.</p>
-                            <p class="mb-2"><strong>Unlock the Dashboard:</strong> When you first join, a
-                                <strong>6-digit PIN</strong> will pop up. <strong>Write this down!</strong> You will
-                                need this to open the Map and see statistics.</p>
-                            <p class="mb-0"><strong>Say "Hello" to the Camera:</strong> Click the <b>blue Eye icon</b>
-                                👁️ above the monitoring box. Your browser will ask for permission to use your
-                                camera—click <strong>"Allow"</strong>.</p>
-                        </div>
-                    </div>
+                <div class="modal-body p-4" style="max-height: 70vh;">
 
-                    <!-- Phase 2: Daily Use -->
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-success d-flex align-items-center mb-3">
-                            <span class="badge bg-success me-2">2</span> 🕵️ Daily Use
-                        </h6>
-                        <div class="ms-4 small text-muted">
-                            <p class="mb-2"><strong>Monitoring:</strong> Keep this page open on your front-desk
-                                computer. If someone runs or is too loud, the screen will glow <strong>Red</strong> and
-                                play a short sound.</p>
-                            <p class="mb-2"><strong>Checking Evidence:</strong> Look at the <strong>"Recent
-                                    Alerts"</strong> list on the right. You can click any alert to see a photo of what
-                                happened. These photos are deleted automatically after 5 hours.</p>
-                            <p class="mb-0"><strong>Multi-Device:</strong> You can enter the same code on your
-                                smartphone to receive vibrations in your pocket while you walk around the library.</p>
+                    <!-- Section 1: Getting Started -->
+                    <h6 class="fw-bold text-info mb-3 d-flex align-items-center"><i data-lucide="rocket" class="me-2"
+                            style="width:18px;"></i> Getting Started</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded-3 border h-100">
+                                <span class="badge bg-info mb-2">Step 1</span>
+                                <p class="fw-bold mb-1">Create a Room</p>
+                                <p class="small text-muted mb-0">Go to <strong>"Librarian's Watch"</strong> and click
+                                    the <i data-lucide="refresh-cw" style="width:12px;"></i> icon to generate a unique
+                                    Room Code.</p>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- Phase 3: The Map -->
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-primary d-flex align-items-center mb-3">
-                            <span class="badge bg-primary me-2">3</span> 🗺️ The Map & Saving
-                        </h6>
-                        <div class="ms-4 small text-muted">
-                            <p class="mb-2"><strong>Design:</strong> Open the <strong>Dashboard</strong> and enter your
-                                PIN. You can drag and drop camera icons to match your bookshelves. It saves
-                                automatically as you move things.</p>
-                            <p class="mb-0"><strong>Important Backup:</strong> Because the server "forgets" things when
-                                it restarts, use the <strong>"Export .lrc"</strong> button to save your map to your
-                                computer. If the map is ever empty, just click <strong>"Restore"</strong> and pick that
-                                file.</p>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded-3 border h-100">
+                                <span class="badge bg-info mb-2">Step 2</span>
+                                <p class="fw-bold mb-1">Select a Zone</p>
+                                <p class="small text-muted mb-0">Choose a zone name from the dropdown (e.g., "Reading
+                                    Area") or add a new one that describes your camera's location.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded-3 border h-100">
+                                <span class="badge bg-info mb-2">Step 3</span>
+                                <p class="fw-bold mb-1">Start Monitoring</p>
+                                <p class="small text-muted mb-0">Toggle the <strong>"Auto"</strong> switch or click the
+                                    <i data-lucide="eye" style="width:12px;"></i> button to enable your camera and mic.
+                                </p>
+                            </div>
                         </div>
                     </div>
 
                     <hr class="my-4 opacity-10">
 
-                    <!-- Troubleshooting -->
-                    <div class="bg-light p-3 rounded-4 border">
-                        <h7 class="fw-bold text-dark d-flex align-items-center mb-2">
-                            <i data-lucide="help-circle" class="me-2 text-muted" style="width: 16px;"></i> Common
-                            Problems
-                        </h7>
-                        <div class="small text-muted">
-                            <div class="mb-2"><strong>Camera is black?</strong> Make sure you clicked "Allow" in the
-                                pop-up at the top of your screen. If you missed it, refresh the page.</div>
-                            <div class="mb-2"><strong>Dashboard is empty?</strong> Enter your Room Code in "Librarian's
-                                Watch" first, then click "Join".</div>
-                            <div><strong>Forgot your PIN?</strong> Just click the 🔄 icon to generate a new room and a
-                                new PIN.</div>
+                    <!-- Section 2: Core Features -->
+                    <h6 class="fw-bold text-primary mb-3 d-flex align-items-center"><i data-lucide="layers" class="me-2"
+                            style="width:18px;"></i> Core Features</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100">
+                                <p class="fw-bold mb-2 text-primary"><i data-lucide="activity" class="me-1"
+                                        style="width:14px;"></i> Live Monitoring</p>
+                                <ul class="small text-muted mb-0 ps-3">
+                                    <li><strong>Speed Detection:</strong> Uses your camera to estimate movement speed
+                                        (m/s).</li>
+                                    <li><strong>Noise Detection:</strong> Uses your microphone to measure sound in
+                                        decibels (dB).</li>
+                                    <li><strong>Streak Counter:</strong> Shows consecutive quiet readings — aim for a
+                                        high streak!</li>
+                                    <li><strong>Status Badge:</strong> Displays "QUIET", "LOUD", or "RUNNING DETECTED".
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100">
+                                <p class="fw-bold mb-2 text-warning"><i data-lucide="smartphone" class="me-1"
+                                        style="width:14px;"></i> Librarian's Watch</p>
+                                <ul class="small text-muted mb-0 ps-3">
+                                    <li><strong>Multi-Device Sync:</strong> Connect your phone to receive alerts from
+                                        the laptop's camera.</li>
+                                    <li><strong>Haptic Feedback:</strong> Your phone will vibrate when an alert is
+                                        triggered.</li>
+                                    <li><strong>Emergency Summon:</strong> Click <span
+                                            class="badge bg-danger">SUMMON</span> to send a full-screen alarm to all
+                                        synced devices.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100">
+                                <p class="fw-bold mb-2 text-success"><i data-lucide="layout-dashboard" class="me-1"
+                                        style="width:14px;"></i> Admin Dashboard</p>
+                                <ul class="small text-muted mb-0 ps-3">
+                                    <li><strong>Interactive Map:</strong> Drag and drop camera nodes to build your floor
+                                        plan.</li>
+                                    <li><strong>Real-time Alerts:</strong> Pulsing red icons show active incidents.
+                                        Click to see snapshots.</li>
+                                    <li><strong>Metrics Chart:</strong> View total incidents and noise warnings per
+                                        zone.</li>
+                                    <li><strong>Secure Access:</strong> Requires a 6-digit PIN generated when you create
+                                        a room.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100">
+                                <p class="fw-bold mb-2 text-danger"><i data-lucide="bell" class="me-1"
+                                        style="width:14px;"></i> Alerts & Evidence</p>
+                                <ul class="small text-muted mb-0 ps-3">
+                                    <li><strong>Automatic Snapshots:</strong> When an alert triggers, a photo is
+                                        captured instantly.</li>
+                                    <li><strong>PDF Reports:</strong> Download individual or batch reports with
+                                        timestamps.</li>
+                                    <li><strong>Auto-Cleanup:</strong> All snapshots are automatically deleted after 5
+                                        hours for privacy.</li>
+                                    <li><strong>Clear History:</strong> Manually clear alerts with the "Clear" button.
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
+
+                    <hr class="my-4 opacity-10">
+
+                    <!-- Section 3: Advanced Settings -->
+                    <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center"><i data-lucide="settings"
+                            class="me-2" style="width:18px;"></i> Advanced Settings</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border h-100">
+                                <p class="fw-bold mb-2"><i data-lucide="grid" class="me-1" style="width:14px;"></i> CCTV
+                                    Grid Mode</p>
+                                <p class="small text-muted mb-0">Enable Grid Detection to divide your camera view into
+                                    zones (e.g., 2x2, 3x3). Each cell tracks activity independently — useful for
+                                    multi-monitor CCTV setups.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border h-100">
+                                <p class="fw-bold mb-2"><i data-lucide="download-cloud" class="me-1"
+                                        style="width:14px;"></i> Export & Restore (.lrc)</p>
+                                <p class="small text-muted mb-0">Your map layouts are saved in server memory. To prevent
+                                    loss after restarts, use <strong>Export .lrc</strong> to save a backup to your
+                                    computer. Use <strong>Restore</strong> to reload it anytime.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 opacity-10">
+
+                    <!-- Section 4: Use Cases -->
+                    <h6 class="fw-bold text-dark mb-3 d-flex align-items-center"><i data-lucide="lightbulb" class="me-2"
+                            style="width:18px;"></i> Use Cases</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 bg-primary bg-opacity-10 rounded-3 border h-100">
+                                <span class="fw-bold d-block mb-1">🏛️ Libraries</span>
+                                <p class="small text-muted mb-0">Maintain silent study zones. Identify recurring
+                                    "hotspots" and rearrange furniture for better flow.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-warning bg-opacity-10 rounded-3 border h-100">
+                                <span class="fw-bold d-block mb-1">🖼️ Museums & Galleries</span>
+                                <p class="small text-muted mb-0">Protect fragile exhibits. Trigger alerts if visitors
+                                    run near artifacts.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-success bg-opacity-10 rounded-3 border h-100">
+                                <span class="fw-bold d-block mb-1">💼 Co-working Spaces</span>
+                                <p class="small text-muted mb-0">Ensure "Deep Work" floors stay quiet. Monitor noise
+                                    levels in open-plan offices.</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-info text-white w-100 fw-bold" data-bs-dismiss="modal">I'm
