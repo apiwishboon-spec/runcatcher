@@ -603,25 +603,43 @@
         }
 
         // --- Secure Import/Export Logic ---
-        const LRC_HEADER = "LRC-V1-";
+        // --- Secure Import/Export Logic ---
+        const LRC_HEADER = "LRC-SECURE-V2-";
+        // Simple XOR Cipher Key
+        const SECRET_KEY = "LibraryRunCatcher_SuperSecure_Key_999";
+
+        function xorProcess(input) {
+            let output = '';
+            for (let i = 0; i < input.length; i++) {
+                const charCode = input.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
+                output += String.fromCharCode(charCode);
+            }
+            return output;
+        }
 
         function exportLayout() {
             try {
                 const dataStr = JSON.stringify({
-                    version: "1.0",
+                    version: "2.0",
                     room: new URLSearchParams(window.location.search).get('room') || 'default',
                     timestamp: new Date().toISOString(),
                     layout: mapLayout
                 });
 
-                // Obfuscate with Base64
-                const encoded = LRC_HEADER + btoa(unescape(encodeURIComponent(dataStr)));
+                // 1. Convert to binary string (handles UTF-8)
+                const binaryStr = unescape(encodeURIComponent(dataStr));
+                
+                // 2. Apply Custom XOR Encryption
+                const encrypted = xorProcess(binaryStr);
 
-                const blob = new Blob([encoded], { type: 'application/octet-stream' });
+                // 3. Base64 Encode
+                const finalPayload = LRC_HEADER + btoa(encrypted);
+
+                const blob = new Blob([finalPayload], { type: 'application/octet-stream' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `layout_${new Date().toISOString().slice(0, 10)}.lrc`;
+                a.download = `layout_secure_${new Date().toISOString().slice(0, 10)}.lrc`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -644,15 +662,33 @@
             reader.onload = function (e) {
                 const content = e.target.result.trim();
 
-                if (!content.startsWith(LRC_HEADER)) {
+                // Support both old V1 and new V2 formats for backward compatibility
+                const isV2 = content.startsWith("LRC-SECURE-V2-");
+                const isV1 = content.startsWith("LRC-V1-");
+
+                if (!isV1 && !isV2) {
                     alert("⚠️ INVALID FILE: This is not a valid LibraryRunCatcher (.lrc) backup.");
                     return;
                 }
 
                 try {
-                    const encodedData = content.substring(LRC_HEADER.length);
-                    const decodedStr = decodeURIComponent(escape(atob(encodedData)));
-                    const data = JSON.parse(decodedStr);
+                    let jsonStr;
+                    
+                    if (isV2) {
+                        const payload = content.substring("LRC-SECURE-V2-".length);
+                        // 1. Base64 Decode
+                        const encrypted = atob(payload);
+                        // 2. Decrypt
+                        const binaryStr = xorProcess(encrypted);
+                        // 3. Decode UTF-8
+                        jsonStr = decodeURIComponent(escape(binaryStr));
+                    } else {
+                        // Legacy V1 Fallback
+                        const encodedData = content.substring("LRC-V1-".length);
+                        jsonStr = decodeURIComponent(escape(atob(encodedData)));
+                    }
+
+                    const data = JSON.parse(jsonStr);
 
                     if (data && data.layout) {
                         mapLayout = data.layout;
@@ -663,7 +699,7 @@
                         throw new Error("Invalid structure");
                     }
                 } catch (err) {
-                    alert("❌ ERROR: The layout file is corrupted and cannot be loaded.");
+                    alert("❌ ERROR: The layout file is corrupted, encrypted with a different key, or cannot be loaded.");
                     console.error(err);
                 }
             };
