@@ -7,53 +7,106 @@
     <meta name="theme-color" content="#216487">
     <title>LibraryRunCatcher | AI-Powered Behavioral Monitoring for Quiet Zones</title>
 
-    <!-- Primary Meta Tags -->
+    <!-- Meta Tags -->
     <meta name="title" content="LibraryRunCatcher | AI-Powered Behavioral Monitoring for Quiet Zones">
     <meta name="description"
-        content="Advanced AI-powered monitoring for libraries and study halls. Detect running and noise levels in real-time using browser-side AI with privacy-first snapshots and multi-device sync.">
-    <meta name="keywords"
-        content="library monitoring, study hall behavior, AI security, school safety, quiet zone management, pose detection, running detection">
+        content="Advanced AI-powered monitoring for libraries and study halls. Detect running and noise levels in real-time using browser-side AI.">
+    <meta name="keywords" content="library monitoring, study hall behavior, AI security, school safety">
     <meta name="author" content="APIWISH ANUTARAVANICHKUL">
-    <meta name="robots" content="index, follow">
-
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://libraryruncatcher.com/">
     <meta property="og:title" content="LibraryRunCatcher | AI-Powered Behavioral Monitoring">
-    <meta property="og:description"
-        content="Maintain peaceful study environments with browser-side AI. Detect disruptions and synchronize alerts across devices instantly.">
+    <meta property="og:description" content="Maintain peaceful study environments with browser-side AI.">
     <meta property="og:image" content="/static/logo.png">
-
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://libraryruncatcher.com/">
-    <meta property="twitter:title" content="LibraryRunCatcher | AI-Powered Behavioral Monitoring">
-    <meta property="twitter:description"
-        content="Maintain peaceful study environments with browser-side AI. Detect disruptions and synchronize alerts across devices instantly.">
-    <meta property="twitter:image" content="/static/logo.png">
 
-    <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "LibraryRunCatcher",
-      "operatingSystem": "Web Browser",
-      "applicationCategory": "EducationalApplication",
-      "description": "AI-powered behavioral monitoring system for libraries and schools to maintain quiet study environments.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
-    }
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        mysk: { blue: '#216487' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
     </script>
+    <style type="text/tailwindcss">
+        /* Bootstrap Compatibility Shim for App.js Dynamic Content */
+        .d-none { @apply hidden; }
+        .d-block { @apply block; }
+        .d-flex { @apply flex; }
+        .flex-column { @apply flex-col; }
+        .align-items-center { @apply items-center; }
+        .justify-content-center { @apply justify-center; }
+        .justify-content-between { @apply justify-between; }
+        .justify-content-end { @apply justify-end; }
+        .gap-2 { @apply gap-2; }
+        .gap-3 { @apply gap-3; }
+        .text-center { @apply text-center; }
+        .text-start { @apply text-left; }
+        .text-end { @apply text-right; }
+        .text-muted { @apply text-slate-500 dark:text-slate-400; }
+        .text-success { @apply text-green-500; }
+        .text-danger { @apply text-rose-500; }
+        .text-warning { @apply text-amber-500; }
+        .text-info { @apply text-sky-500; }
+        .fw-bold { @apply font-bold; }
+        .small { @apply text-sm; }
+        .bg-light { @apply bg-slate-50 text-slate-800 dark:bg-slate-800 dark:text-slate-100; }
+        .bg-white { @apply bg-white dark:bg-slate-900; }
+        .bg-success { @apply bg-green-500 text-white; }
+        .bg-danger { @apply bg-rose-500 text-white; }
+        .bg-warning { @apply bg-amber-500 text-white; }
+        .bg-info { @apply bg-sky-500 text-white; }
+        .bg-primary { @apply bg-mysk-blue text-white; }
+        .rounded-3 { @apply rounded-xl; }
+        .rounded-4 { @apply rounded-2xl; }
+        .rounded-circle { @apply rounded-full; }
+        .rounded-pill { @apply rounded-full; }
+        .shadow-sm { @apply shadow-sm; }
+        .p-3 { @apply p-3; }
+        .mb-2 { @apply mb-2; }
+        .me-2 { @apply mr-2; }
+        .ms-1 { @apply ml-1; }
+        .vstack { @apply flex flex-col; }
+        .w-100 { @apply w-full; }
+        .h-100 { @apply h-full; }
+        .border-0 { @apply border-0; }
+        .alert-running { @apply border-l-4 border-rose-500; } 
+        .alert-loud { @apply border-l-4 border-sky-400; }
+        .card { @apply bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800; }
+        .card-body { @apply p-6; }
+        .modal-body { @apply p-6; }
+        .btn { @apply inline-flex items-center justify-center px-4 py-2 rounded-full font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed; }
+        .btn-sm { @apply px-3 py-1 text-sm; }
+        .btn-primary { @apply bg-mysk-blue text-white hover:bg-blue-800; }
+        .btn-outline-primary { @apply border border-mysk-blue text-mysk-blue hover:bg-mysk-blue hover:text-white; }
+        .btn-outline-danger { @apply border border-rose-500 text-rose-500 hover:bg-rose-500 hover:text-white; }
+        .btn-outline-info { @apply border border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white; }
+        .btn-outline-secondary { @apply border border-slate-300 text-slate-500 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-800; }
+        .btn-danger { @apply bg-rose-500 text-white hover:bg-rose-600; }
+        .btn-warning { @apply bg-amber-500 text-white hover:bg-amber-600; }
+        .form-control, .form-select { @apply w-full rounded-xl border border-slate-200 px-3 py-2 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all; }
+        .form-label { @apply block mb-1 text-sm font-bold text-slate-700 dark:text-slate-300; }
+        .input-group { @apply flex; }
+        .input-group .form-select { @apply rounded-r-none; }
+        .input-group .btn { @apply rounded-l-none; }
+        .badge { @apply inline-block px-2 py-0.5 text-xs font-bold rounded-full; }
+        
+        /* Custom Aura/Particles overrides if needed */
+        .glass-card { @apply bg-white/90 backdrop-blur-md border border-slate-200 shadow-sm rounded-3xl dark:bg-slate-900/80 dark:border-slate-700; }
+    </style>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/style.css?v=2.3">
     <link rel="icon" type="image/png" href="/static/logo.png?v=2.3">
-    <link rel="shortcut icon" href="/static/logo.png?v=2.3">
-    <link rel="manifest" href="/static/manifest.json?v=2.3">
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
@@ -61,878 +114,644 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
+    <script>
+        // Init Dark Mode
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Modal Logic Shim
+        window.toggleModal = function (id, forceState) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const content = el.querySelector('div[class*="transform"]'); // Find the inner content div
+
+            const isHidden = el.classList.contains('hidden');
+            const shouldShow = forceState !== undefined ? forceState : isHidden;
+
+            if (shouldShow) {
+                el.classList.remove('hidden');
+                // Allow browser paint then animate
+                requestAnimationFrame(() => {
+                    el.classList.remove('opacity-0');
+                    if (content) content.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+                });
+            } else {
+                el.classList.add('opacity-0');
+                if (content) content.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+                setTimeout(() => el.classList.add('hidden'), 300);
+            }
+        }
+
+        // Bootstrap Compatibility Object for App.js
+        window.bootstrap = {
+            Modal: class {
+                constructor(element) {
+                    this.element = element;
+                }
+                show() { window.toggleModal(this.element.id, true); }
+                hide() { window.toggleModal(this.element.id, false); }
+            }
+        };
+    </script>
 </head>
 
-<body class="bg-light">
-    <!-- Accessibility: Skip to Main Content Link -->
-    <a href="#main-monitoring" class="skip-link">Skip to monitoring</a>
+<body
+    class="bg-slate-50 text-slate-800 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100 font-sans selection:bg-sky-500/30">
 
-    <!-- Particle System Canvas -->
-    <canvas id="particle-canvas" class="particle-canvas" aria-hidden="true"></canvas>
+    <a href="#main-monitoring"
+        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-mysk-blue text-white rounded-lg">Skip
+        to monitoring</a>
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none -z-20 opacity-50"></canvas>
 
-    <!-- Dynamic Aura Background -->
-    <div id="aura-bg" class="aura-bg state-quiet">
+    <div id="aura-bg" class="aura-bg state-quiet fixed inset-0 -z-10 overflow-hidden">
         <div class="aura-sphere aura-sphere-1"></div>
         <div class="aura-sphere aura-sphere-2"></div>
     </div>
 
     <!-- Intro Overlay -->
-    <div id="intro-overlay" class="intro-overlay">
-        <div class="intro-text">
-            <img src="/static/logo.png?v=2.3" alt="Logo" width="120" height="120"
-                class="mb-4 bg-white rounded-4 shadow-lg p-3 mx-auto d-block">
-            Library Run
-            <span>Catcher</span>
-            <div class="intro-slogan">Smart monitoring for quiet study spaces</div>
+    <div id="intro-overlay"
+        class="intro-overlay fixed inset-0 z-50 flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div class="intro-text text-center">
+            <img src="/static/logo.png?v=2.3" alt="Logo"
+                class="block mx-auto mb-8 bg-white p-4 rounded-3xl shadow-2xl h-32 w-32 object-contain">
+            <div class="font-display font-bold text-6xl text-slate-800 dark:text-white mb-2">Library Run</div>
+            <div class="font-display font-medium text-4xl text-mysk-blue dark:text-sky-400">Catcher</div>
+            <div class="intro-slogan mt-6 text-xl text-slate-500 dark:text-slate-400 font-medium tracking-wide">Smart
+                monitoring for quiet study spaces</div>
         </div>
     </div>
 
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4 border-bottom">
-            <div class="container">
-                <a class="navbar-brand d-flex align-items-center" href="/">
-                    <img src="/static/logo.png?v=2.3" alt="LibraryRunCatcher Logo" height="32"
-                        class="me-2 rounded-circle bg-white p-1">
-                    LibraryRunCatcher
-                </a>
-                <div class="ms-auto d-flex align-items-center gap-2">
-                    <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2 position-relative"
-                        data-bs-toggle="modal" data-bs-target="#notificationModal" aria-label="View latest updates">
-                        <i data-lucide="bell" style="width: 16px; height: 16px;" aria-hidden="true"></i>
-                        <span id="notification-badge"
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
-                            style="font-size: 0.6rem;">
-                            0
-                        </span>
-                    </button>
-                    <button class="btn btn-sm btn-outline-info d-flex align-items-center gap-2" data-bs-toggle="modal"
-                        data-bs-target="#manualModal" aria-label="Open User Manual">
-                        <i data-lucide="help-circle" style="width: 14px; height: 14px;" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline">Having problems? Click me</span>
-                    </button>
-                    <button onclick="toggleDashboard()" aria-label="Open performance dashboard"
-                        class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2">
-                        <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline">Dashboard</span>
-                    </button>
-                </div>
+    <header
+        class="sticky top-0 z-40 mb-8 border-b border-slate-200 bg-white/80 backdrop-blur-md shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900/80">
+        <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+            <a class="flex items-center gap-3 group" href="/">
+                <img src="/static/logo.png?v=2.3" alt="Logo"
+                    class="h-9 w-9 bg-white rounded-full p-1 shadow-sm transition-transform group-hover:scale-105">
+                <span class="font-display text-xl font-bold text-mysk-blue dark:text-sky-400">LibraryRunCatcher</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <button
+                    class="relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-slate-500 transition-all hover:bg-slate-100 hover:text-mysk-blue dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                    onclick="toggleModal('notificationModal')" aria-label="Notifications">
+                    <i data-lucide="bell" class="h-5 w-5"></i>
+                    <span id="notification-badge"
+                        class="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 hidden"></span>
+                </button>
+                <button
+                    class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-slate-500 transition-all hover:bg-slate-100 hover:text-mysk-blue dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                    onclick="toggleModal('manualModal')" aria-label="Help">
+                    <i data-lucide="help-circle" class="h-5 w-5"></i>
+                    <span class="hidden md:inline">Help</span>
+                </button>
+                <button onclick="toggleDashboard()" aria-label="Dashboard"
+                    class="hidden md:flex items-center gap-2 rounded-xl bg-mysk-blue px-4 py-2 text-sm font-bold text-white shadow-lg shadow-blue-900/10 transition-all hover:scale-105 hover:bg-blue-800">
+                    <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="toggleTheme()"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-mysk-blue dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white">
+                    <i data-lucide="moon" class="h-5 w-5 dark:hidden"></i>
+                    <i data-lucide="sun" class="h-5 w-5 hidden dark:block text-amber-400"></i>
+                </button>
             </div>
         </nav>
     </header>
 
-    <main id="main-monitoring">
-
-        <!-- Dashboard Overlay (Iframe) -->
-        <div id="dashboard-overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-white"
-            style="z-index: 10000; display: none;">
-            <iframe id="dashboard-frame" src="" class="w-100 h-100 border-0"></iframe>
+    <main id="main-monitoring" class="mx-auto max-w-7xl px-4 pb-12">
+        <div id="dashboard-overlay" class="fixed inset-0 z-[100] hidden bg-white dark:bg-slate-900">
+            <iframe id="dashboard-frame" src="" class="h-full w-full border-0"></iframe>
         </div>
 
-        <div class="container">
-            <div class="row g-4">
-                <!-- Main Monitoring Card -->
-                <div class="col-md-8">
-                    <div class="card border-0 shadow-sm glass-card">
-                        <div class="card-body p-4">
-                            <div
-                                class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
-                                <h4 class="card-title mb-0 w-100 text-center text-md-start">Live Monitoring</h4>
-                                <div
-                                    class="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-md-end w-100">
-                                    <button id="summon-btn" aria-label="Emergency SOS Alert"
-                                        class="btn btn-sm btn-danger d-flex align-items-center gap-2 px-3 fw-bold"
-                                        onclick="triggerStaffSummon()" title="Emergency: SOS Alert to All Staff">
-                                        <i data-lucide="siren" style="width: 16px; height: 16px;"
-                                            aria-hidden="true"></i> SOS
-                                    </button>
-                                    <button id="preview-btn" class="btn btn-sm btn-outline-info"
-                                        onclick="togglePreview()" title="Show Camera Preview"
-                                        aria-label="Toggle Camera Preview">
-                                        <i data-lucide="eye" style="width: 16px; height: 16px;" aria-hidden="true"></i>
-                                    </button>
-                                    <button id="fullscreen-btn" class="btn btn-sm btn-outline-secondary"
-                                        onclick="toggleFullscreen()" title="Toggle Fullscreen"
-                                        aria-label="Toggle Fullscreen Interface">
-                                        <i data-lucide="maximize" style="width: 16px; height: 16px;"
-                                            aria-hidden="true"></i>
-                                    </button>
-                                    <div class="form-check form-switch pt-1 ms-1">
-                                        <input class="form-check-input" type="checkbox" id="live-toggle">
-                                        <label class="form-check-label fw-bold small" for="live-toggle">Auto</label>
-                                    </div>
-                                    <div id="status-badge" class="badge bg-success py-2 px-3 rounded-pill ms-1"
-                                        role="status">
-                                        All Quiet
-                                    </div>
-                                </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- Main Monitoring Card -->
+            <div class="md:col-span-8">
+                <div class="glass-card p-6 h-full">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <h4 class="font-display font-bold text-2xl text-slate-800 dark:text-white">Live Monitoring</h4>
+                        <div class="flex flex-wrap items-center gap-2 justify-center">
+                            <button id="summon-btn" onclick="triggerStaffSummon()"
+                                class="btn bg-rose-500 text-white hover:bg-rose-600 shadow-lg shadow-rose-500/20 px-4 py-2 text-sm gap-2">
+                                <i data-lucide="siren" class="w-4 h-4"></i> SOS
+                            </button>
+                            <button id="preview-btn" onclick="togglePreview()"
+                                class="btn border border-sky-500 text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-900/20 p-2 rounded-full">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                            <button id="fullscreen-btn" onclick="toggleFullscreen()"
+                                class="btn border border-slate-300 text-slate-500 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-800 p-2 rounded-full">
+                                <i data-lucide="maximize" class="w-4 h-4"></i>
+                            </button>
+                            <div class="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-full">
+                                <input type="checkbox" id="live-toggle" class="accent-mysk-blue w-4 h-4">
+                                <label for="live-toggle"
+                                    class="text-xs font-bold uppercase tracking-wide cursor-pointer select-none">Auto</label>
                             </div>
-
-                            <!-- Camera Preview (Optional toggle) -->
-                            <div id="camera-container" class="position-relative mt-3 rounded overflow-hidden"
-                                style="display: none; aspect-ratio: 4/3; background: #000;">
-                                <video id="input-video" class="w-100 h-100 object-fit-contain"
-                                    style="display: none;"></video>
-                                <canvas id="output-canvas" class="w-100 h-100 object-fit-contain"
-                                    style="display: none;"></canvas>
-                                <canvas id="grid-overlay-canvas" class="position-absolute top-0 start-0 w-100 h-100"
-                                    style="pointer-events: none; display: none;"></canvas>
-                                <div id="grid-overlay-label"
-                                    class="position-absolute top-0 start-0 p-2 text-white small"
-                                    style="background: rgba(0,0,0,0.5); display: none;">Grid Alignment Active</div>
-                            </div>
-
-                            <div id="status-display" class="text-center py-5">
-                                <div class="status-icon-wrapper mb-3">
-                                    <i data-lucide="smile" id="main-icon" class="text-success" size="64"></i>
-                                </div>
-                                <h2 id="status-message" class="fw-bold text-dark">Environment is Peaceful</h2>
-                                <p class="text-muted">No disruptions detected in current zones.</p>
-                            </div>
-
-                            <div class="row text-center mt-4">
-                                <div class="col-6 col-md-3">
-                                    <div class="p-3 bg-light rounded shadow-sm border">
-                                        <small class="text-uppercase text-muted d-block mb-1">Speed</small>
-                                        <span id="stat-speed" class="h4 fw-bold">0.0</span> <small>m/s</small>
-                                        <div class="progress mt-2" style="height: 4px;">
-                                            <div id="speed-meter" class="progress-bar bg-primary" role="progressbar"
-                                                style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="p-3 bg-light rounded shadow-sm border">
-                                        <small class="text-uppercase text-muted d-block mb-1">Noise</small>
-                                        <span id="stat-noise" class="h4 fw-bold">0</span> <small>dB</small>
-                                        <div class="progress mt-2" style="height: 4px;">
-                                            <div id="noise-meter" class="progress-bar bg-info" role="progressbar"
-                                                style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="p-3 bg-light rounded shadow-sm border">
-                                        <small class="text-uppercase text-muted d-block mb-1">Streak</small>
-                                        <span id="stat-streak" class="h4 fw-bold text-primary">0</span>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="p-3 bg-light rounded shadow-sm border">
-                                        <small class="text-uppercase text-muted d-block mb-1">Zone</small>
-                                        <span id="stat-zone" class="h5 fw-bold">-</span>
-                                    </div>
-                                </div>
+                            <div id="status-badge"
+                                class="px-4 py-2 bg-green-500 text-white rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
+                                All Quiet
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Alerts Sidebar -->
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm glass-card h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                                <h5 class="card-title mb-0 d-flex align-items-center">
-                                    <i data-lucide="bell" class="me-2 text-warning" aria-hidden="true"></i> Recent
-                                    Alerts
-                                </h5>
-                                <div class="d-flex gap-2">
-                                    <button id="download-all-btn" class="btn btn-sm btn-outline-primary"
-                                        onclick="downloadAllReports()" aria-label="Download All Reports as PDF">
-                                        <i data-lucide="download" class="me-1" style="width: 14px; height: 14px;"
-                                            aria-hidden="true"></i> All
-                                    </button>
-                                    <button id="clear-alerts-btn" class="btn btn-sm btn-outline-danger"
-                                        onclick="clearAllAlerts()" aria-label="Clear All Alerts History">
-                                        <i data-lucide="trash-2" class="me-1" style="width: 14px; height: 14px;"
-                                            aria-hidden="true"></i> Clear
-                                    </button>
-                                </div>
+                    <div id="camera-container"
+                        class="relative mt-4 rounded-3xl overflow-hidden bg-black aspect-[4/3] hidden">
+                        <video id="input-video" class="w-full h-full object-contain hidden"></video>
+                        <canvas id="output-canvas" class="w-full h-full object-contain hidden"></canvas>
+                        <canvas id="grid-overlay-canvas"
+                            class="absolute inset-0 w-full h-full pointer-events-none hidden"></canvas>
+                        <div id="grid-overlay-label"
+                            class="absolute top-0 left-0 p-3 bg-black/50 text-white text-xs font-bold backdrop-blur-sm hidden">
+                            Grid Active</div>
+                    </div>
+
+                    <div id="status-display" class="text-center py-12">
+                        <div
+                            class="status-icon-wrapper mb-6 mx-auto bg-white/80 dark:bg-slate-800/80 rounded-full h-32 w-32 flex items-center justify-center shadow-xl backdrop-blur-sm">
+                            <i data-lucide="smile" id="main-icon"
+                                class="w-16 h-16 text-green-500 transition-colors duration-500"></i>
+                        </div>
+                        <h2 id="status-message"
+                            class="font-display font-bold text-3xl text-slate-800 dark:text-white mb-2">Environment is
+                            Peaceful</h2>
+                        <p class="text-slate-500 dark:text-slate-400">No disruptions detected in current zones.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+                        <!-- Stat Cards -->
+                        <div
+                            class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50 text-center">
+                            <small class="block text-xs font-bold uppercase text-slate-400 mb-1">Speed</small>
+                            <div class="text-2xl font-bold text-slate-800 dark:text-white"><span
+                                    id="stat-speed">0.0</span> <span
+                                    class="text-sm font-normal text-slate-500">m/s</span></div>
+                            <div class="h-1 w-full bg-slate-200 dark:bg-slate-700 rounded-full mt-2 overflow-hidden">
+                                <div id="speed-meter" class="h-full bg-mysk-blue transition-all duration-300 w-0"></div>
                             </div>
-                            <div id="alerts-container" class="vstack gap-3" role="list" aria-live="polite">
-                                <div id="alerts-placeholder" class="text-center text-muted py-5">
-                                    <small>No recent alerts.</small>
-                                </div>
+                        </div>
+                        <div
+                            class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50 text-center">
+                            <small class="block text-xs font-bold uppercase text-slate-400 mb-1">Noise</small>
+                            <div class="text-2xl font-bold text-slate-800 dark:text-white"><span
+                                    id="stat-noise">0</span> <span class="text-sm font-normal text-slate-500">dB</span>
+                            </div>
+                            <div class="h-1 w-full bg-slate-200 dark:bg-slate-700 rounded-full mt-2 overflow-hidden">
+                                <div id="noise-meter" class="h-full bg-sky-400 transition-all duration-300 w-0"></div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50 text-center">
+                            <small class="block text-xs font-bold uppercase text-slate-400 mb-1">Streak</small>
+                            <div id="stat-streak" class="text-2xl font-bold text-mysk-blue dark:text-sky-400">0</div>
+                        </div>
+                        <div
+                            class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50 text-center">
+                            <small class="block text-xs font-bold uppercase text-slate-400 mb-1">Zone</small>
+                            <div id="stat-zone" class="text-xl font-bold text-slate-700 dark:text-slate-300 truncate">-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Zone Selection, Grid Settings & Librarian's Watch -->
-        <div class="container mt-4 mb-5">
-            <div class="row g-4">
-                <!-- Zone Selection -->
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm glass-card h-100">
-                        <div class="card-body p-4">
-                            <h5 class="card-title mb-3 d-flex align-items-center">
-                                <i data-lucide="map-pin" class="me-2 text-primary"></i> Zone Selection
-                            </h5>
-                            <div class="vstack gap-3">
-                                <div>
-                                    <label class="form-label fw-bold">Monitoring Zone</label>
-                                    <div class="input-group">
-                                        <select id="zone-select" class="form-select">
-                                            <option value="reading_area">Reading Area</option>
-                                            <option value="computer_lab">Computer Lab</option>
-                                            <option value="study_hall">Study Hall</option>
-                                            <option value="quiet_zone">Quiet Zone</option>
-                                        </select>
-                                        <button class="btn btn-outline-primary" onclick="refreshZonesFromMap()"
-                                            id="sync-zones-btn" title="Sync with Floor Plan">
-                                            <i data-lucide="map" style="width: 16px; height: 16px;"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-8">
-                                        <input type="text" id="new-zone-input" class="form-control"
-                                            placeholder="New zone name...">
-                                    </div>
-                                    <div class="col-4">
-                                        <button id="add-zone-btn" class="btn btn-primary w-100" onclick="addNewZone()">
-                                            <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+            <!-- Alerts Sidebar -->
+            <div class="md:col-span-4">
+                <div class="glass-card p-6 h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h5 class="font-bold flex items-center text-slate-800 dark:text-white"><i data-lucide="bell"
+                                class="mr-2 text-amber-500 w-5 h-5"></i> Alerts</h5>
+                        <div class="flex gap-2">
+                            <button id="download-all-btn" onclick="downloadAllReports()"
+                                class="btn btn-sm btn-outline-primary h-8 w-8 !p-0 rounded-full flex items-center justify-center">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                            </button>
+                            <button id="clear-alerts-btn" onclick="clearAllAlerts()"
+                                class="btn btn-sm btn-outline-danger h-8 w-8 !p-0 rounded-full flex items-center justify-center">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="alerts-container"
+                        class="flex flex-col gap-3 overflow-y-auto max-h-[600px] pr-2 custom-scrollbar">
+                        <div id="alerts-placeholder" class="text-center py-10 text-slate-400 text-sm">No recent alerts.
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Grid Settings -->
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm glass-card h-100">
-                        <div class="card-body p-4">
-                            <h5 class="card-title mb-3 d-flex align-items-center">
-                                <i data-lucide="grid" class="me-2 text-info"></i> CCTV Grid Configuration
-                            </h5>
-                            <div class="vstack gap-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="grid-mode-toggle">
-                                    <label class="form-check-label fw-bold" for="grid-mode-toggle">Enable Grid
-                                        Detection</label>
-                                </div>
-                                <div id="grid-settings-content" style="opacity: 0.5; pointer-events: none;">
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold">Quick Presets</label>
-                                        <div class="btn-group w-100" role="group">
-                                            <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
-                                                data-rows="2" data-cols="2">2×2</button>
-                                            <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
-                                                data-rows="3" data-cols="3">3×3</button>
-                                            <button type="button" class="btn btn-sm btn-outline-info preset-grid-btn"
-                                                data-rows="4" data-cols="4">4×4</button>
-                                        </div>
-                                    </div>
-                                    <div class="row g-3">
-                                        <div class="col-6">
-                                            <label class="form-label small fw-bold">Rows</label>
-                                            <input type="number" id="grid-rows" class="form-control" value="2" min="1"
-                                                max="4">
-                                        </div>
-                                        <div class="col-6">
-                                            <label class="form-label small fw-bold">Columns</label>
-                                            <input type="number" id="grid-cols" class="form-control" value="2" min="1"
-                                                max="4">
-                                        </div>
-                                    </div>
-                                    <div class="mt-2 text-muted small">
-                                        <i data-lucide="info" style="width: 12px; height: 12px;"></i> Active cells
-                                        highlight
-                                        when motion detected.
-                                    </div>
-                                </div>
+            <!-- Zone Selection -->
+            <div class="md:col-span-4">
+                <div class="glass-card p-6 h-full">
+                    <h5 class="font-bold mb-4 flex items-center text-slate-800 dark:text-white"><i data-lucide="map-pin"
+                            class="mr-2 text-mysk-blue w-5 h-5"></i> Zone Selection</h5>
+                    <div class="flex flex-col gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Monitoring Zone</label>
+                            <div class="flex">
+                                <select id="zone-select" class="form-select rounded-r-none border-r-0">
+                                    <option value="reading_area">Reading Area</option>
+                                    <option value="computer_lab">Computer Lab</option>
+                                    <option value="study_hall">Study Hall</option>
+                                    <option value="quiet_zone">Quiet Zone</option>
+                                </select>
+                                <button
+                                    class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-r-xl px-3 flex items-center justify-center text-slate-600 dark:text-slate-300"
+                                    onclick="refreshZonesFromMap()" id="sync-zones-btn">
+                                    <i data-lucide="map" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Librarian's Watch Sync -->
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm glass-card h-100">
-                        <div class="card-body p-4">
-                            <h5
-                                class="card-title mb-3 d-flex align-items-center text-warning justify-content-between flex-wrap gap-2">
-                                <span class="d-flex align-items-center">
-                                    <i data-lucide="smartphone" class="me-2"></i> Librarian's Watch
-                                </span>
-                                <a href="#" class="text-warning opacity-75 small text-decoration-none fw-normal"
-                                    data-bs-toggle="modal" data-bs-target="#watchHelpModal">
-                                    <i data-lucide="help-circle" style="width: 14px; height: 14px;"></i> How to use
-                                </a>
-                            </h5>
-                            <div class="vstack gap-3">
-                                <div class="d-flex gap-2">
-                                    <input type="text" id="sync-code-input" class="form-control font-monospace"
-                                        placeholder="Room Code..." readonly>
-                                    <button onclick="copySyncCode()" class="btn btn-outline-secondary"
-                                        title="Copy Code">
-                                        <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
-                                    </button>
-                                    <button onclick="generateSyncCode()" class="btn btn-outline-warning">
-                                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
-                                    </button>
-                                </div>
-                                <div id="sync-status" class="alert alert-light py-2 px-3 m-0 small border d-none">
-                                    <div class="d-flex align-items-center">
-                                        <span class="spinner-grow spinner-grow-sm text-warning me-2"
-                                            role="status"></span>
-                                        <span>Syncing Active...</span>
-                                    </div>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-7">
-                                        <input type="text" id="join-code-input" class="form-control"
-                                            placeholder="Enter Code...">
-                                    </div>
-                                    <div class="col-5">
-                                        <button onclick="joinSyncRoom()"
-                                            class="btn btn-warning w-100 text-white fw-bold">Join</button>
-                                    </div>
-                                </div>
-                                <small class="text-muted">Sync multiple devices. Phone vibrates on alert.</small>
+                        <div class="grid grid-cols-12 gap-2">
+                            <div class="col-span-8">
+                                <input type="text" id="new-zone-input" class="form-control"
+                                    placeholder="New zone name...">
+                            </div>
+                            <div class="col-span-4">
+                                <button id="add-zone-btn" class="btn btn-primary w-full h-full text-xs"
+                                    onclick="addNewZone()">Add</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
+            <!-- Grid Settings -->
+            <div class="md:col-span-4">
+                <div class="glass-card p-6 h-full">
+                    <h5 class="font-bold mb-4 flex items-center text-slate-800 dark:text-white"><i data-lucide="grid"
+                            class="mr-2 text-sky-500 w-5 h-5"></i> Grid Config</h5>
+                    <div class="flex items-center gap-3 mb-4 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                        <input type="checkbox" id="grid-mode-toggle" class="accent-sky-500 w-5 h-5">
+                        <label for="grid-mode-toggle"
+                            class="font-bold text-sm text-slate-700 dark:text-slate-300 cursor-pointer select-none">Enable
+                            Grid Detection</label>
+                    </div>
+                    <div id="grid-settings-content" class="opacity-50 pointer-events-none transition-opacity">
+                        <div class="mb-3">
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Presets</label>
+                            <div class="flex gap-2">
+                                <button
+                                    class="preset-grid-btn flex-1 py-1 rounded-lg border border-sky-200 text-sky-600 hover:bg-sky-50 text-xs font-bold dark:border-sky-800 dark:text-sky-400 dark:hover:bg-sky-900/30"
+                                    data-rows="2" data-cols="2">2×2</button>
+                                <button
+                                    class="preset-grid-btn flex-1 py-1 rounded-lg border border-sky-200 text-sky-600 hover:bg-sky-50 text-xs font-bold dark:border-sky-800 dark:text-sky-400 dark:hover:bg-sky-900/30"
+                                    data-rows="3" data-cols="3">3×3</button>
+                                <button
+                                    class="preset-grid-btn flex-1 py-1 rounded-lg border border-sky-200 text-sky-600 hover:bg-sky-50 text-xs font-bold dark:border-sky-800 dark:text-sky-400 dark:hover:bg-sky-900/30"
+                                    data-rows="4" data-cols="4">4×4</button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Rows</label>
+                                <input type="number" id="grid-rows" class="form-control" value="2" min="1" max="4">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Cols</label>
+                                <input type="number" id="grid-cols" class="form-control" value="2" min="1" max="4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Librarian Watch -->
+            <div class="md:col-span-4">
+                <div class="glass-card p-6 h-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h5 class="font-bold flex items-center text-amber-500"><i data-lucide="smartphone"
+                                class="mr-2 w-5 h-5"></i> Watch</h5>
+                        <button onclick="toggleModal('watchHelpModal')"
+                            class="text-xs text-amber-500/80 hover:text-amber-600 hover:underline flex items-center"><i
+                                data-lucide="help-circle" class="w-3 h-3 mr-1"></i> Help</button>
+                    </div>
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="sync-code-input"
+                            class="form-control font-mono text-center tracking-widest font-bold bg-slate-100 dark:bg-slate-800"
+                            placeholder="CODE" readonly>
+                        <button onclick="copySyncCode()" class="btn btn-outline-secondary px-3"><i data-lucide="copy"
+                                class="w-4 h-4"></i></button>
+                        <button onclick="generateSyncCode()"
+                            class="btn btn-outline-primary px-3 !text-amber-500 !border-amber-500 hover:!bg-amber-500"><i
+                                data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+                    </div>
+                    <div id="sync-status"
+                        class="hidden mb-3 p-2 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-xs font-bold rounded-lg flex items-center justify-center">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse mr-2"></span> Syncing Active...
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="join-code-input" class="form-control" placeholder="Enter Code...">
+                        <button onclick="joinSyncRoom()" class="btn btn-warning font-bold">Join</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Modal for snapshot viewing -->
-    <div class="modal fade" id="snapshotModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content glass-card border-0">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Alert Snapshot</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center p-0">
-                    <img id="snapshot-img" src="" class="img-fluid" alt="Snapshot" crossorigin="anonymous">
-                </div>
-                <div class="modal-footer bg-light border-0 d-flex justify-content-between p-3">
-                    <div class="d-flex gap-4">
-                        <div class="text-start">
-                            <small class="text-muted d-block">Time Detected</small>
-                            <span id="modal-time" class="fw-bold">00:00:00</span>
-                        </div>
-                        <div class="text-start">
-                            <small class="text-muted d-block">Sound Level</small>
-                            <span id="modal-noise" class="fw-bold text-info">0 dB</span>
-                        </div>
-                        <div class="text-start">
-                            <small class="text-muted d-block">Movement Speed</small>
-                            <span id="modal-speed" class="fw-bold text-danger">0.0 m/s</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" onclick="downloadPDFReport()">
-                        <i data-lucide="download" class="me-1" style="width: 16px; height: 16px;"></i> Report
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Librarian's Watch Help -->
-    <div class="modal fade" id="watchHelpModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass-card border-0">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold text-warning">How to use: Librarian's Watch</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <ol class="small text-muted vstack gap-3">
-                        <li><strong>On your Laptop (Station):</strong> Click the refresh icon <i
-                                data-lucide="refresh-cw" style="width: 12px;"></i> to generate a code, then click
-                            <strong>Join</strong>.
-                        </li>
-                        <li><strong>On your Phone/Watch:</strong> Open this same URL, enter the code in the
-                            <strong>Join</strong> box, and click <strong>Join</strong>.
-                        </li>
-                        <li><strong>Start Monitoring:</strong> Once both are joined, keep your phone in your pocket. It
-                            will vibrate and chime whenever an alert is triggered by the laptop's camera.</li>
-                    </ol>
-                    <div class="alert alert-warning py-2 mt-3 small border-0 opacity-75">
-                        <i data-lucide="info" class="me-1" style="width: 14px;"></i> Keep the browser tab open on your
-                        phone for haptics.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Notification Modal -->
-    <div class="modal fade" id="notificationModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass-card border-0">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold text-primary">Latest Updates & News</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="notification-items-container">
-                    <div class="text-center py-4 text-muted">
-                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                        Loading updates...
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Got it!</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Sponsor Modal (small) -->
-    <!-- Sponsor Modal (small) -->
-    <div class="modal fade" id="sponsorModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content glass-card border-0">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Sponsor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center p-3">
-                    <img src="/static/spornserme.png" alt="Sponsor" class="img-fluid">
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Privacy Policy Modal (large, scrollable) -->
-    <div class="modal fade" id="privacyModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content glass-card border-0">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Privacy Policy</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4" style="max-height:65vh; overflow:auto;">
-                    <h4>Privacy Policy</h4>
-                    <h5>LibraryRunCatcher</h5>
-                    <p class="small text-muted"><strong>Last Updated:</strong> 2026-01-31</p>
-
-                    <p class="small text-muted">LibraryRunCatcher is built on a "Privacy-by-Design" philosophy. We
-                        believe that monitoring should never mean surveillance. This policy outlines how we protect the
-                        privacy of students and staff while maintaining a quiet study environment.</p>
-
-                    <h6>1. Local-Only Processing (Edge AI)</h6>
-                    <p class="small text-muted">Our AI does not "watch" you in the traditional sense. All video and
-                        audio streams are processed locally in your browser using MediaPipe and Web Audio API.
-                        <strong>Raw video and audio data never leave your device.</strong> The server only receives
-                        metadata about alerts, not the live feed.
-                    </p>
-
-                    <h6>2. Incident Snapshots & Evidence</h6>
-                    <p class="small text-muted">The system only captures a snapshot when a specific "Run" or "Noise"
-                        threshold is triggered. These snapshots are intended for immediate librarian review and include:
-                    </p>
-                    <ul class="small text-muted">
-                        <li>Timestamp and Detection Zone</li>
-                        <li>Calculated Speed (m/s) and Noise Level (dB)</li>
-                        <li>A single image of the triggering event</li>
-                    </ul>
-
-                    <h6>3. Ephemeral Storage (5-Hour Rule)</h6>
-                    <p class="small text-muted">We hate digital hoarding. All incident evidence, snapshots, and alert
-                        logs are <strong>automatically and permanently deleted after 5 hours</strong>. We do not
-                        maintain long-term archives or behavioral profiles.</p>
-
-                    <h6>4. No Biometrics or Identity Tracking</h6>
-                    <p class="small text-muted">LibraryRunCatcher does not use facial recognition, gait analysis, or
-                        voice identification. It tracks skeletal "blobs" and decibel levels. We see motion and sound,
-                        not people.</p>
-
-                    <h6>5. Librarian's Watch (Sync)</h6>
-                    <p class="small text-muted">Multi-device synchronization uses temporary, randomized room codes. No
-                        user accounts, passwords, or personal identifiers are required. Connections are encrypted and
-                        terminated when the session ends.</p>
-
-                    <h6>6. Compliance & Ethics</h6>
-                    <p class="small text-muted">This program is designed to comply with <strong>Thailand PDPA, GDPR, and
-                            FERPA</strong> principles by minimizing data collection and ensuring transparency. It is
-                        intended for educational supervision, not punitive surveillance.</p>
-
-                    <h6>7. Contact & Transparency</h6>
-                    <p class="small text-muted">Project Maintainer: APIWISH ANUTARAVANICHKUL<br>
-                        LibraryRunCatcher is an open-tool for smarter libraries.</p>
-
-                    <p class="small text-muted">© 2026 APIWISH ANUTARAVANICHKUL<br>Privacy-First by Design</p>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Terms of Service Modal (large, scrollable) -->
-    <div class="modal fade" id="tosModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content glass-card border-0">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Terms of Service</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4" style="max-height:65vh; overflow:auto;">
-                    <h4>Terms of Service</h4>
-                    <h5>LibraryRunCatcher</h5>
-                    <p class="small text-muted"><strong>Last Updated:</strong> 2026-01-31</p>
-
-                    <p class="small text-muted">By using LibraryRunCatcher, you agree to these operational terms. This
-                        software is a tool for education, not a weapon for surveillance.</p>
-
-                    <h6>1. Authorized Use Case</h6>
-                    <p class="small text-muted">LibraryRunCatcher is designed exclusively for <strong>libraries, quiet
-                            study zones, and educational halls</strong>. Use for covert home surveillance, workplace
-                        productivity tracking, or punitive monitoring is strictly prohibited and outside the scope of
-                        its intended design.</p>
-
-                    <h6>2. Human-in-the-Loop Governance</h6>
-                    <p class="small text-muted">The AI detections (Speed/Noise) are probabilistic indicators, not
-                        absolute facts. <strong>Every alert must be reviewed by a human librarian</strong> before any
-                        disciplinary action is taken. The software is a helper, not a judge.</p>
-
-                    <h6>3. Transparency Requirements</h6>
-                    <p class="small text-muted">Institutional users are responsible for ensuring that individuals in
-                        monitored zones are aware that an automated behavior-assistance system is in use. Transparency
-                        builds trust.</p>
-
-                    <h6>4. Data Ownership & Responsibility</h6>
-                    <p class="small text-muted">Users are responsible for any exported data (PDF reports). Once data is
-                        downloaded from the 5-hour ephemeral storage, it becomes the responsibility of the institution
-                        to protect that information.</p>
-
-                    <h6>5. No Warranty (As-Is)</h6>
-                    <p class="small text-muted">LibraryRunCatcher is provided as-is. While we strive for 99% accuracy in
-                        motion detection, environmental factors (lighting, echoes) can affect performance. We are not
-                        liable for false alerts or missed detections.</p>
-
-                    <h6>6. License</h6>
-                    <p class="small text-muted">This project is licensed under the <strong>Apache License 2.0</strong>.
-                        You are free to modify and deploy it, provided you maintain original attribution and do not use
-                        the name "LibraryRunCatcher" for unrelated surveillance products.</p>
-
-                    <p class="small text-muted">© 2026 APIWISH ANUTARAVANICHKUL<br>LibraryRunCatcher — For a Smarter,
-                        Quieter Library</p>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- User Manual Modal -->
-    <div class="modal fade" id="manualModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content glass-card border-0">
-                <div class="modal-header border-0 bg-info text-white">
-                    <h5 class="modal-title fw-bold d-flex align-items-center">
-                        <i data-lucide="book-open" class="me-2"></i> Complete User Manual
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4" style="max-height: 70vh;">
-
-                    <!-- Section 1: Getting Started -->
-                    <h6 class="fw-bold text-info mb-3 d-flex align-items-center"><i data-lucide="rocket" class="me-2"
-                            style="width:18px;"></i> Getting Started</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <div class="p-3 bg-light rounded-3 border h-100">
-                                <span class="badge bg-info mb-2">Step 1</span>
-                                <p class="fw-bold mb-1">Create a Room</p>
-                                <p class="small text-muted mb-0">Go to <strong>"Librarian's Watch"</strong> and click
-                                    the <i data-lucide="refresh-cw" style="width:12px;"></i> icon to generate a unique
-                                    Room Code.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="p-3 bg-light rounded-3 border h-100">
-                                <span class="badge bg-info mb-2">Step 2</span>
-                                <p class="fw-bold mb-1">Select a Zone</p>
-                                <p class="small text-muted mb-0">Choose a zone name from the dropdown (e.g., "Reading
-                                    Area") or add a new one that describes your camera's location.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="p-3 bg-light rounded-3 border h-100">
-                                <span class="badge bg-info mb-2">Step 3</span>
-                                <p class="fw-bold mb-1">Start Monitoring</p>
-                                <p class="small text-muted mb-0">Toggle the <strong>"Auto"</strong> switch or click the
-                                    <i data-lucide="eye" style="width:12px;"></i> button to enable your camera and mic.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="my-4 opacity-10">
-
-                    <!-- Section 2: Core Features -->
-                    <h6 class="fw-bold text-primary mb-3 d-flex align-items-center"><i data-lucide="layers" class="me-2"
-                            style="width:18px;"></i> Core Features</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <div class="p-3 border rounded-3 h-100">
-                                <p class="fw-bold mb-2 text-primary"><i data-lucide="activity" class="me-1"
-                                        style="width:14px;"></i> Live Monitoring</p>
-                                <ul class="small text-muted mb-0 ps-3">
-                                    <li><strong>Speed Detection:</strong> Uses your camera to estimate movement speed
-                                        (m/s).</li>
-                                    <li><strong>Noise Detection:</strong> Uses your microphone to measure sound in
-                                        decibels (dB).</li>
-                                    <li><strong>Streak Counter:</strong> Shows consecutive quiet readings — aim for a
-                                        high streak!</li>
-                                    <li><strong>Status Badge:</strong> Displays "QUIET", "LOUD", or "RUNNING DETECTED".
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-3 border rounded-3 h-100">
-                                <p class="fw-bold mb-2 text-warning"><i data-lucide="smartphone" class="me-1"
-                                        style="width:14px;"></i> Librarian's Watch</p>
-                                <ul class="small text-muted mb-0 ps-3">
-                                    <li><strong>Multi-Device Sync:</strong> Connect your phone to receive alerts from
-                                        the laptop's camera.</li>
-                                    <li><strong>Haptic Feedback:</strong> Your phone will vibrate when an alert is
-                                        triggered.</li>
-                                    <li><strong>Emergency SOS:</strong> Click <span class="badge bg-danger">SOS</span>
-                                        to send a full-screen alarm to all
-                                        synced devices.</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-3 border rounded-3 h-100">
-                                <p class="fw-bold mb-2 text-success"><i data-lucide="layout-dashboard" class="me-1"
-                                        style="width:14px;"></i> Admin Dashboard & Map</p>
-                                <ul class="small text-muted mb-0 ps-3">
-                                    <li><strong>Interactive Map:</strong> Drag and drop camera nodes to build your floor
-                                        plan.</li>
-                                    <li><strong>Add Zones:</strong> Click "Add Shape" to draw study areas, bookshelves,
-                                        or corridors on the map.</li>
-                                    <li><strong>Sync Zones:</strong> Click the <i data-lucide="map"
-                                            style="width:12px;"></i> button in Zone Selection to sync your drawn shapes
-                                        as zone options.</li>
-                                    <li><strong>Real-time Alerts:</strong> Pulsing red icons show active incidents.
-                                        Click to see snapshots.</li>
-                                    <li><strong>Import/Export:</strong> Use "Export .lrc" to backup your map. Use
-                                        "Restore" to load it back after server restarts.</li>
-                                    <li><strong>Secure Access:</strong> Requires a 6-digit PIN generated when you create
-                                        a room.</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-3 border rounded-3 h-100">
-                                <p class="fw-bold mb-2 text-danger"><i data-lucide="bell" class="me-1"
-                                        style="width:14px;"></i> Alerts & Evidence</p>
-                                <ul class="small text-muted mb-0 ps-3">
-                                    <li><strong>Automatic Snapshots:</strong> When an alert triggers, a photo is
-                                        captured instantly.</li>
-                                    <li><strong>PDF Reports:</strong> Download individual or batch reports with
-                                        timestamps.</li>
-                                    <li><strong>Auto-Cleanup:</strong> All snapshots are automatically deleted after 5
-                                        hours for privacy.</li>
-                                    <li><strong>Clear History:</strong> Manually clear alerts with the "Clear" button.
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="my-4 opacity-10">
-
-                    <!-- Section 3: Advanced Settings -->
-                    <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center"><i data-lucide="settings"
-                            class="me-2" style="width:18px;"></i> Advanced Settings</h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <div class="p-3 bg-light rounded-3 border h-100">
-                                <p class="fw-bold mb-2"><i data-lucide="grid" class="me-1" style="width:14px;"></i> CCTV
-                                    Grid Mode</p>
-                                <p class="small text-muted mb-0">Enable Grid Detection to divide your camera view into
-                                    zones (e.g., 2x2, 3x3). Each cell tracks activity independently — useful for
-                                    multi-monitor CCTV setups.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-3 bg-light rounded-3 border h-100">
-                                <p class="fw-bold mb-2"><i data-lucide="download-cloud" class="me-1"
-                                        style="width:14px;"></i> Export & Restore (.lrc)</p>
-                                <p class="small text-muted mb-0">Your map layouts are saved in server memory. To prevent
-                                    loss after restarts, use <strong>Export .lrc</strong> to save a backup to your
-                                    computer. Use <strong>Restore</strong> to reload it anytime.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="my-4 opacity-10">
-
-                    <!-- Section 4: Use Cases -->
-                    <h6 class="fw-bold text-dark mb-3 d-flex align-items-center"><i data-lucide="lightbulb" class="me-2"
-                            style="width:18px;"></i> Use Cases</h6>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="p-3 bg-primary bg-opacity-10 rounded-3 border h-100">
-                                <span class="fw-bold d-block mb-1">🏛️ Libraries</span>
-                                <p class="small text-muted mb-0">Maintain silent study zones. Identify recurring
-                                    "hotspots" and rearrange furniture for better flow.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="p-3 bg-warning bg-opacity-10 rounded-3 border h-100">
-                                <span class="fw-bold d-block mb-1">🖼️ Museums & Galleries</span>
-                                <p class="small text-muted mb-0">Protect fragile exhibits. Trigger alerts if visitors
-                                    run near artifacts.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="p-3 bg-success bg-opacity-10 rounded-3 border h-100">
-                                <span class="fw-bold d-block mb-1">💼 Co-working Spaces</span>
-                                <p class="small text-muted mb-0">Ensure "Deep Work" floors stay quiet. Monitor noise
-                                    levels in open-plan offices.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-info text-white w-100 fw-bold" data-bs-dismiss="modal">I'm
-                        ready to monitor!</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer class="container mt-5 mb-4 text-center d-flex justify-content-center align-items-center gap-2">
-        <p class="text-muted mb-0" style="font-size: 9pt;">© 2026 APIWISH ANUTARAVANICHKUL</p>
-
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-link btn-sm p-0" data-bs-toggle="modal" data-bs-target="#sponsorModal"
-                title="Sponsor">
-                <img src="/static/slogo.png" alt="Sponsor" height="18" class="rounded me-1">Sponsor
-            </button>
-
-            <button class="btn btn-link btn-sm p-0" data-bs-toggle="modal" data-bs-target="#privacyModal"
-                title="Privacy Policy">
-                Privacy Policy
-            </button>
-
-            <button class="btn btn-link btn-sm p-0" data-bs-toggle="modal" data-bs-target="#tosModal"
-                title="Terms of Service">
-                Terms of Service
-            </button>
+    <footer class="text-center py-8 text-slate-400 text-xs">
+        <p class="mb-2">© 2026 APIWISH ANUTARAVANICHKUL</p>
+        <div class="flex justify-center gap-4">
+            <button onclick="toggleModal('sponsorModal')" class="hover:text-mysk-blue hover:underline">Sponsor</button>
+            <button onclick="toggleModal('privacyModal')" class="hover:text-mysk-blue hover:underline">Privacy
+                Policy</button>
+            <button onclick="toggleModal('tosModal')" class="hover:text-mysk-blue hover:underline">Terms of
+                Service</button>
         </div>
     </footer>
 
+    <!-- Modals (Tailwind Implementation) -->
+
+    <!-- Snapshot Modal -->
+    <div id="snapshotModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div id="snapshot-content"
+            class="bg-white dark:bg-slate-900 w-full max-w-4xl mx-4 rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-300 scale-95 opacity-0 translate-y-4">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Alert Snapshot</h3>
+                <button onclick="toggleModal('snapshotModal')"
+                    class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="x"
+                        class="w-5 h-5 text-slate-500"></i></button>
+            </div>
+            <div class="bg-black/5 flex items-center justify-center p-1 min-h-[300px]">
+                <img id="snapshot-img" src="" class="max-h-[60vh] object-contain rounded-lg shadow-sm"
+                    crossorigin="anonymous">
+            </div>
+            <div class="p-6 bg-slate-50 dark:bg-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex gap-6 text-center md:text-left">
+                    <div><small class="text-slate-500 uppercase text-xs font-bold">Time</small>
+                        <div id="modal-time" class="font-mono font-bold text-slate-800 dark:text-white">00:00:00</div>
+                    </div>
+                    <div><small class="text-slate-500 uppercase text-xs font-bold">Sound</small>
+                        <div id="modal-noise" class="font-bold text-sky-500">0 dB</div>
+                    </div>
+                    <div><small class="text-slate-500 uppercase text-xs font-bold">Speed</small>
+                        <div id="modal-speed" class="font-bold text-rose-500">0.0 m/s</div>
+                    </div>
+                </div>
+                <button onclick="downloadPDFReport()" class="btn btn-primary gap-2"><i data-lucide="download"
+                        class="w-4 h-4"></i> Download Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Watch Help Modal -->
+    <div id="watchHelpModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-lg mx-4 rounded-3xl p-6 shadow-2xl transform transition-all duration-300 scale-95 opacity-0 translate-y-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-amber-500">How to use: Watch</h3>
+                <button onclick="toggleModal('watchHelpModal')"
+                    class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="x"
+                        class="w-5 h-5 text-slate-500"></i></button>
+            </div>
+            <ol class="list-decimal list-inside space-y-3 text-sm text-slate-600 dark:text-slate-300">
+                <li><strong class="text-slate-800 dark:text-white">Station (Laptop):</strong> Click <i
+                        data-lucide="refresh-cw" class="w-3 h-3 inline"></i> to generate code.</li>
+                <li><strong class="text-slate-800 dark:text-white">Phone:</strong> Open this site, enter code, click
+                    <strong>Join</strong>.</li>
+                <li><strong class="text-slate-800 dark:text-white">Monitor:</strong> Keep phone in pocket. It vibrates
+                    on alert.</li>
+            </ol>
+            <div
+                class="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 text-cat-amber-700 dark:text-amber-400 text-xs rounded-xl flex items-center gap-2">
+                <i data-lucide="info" class="w-4 h-4"></i> Keep browser tab open on phone.
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-md mx-4 rounded-3xl p-6 shadow-2xl transform transition-all duration-300 scale-95 opacity-0 translate-y-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-mysk-blue dark:text-sky-400">Updates</h3>
+                <button onclick="toggleModal('notificationModal')"
+                    class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="x"
+                        class="w-5 h-5 text-slate-500"></i></button>
+            </div>
+            <div id="notification-items-container" class="max-h-[60vh] overflow-y-auto custom-scrollbar">
+                <div class="text-center py-8 text-slate-400 text-sm">Loading updates...</div>
+            </div>
+            <button onclick="toggleModal('notificationModal')" class="mt-4 btn btn-primary w-full">Got it!</button>
+        </div>
+    </div>
+
+    <!-- Sponsor Modal -->
+    <div id="sponsorModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-xs mx-4 rounded-3xl p-6 shadow-2xl transform transition-all duration-300 scale-95 opacity-0 translate-y-4 text-center">
+            <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white">Sponsor</h3>
+            <img src="/static/spornserme.png" alt="Sponsor" class="w-32 mx-auto mb-4 rounded-xl shadow-md">
+            <button onclick="toggleModal('sponsorModal')"
+                class="btn btn-outline-secondary w-full text-sm">Close</button>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div id="privacyModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-2xl mx-4 rounded-3xl p-8 shadow-2xl transform transition-all duration-300 scale-95 opacity-0 translate-y-4 max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Privacy Policy</h3>
+                <button onclick="toggleModal('privacyModal')"
+                    class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="x"
+                        class="w-5 h-5 text-slate-500"></i></button>
+            </div>
+            <div
+                class="overflow-y-auto flex-1 pr-2 custom-scrollbar text-sm space-y-4 text-slate-600 dark:text-slate-300">
+                <p><strong>Last Updated:</strong> 2026-01-31</p>
+                <p>LibraryRunCatcher is built on "Privacy-by-Design". Local processing only. No cloud surveillance.</p>
+                <h6 class="font-bold text-slate-800 dark:text-white">1. Local-Only Processing</h6>
+                <p>All AI analysis happens on your device. We do not stream video to servers.</p>
+                <h6 class="font-bold text-slate-800 dark:text-white">2. Ephemeral Storage</h6>
+                <p>All data is deleted after 5 hours.</p>
+                <p class="text-xs text-slate-400">© 2026 APIWISH ANUTARAVANICHKUL</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOS Modal -->
+    <div id="tosModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-2xl mx-4 rounded-3xl p-8 shadow-2xl transform transition-all duration-300 scale-95 opacity-0 translate-y-4 max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Terms of Service</h3>
+                <button onclick="toggleModal('tosModal')"
+                    class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="x"
+                        class="w-5 h-5 text-slate-500"></i></button>
+            </div>
+            <div
+                class="overflow-y-auto flex-1 pr-2 custom-scrollbar text-sm space-y-4 text-slate-600 dark:text-slate-300">
+                <p><strong>Last Updated:</strong> 2026-01-31</p>
+                <p>By using this tool, you agree it is for educational safety, not punitive surveillance.</p>
+                <h6 class="font-bold text-slate-800 dark:text-white">1. Authorized Use</h6>
+                <p>Libraries, Study Halls, Schools only.</p>
+                <h6 class="font-bold text-slate-800 dark:text-white">2. Human Review</h6>
+                <p>Verify all alerts manually.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Modal -->
+    <div id="manualModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-4xl mx-4 rounded-3xl p-0 shadow-2xl transform transition-all duration-300 scale-95 opacity-0 translate-y-4 max-h-[85vh] flex flex-col overflow-hidden">
+            <div class="bg-sky-500 p-4 flex justify-between items-center text-white">
+                <h5 class="font-bold flex items-center gap-2"><i data-lucide="book-open" class="w-5 h-5"></i> User
+                    Manual</h5>
+                <button onclick="toggleModal('manualModal')" class="p-1 hover:bg-white/20 rounded-full"><i
+                        data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar space-y-6">
+                <!-- Getting Started -->
+                <div>
+                    <h6 class="text-sky-500 font-bold flex items-center gap-2 mb-3"><i data-lucide="rocket"
+                            class="w-4 h-4"></i> Getting Started</h6>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div
+                            class="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <span class="badge bg-sky-500 text-white mb-2">Step 1</span>
+                            <p class="font-bold text-slate-800 dark:text-white">Room Code</p>
+                            <p class="text-xs text-slate-500">Generate a code in Watch section.</p>
+                        </div>
+                        <div
+                            class="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <span class="badge bg-sky-500 text-white mb-2">Step 2</span>
+                            <p class="font-bold text-slate-800 dark:text-white">Zone</p>
+                            <p class="text-xs text-slate-500">Select area name.</p>
+                        </div>
+                        <div
+                            class="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <span class="badge bg-sky-500 text-white mb-2">Step 3</span>
+                            <p class="font-bold text-slate-800 dark:text-white">Start</p>
+                            <p class="text-xs text-slate-500">Toggle Auto or click Eye.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Features -->
+                <div>
+                    <h6 class="text-mysk-blue font-bold flex items-center gap-2 mb-3"><i data-lucide="layers"
+                            class="w-4 h-4"></i> Features</h6>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-300">
+                        <div class="p-4 border rounded-xl dark:border-slate-700">
+                            <p class="font-bold text-mysk-blue mb-2">Live Monitor</p>
+                            <ul class="list-disc pl-4 space-y-1">
+                                <li>Speed (m/s) & Noise (dB)</li>
+                                <li>Streak Counter</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 border rounded-xl dark:border-slate-700">
+                            <p class="font-bold text-amber-500 mb-2">Watch Sync</p>
+                            <ul class="list-disc pl-4 space-y-1">
+                                <li>Link Phone</li>
+                                <li>Vibrate on Alert</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800">
+                <button onclick="toggleModal('manualModal')"
+                    class="btn btn-primary w-full shadow-lg shadow-sky-500/30">Ready!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script>
+        // Toggle Dashboard Iframe
         function toggleDashboard() {
             const overlay = document.getElementById('dashboard-overlay');
             const frame = document.getElementById('dashboard-frame');
 
-            if (overlay.style.display === 'none') {
+            if (overlay.classList.contains('hidden')) {
                 // Open
                 if (!frame.src.includes('dashboard')) {
-                    const roomParam = currentRoomId ? `?room=${currentRoomId}` : '';
+                    const roomParam = (typeof currentRoomId !== 'undefined' && currentRoomId) ? `?room=${currentRoomId}` : '';
                     const connector = roomParam ? '&' : '?';
                     frame.src = "/dashboard" + roomParam + connector + "v=" + Date.now();
                 }
-                overlay.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
             } else {
                 // Close
-                overlay.style.display = 'none';
+                overlay.classList.add('hidden');
                 document.body.style.overflow = '';
             }
         }
 
-        // Listen for close message from iframe
         window.addEventListener('message', (event) => {
             if (event.data === 'closeDashboard') {
                 toggleDashboard();
             }
         });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/static/app.js?v=2.5"></script>
-    <script>
-        lucide.createIcons();
 
-        // Remove intro after animation to prevent interaction issues
-        const intro = document.getElementById('intro-overlay');
-        if (intro) {
-            intro.addEventListener('animationend', () => {
-                intro.style.display = 'none';
-            });
-            // Fallback just in case
-            setTimeout(() => {
-                intro.style.display = 'none';
-            }, 3600);
-        }
-    </script>
-    <script>
-        // Notification System Logic
-        async function loadNotifications() {
-            const container = document.getElementById('notification-items-container');
-            const badge = document.getElementById('notification-badge');
-
-            try {
-                // Add version for cache busting
-                const response = await fetch('/static/notifications.json?v=' + Date.now());
-                const notifications = await response.json();
-
-                let newCount = 0;
-                let html = '<div class="vstack gap-3">';
-
-                notifications.forEach(item => {
-                    if (item.isNew) newCount++;
-
-                    const borderClass = item.isNew ? 'border-primary bg-light' : 'border-light';
-                    const iconColor = item.isNew ? 'text-primary' : 'text-muted';
-
-                    html += `
-                        <div class="d-flex gap-3 p-3 rounded-4 border-start border-4 ${borderClass}">
-                            <div class="${iconColor}"><i data-lucide="${item.icon || 'info'}"></i></div>
-                            <div>
-                                <h6 class="fw-bold mb-1">${item.title}</h6>
-                                <p class="small text-muted mb-0">${item.description}</p>
-                                <small class="${item.isNew ? 'text-primary fw-bold' : 'text-muted'}" style="font-size: 0.7rem;">${item.date}</small>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += '</div>';
-                container.innerHTML = html;
-
-                if (newCount > 0) {
-                    badge.innerText = newCount;
-                    badge.classList.remove('d-none');
-                } else {
-                    badge.classList.add('d-none');
-                }
-
-                lucide.createIcons();
-            } catch (err) {
-                console.error('Failed to load notifications:', err);
-                container.innerHTML = '<div class="text-center py-4 text-muted small">No updates found.</div>';
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
             }
         }
 
-        // Load on startup
-        document.addEventListener('DOMContentLoaded', loadNotifications);
+        // Init Icons
+        lucide.createIcons();
 
-        // Refresh every 5 minutes
-        setInterval(loadNotifications, 300000);
+        // Remove intro
+        const intro = document.getElementById('intro-overlay');
+        if (intro) {
+            setTimeout(() => {
+                intro.classList.add('opacity-0', 'pointer-events-none', 'transition-opacity', 'duration-500');
+                setTimeout(() => intro.remove(), 600);
+            }, 3000);
+        }
+
+        // Load Notifications Shim
+        async function loadNotifications() {
+            const container = document.getElementById('notification-items-container');
+            const badge = document.getElementById('notification-badge');
+            try {
+                const response = await fetch('/static/notifications.json?v=' + Date.now());
+                const notifications = await response.json();
+                let newCount = 0;
+                let html = '<div class="flex flex-col gap-3">';
+                notifications.forEach(item => {
+                    if (item.isNew) newCount++;
+                    const bgClass = item.isNew ? 'bg-sky-50 border-l-4 border-mysk-blue dark:bg-sky-900/20 dark:border-sky-500' : 'border border-slate-100 dark:border-slate-800';
+                    const iconColor = item.isNew ? 'text-mysk-blue dark:text-sky-400' : 'text-slate-400';
+                    html += `
+                        <div class="flex gap-3 p-4 rounded-2xl ${bgClass} transition-colors">
+                            <div class="${iconColor}"><i data-lucide="${item.icon || 'info'}" class="w-5 h-5"></i></div>
+                            <div>
+                                <h6 class="font-bold text-slate-800 dark:text-white mb-1 leading-snug">${item.title}</h6>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${item.description}</p>
+                                <small class="block mt-2 text-[10px] uppercase font-bold tracking-wider ${item.isNew ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400'}">${item.date}</small>
+                            </div>
+                        </div>`;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+                if (newCount > 0) {
+                    badge.innerText = newCount;
+                    badge.classList.remove('hidden');
+                } else badge.classList.add('hidden');
+                lucide.createIcons();
+            } catch (e) { console.log(e); }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadNotifications);
     </script>
+    <script src="/static/app.js?v=2.6"></script>
 </body>
 
 </html>
