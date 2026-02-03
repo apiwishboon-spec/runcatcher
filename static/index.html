@@ -22,6 +22,16 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Critical Fallback CSS */
+        .hidden {
+            display: none !important;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+    </style>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -511,7 +521,8 @@
                 <li><strong class="text-slate-800 dark:text-white">Station (Laptop):</strong> Click <i
                         data-lucide="refresh-cw" class="w-3 h-3 inline"></i> to generate code.</li>
                 <li><strong class="text-slate-800 dark:text-white">Phone:</strong> Open this site, enter code, click
-                    <strong>Join</strong>.</li>
+                    <strong>Join</strong>.
+                </li>
                 <li><strong class="text-slate-800 dark:text-white">Monitor:</strong> Keep phone in pocket. It vibrates
                     on alert.</li>
             </ol>
