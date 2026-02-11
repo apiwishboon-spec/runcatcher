@@ -1,7 +1,7 @@
-# � LibraryRunCatcher
+# Chronopic
 ### "Smart monitoring for quiet study spaces"
 
-**LibraryRunCatcher** is a high-performance, multi-tenant monitoring system designed to maintain peace and safety in study environments. Using real-time pose detection (MediaPipe) and auditory analysis, it identifies running and noise disturbances instantly, allowing librarians to manage their spaces effectively.
+**Chronopic** is a high-performance, multi-tenant monitoring system designed to maintain peace and safety in study environments. Using real-time pose detection (MediaPipe) and auditory analysis, it identifies running and noise disturbances instantly, allowing librarians to manage their spaces effectively.
 
 ---
 
